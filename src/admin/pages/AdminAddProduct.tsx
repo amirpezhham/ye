@@ -43,7 +43,7 @@ export function AdminAddProduct() {
       categorySlug: category,
       description: description.trim(),
       price: Number(price),
-      image: "/images/products/placeholder.jpg",
+      image: "/images/products/placeholder.svg",
       status: "in-stock",
       stock: 1,
     }

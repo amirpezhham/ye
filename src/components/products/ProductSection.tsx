@@ -3,7 +3,7 @@ import { motion } from "motion/react"
 
 import { ProductFilters } from "./ProductFilters"
 import { ProductGrid } from "./ProductGrid"
-import { getProducts } from "@/admin/components/product-storage"
+import { useProducts } from "@/context/ProductsContext"
 
 const categories = [
   {
@@ -47,7 +47,7 @@ const categories = [
 export function ProductSection() {
   const [activeCategory, setActiveCategory] = useState("all")
 
-  const products = getProducts()
+  const { products } = useProducts()
 
   const filteredProducts = useMemo(() => {
     if (activeCategory === "all") {

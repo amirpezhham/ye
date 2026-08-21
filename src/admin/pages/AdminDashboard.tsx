@@ -4,20 +4,18 @@ import {
   ShoppingBag,
   Users,
 } from "lucide-react"
+import { Link } from "react-router-dom"
 
-const stats = [
+import { useProducts } from "@/context/ProductsContext"
+
+const staticStats = [
   {
-    title: "محصولات",
-    value: "۸",
-    icon: Package,
-  },
-  {
-    title: "سفارش‌ها",
+    title: "سفارشها",
     value: "۰",
     icon: ShoppingBag,
   },
   {
-    title: "مشتری‌ها",
+    title: "مشتریها",
     value: "۰",
     icon: Users,
   },
@@ -29,6 +27,17 @@ const stats = [
 ]
 
 export function AdminDashboard() {
+  const { products } = useProducts()
+
+  const stats = [
+    {
+      title: "محصولات",
+      value: new Intl.NumberFormat("fa-IR").format(products.length),
+      icon: Package,
+    },
+    ...staticStats,
+  ]
+
   return (
     <main
       dir="rtl"
@@ -82,25 +91,25 @@ export function AdminDashboard() {
           </h2>
 
           <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            <button
-              type="button"
+            <Link
+              to="/admin/products/new"
               className="rounded-xl border border-white/10 bg-[#0D0F0D] px-5 py-4 text-right text-sm font-bold transition hover:border-[#D9E600]/30 hover:text-[#D9E600]"
             >
               افزودن محصول جدید
-            </button>
+            </Link>
 
-            <button
-              type="button"
+            <Link
+              to="/admin/products"
               className="rounded-xl border border-white/10 bg-[#0D0F0D] px-5 py-4 text-right text-sm font-bold transition hover:border-[#D9E600]/30 hover:text-[#D9E600]"
             >
               مدیریت محصولات
-            </button>
+            </Link>
 
             <button
               type="button"
               className="rounded-xl border border-white/10 bg-[#0D0F0D] px-5 py-4 text-right text-sm font-bold transition hover:border-[#D9E600]/30 hover:text-[#D9E600]"
             >
-              مشاهده سفارش‌ها
+              مشاهده سفارشها
             </button>
           </div>
         </div>

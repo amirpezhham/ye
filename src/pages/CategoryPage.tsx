@@ -3,7 +3,7 @@ import { ArrowLeft } from "lucide-react"
 import { motion } from "motion/react"
 
 import { ProductGrid } from "@/components/products/ProductGrid"
-import { products } from "@/components/products/product-data"
+import { useProducts } from "@/context/ProductsContext"
 
 
 const categoryNames: Record<string, string> = {
@@ -23,10 +23,9 @@ export function CategoryPage() {
   const { categorySlug } = useParams()
 
 
-  const filteredProducts = products.filter(
-    (product) =>
-      product.categorySlug === categorySlug,
-  )
+  const { getByCategorySlug } = useProducts()
+
+  const filteredProducts = getByCategorySlug(categorySlug ?? "")
 
 
   const categoryTitle =

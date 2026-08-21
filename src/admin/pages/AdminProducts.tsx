@@ -4,10 +4,13 @@ import {
   Plus,
   Trash2,
 } from "lucide-react"
+import { Link } from "react-router-dom"
 
-import { products } from "@/components/products/product-data"
+import { useProducts } from "@/context/ProductsContext"
 
 export function AdminProducts() {
+  const { products, removeProduct } = useProducts()
+
   return (
     <main
       dir="rtl"
@@ -29,13 +32,13 @@ export function AdminProducts() {
             </p>
           </div>
 
-          <button
-            type="button"
+          <Link
+            to="/admin/products/new"
             className="flex h-12 items-center justify-center gap-2 rounded-xl bg-[#D9E600] px-5 font-black text-[#0D0F0D] transition hover:bg-[#E4EF00]"
           >
             <Plus className="size-5" />
             افزودن محصول
-          </button>
+          </Link>
         </div>
 
         <div className="mt-8 overflow-hidden rounded-2xl border border-white/10 bg-[#151814]">
@@ -78,16 +81,17 @@ export function AdminProducts() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <button
-                    type="button"
+                  <Link
+                    to={`/admin/products/${product.id}/edit`}
                     className="flex size-10 items-center justify-center rounded-xl border border-white/10 text-white/50 transition hover:border-[#D9E600]/30 hover:text-[#D9E600]"
                     aria-label={`ویرایش ${product.name}`}
                   >
                     <Edit3 className="size-4" />
-                  </button>
+                  </Link>
 
                   <button
                     type="button"
+                    onClick={() => removeProduct(product.id)}
                     className="flex size-10 items-center justify-center rounded-xl border border-white/10 text-white/50 transition hover:border-red-500/30 hover:text-red-400"
                     aria-label={`حذف ${product.name}`}
                   >

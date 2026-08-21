@@ -4,6 +4,7 @@ import { Home } from "@/pages/Home"
 import { CategoryPage } from "@/pages/CategoryPage"
 import { ProductDetails } from "@/pages/ProductDetails"
 import { CartPage } from "@/pages/CartPage"
+import { ProductsPage } from "@/pages/ProductsPage"
 
 import { AdminDashboard } from "@/admin/pages/AdminDashboard"
 import { AdminProducts } from "@/admin/pages/AdminProducts"
@@ -21,6 +22,11 @@ export function AppRouter() {
         <Route
           path="/category/:categorySlug"
           element={<CategoryPage />}
+        />
+
+        <Route
+          path="/products"
+          element={<ProductsPage />}
         />
 
         <Route

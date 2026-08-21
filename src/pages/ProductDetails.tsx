@@ -13,15 +13,16 @@ import {
 } from "lucide-react"
 import { motion } from "motion/react"
 
-import { products } from "@/components/products/product-data"
 import { ProductGrid } from "@/components/products/ProductGrid"
+import type { Product } from "@/components/products/product-data"
 import { useCart } from "@/context/CartContext"
+import { useProducts } from "@/context/ProductsContext"
 function formatPrice(price: number) {
   return new Intl.NumberFormat("fa-IR").format(price)
 }
 
 const badgeLabels: Record<
-  NonNullable<(typeof products)[number]["badge"]>,
+  NonNullable<Product["badge"]>,
   string
 > = {
   new: "جدید",
@@ -35,7 +36,8 @@ export function ProductDetails(){
   const [quantity, setQuantity] = useState(1)
   const [isFavorite, setIsFavorite] = useState(false)
   const { addToCart } = useCart()
-  const product = products.find((item) => item.slug === slug)
+  const { products, getProductBySlug } = useProducts()
+  const product = getProductBySlug(slug ?? "")
 
   const relatedProducts = useMemo(() => {
     if (!product) {
@@ -49,7 +51,7 @@ export function ProductDetails(){
           item.categorySlug === product.categorySlug,
       )
       .slice(0, 4)
-  }, [product])
+  }, [product, products])
 
   if (!product) {
     return (
