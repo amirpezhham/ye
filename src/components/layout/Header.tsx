@@ -107,14 +107,15 @@ export function Header() {
         <div className="flex items-center gap-1">
 
 
-          <button
-            type="button"
+          <Link
+            to="/search"
+            aria-label="جستجو"
             className="hidden size-10 items-center justify-center rounded-full text-white/70 transition hover:bg-white/5 hover:text-primary sm:flex"
           >
 
             <Search className="size-[19px]" />
 
-          </button>
+          </Link>
 
 
 

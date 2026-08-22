@@ -8,6 +8,7 @@ import { ProductsPage } from "@/pages/ProductsPage"
 import { FavoritesPage } from "@/pages/FavoritesPage"
 import { CheckoutPage } from "@/pages/CheckoutPage"
 import { OrderSuccessPage } from "@/pages/OrderSuccessPage"
+import { SearchPage } from "@/pages/SearchPage"
 
 import { AdminDashboard } from "@/admin/pages/AdminDashboard"
 import { AdminProducts } from "@/admin/pages/AdminProducts"
@@ -46,6 +47,11 @@ export function AppRouter() {
         <Route
           path="/favorites"
           element={<FavoritesPage />}
+        />
+
+        <Route
+          path="/search"
+          element={<SearchPage />}
         />
 
         <Route
