@@ -10,6 +10,7 @@ import { useState } from "react"
 import { Link } from "react-router-dom"
 
 import { useCart } from "@/context/CartContext"
+import { useFavorites } from "@/context/FavoritesContext"
 
 
 const navigation = [
@@ -26,8 +27,10 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const { totalItems } = useCart()
+  const { ids: favoriteIds } = useFavorites()
 
   const cartCount = totalItems
+  const favoriteCount = favoriteIds.length
 
 
   return (
@@ -115,14 +118,25 @@ export function Header() {
 
 
 
-          <button
-            type="button"
-            className="hidden size-10 items-center justify-center rounded-full text-white/70 transition hover:bg-white/5 hover:text-primary sm:flex"
+          <Link
+            to="/favorites"
+            aria-label="علاقه‌مندی‌ها"
+            className="relative hidden size-10 items-center justify-center rounded-full text-white/70 transition hover:bg-white/5 hover:text-primary sm:flex"
           >
 
             <Heart className="size-[19px]" />
 
-          </button>
+            {favoriteCount > 0 && (
+
+              <span className="absolute right-0 top-0 flex size-4 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground">
+
+                {favoriteCount}
+
+              </span>
+
+            )}
+
+          </Link>
 
 
 

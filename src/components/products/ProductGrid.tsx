@@ -39,18 +39,6 @@ export function ProductGrid({
         <ProductCard
           key={product.id}
           product={product}
-          onAddToCart={(selectedProduct) => {
-            console.log(
-              "Add to cart:",
-              selectedProduct.name,
-            )
-          }}
-          onToggleFavorite={(selectedProduct) => {
-            console.log(
-              "Toggle favorite:",
-              selectedProduct.name,
-            )
-          }}
         />
       ))}
     </motion.div>

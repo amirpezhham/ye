@@ -2,12 +2,11 @@ import { Heart, ShoppingBag, Star } from "lucide-react"
 import { motion } from "motion/react"
 import { Link } from "react-router-dom"
 import { useCart } from "@/context/CartContext"
+import { useFavorites } from "@/context/FavoritesContext"
 import type { Product } from "./product-data"
 
 interface ProductCardProps {
   product: Product
-  onAddToCart?: (product: Product) => void
-  onToggleFavorite?: (product: Product) => void
 }
 
 const badgeLabels: Record<NonNullable<Product["badge"]>, string> = {
@@ -29,12 +28,12 @@ function formatPrice(price: number) {
 
 export function ProductCard({
   product,
-  onAddToCart,
-  onToggleFavorite,
 }: ProductCardProps) {
 
   const { addToCart } = useCart()
+  const { has, toggle } = useFavorites()
 
+  const isFavorite = has(product.id)
   const isOutOfStock = product.status === "out-of-stock"
 
   return (
@@ -79,12 +78,20 @@ export function ProductCard({
 
         <motion.button
           type="button"
-          aria-label={`افزودن ${product.name} به علاقه‌مندی‌ها`}
+          aria-label={
+            isFavorite
+              ? `حذف ${product.name} از علاقه‌مندی‌ها`
+              : `افزودن ${product.name} به علاقه‌مندی‌ها`
+          }
           whileTap={{ scale: 0.9 }}
-          onClick={() => onToggleFavorite?.(product)}
-          className="absolute left-4 top-4 z-20 flex size-10 items-center justify-center rounded-full border border-white/10 bg-black/45 text-white/75 backdrop-blur-md transition-all duration-300 hover:border-[#D9E600]/40 hover:bg-[#D9E600]/10 hover:text-[#D9E600]"
+          onClick={() => toggle(product)}
+          className={`absolute left-4 top-4 z-20 flex size-10 items-center justify-center rounded-full border backdrop-blur-md transition-all duration-300 ${
+            isFavorite
+              ? "border-[#D9E600]/40 bg-[#D9E600]/10 text-[#D9E600]"
+              : "border-white/10 bg-black/45 text-white/75 hover:border-[#D9E600]/40 hover:bg-[#D9E600]/10 hover:text-[#D9E600]"
+          }`}
         >
-          <Heart className="size-[18px]" />
+          <Heart className={`size-[18px] ${isFavorite ? "fill-current" : ""}`} />
         </motion.button>
 
 
@@ -167,7 +174,6 @@ export function ProductCard({
             onClick={() => {
               if (!isOutOfStock) {
                 addToCart(product)
-                onAddToCart?.(product)
               }
             }}
             className="flex size-11 items-center justify-center rounded-xl border border-[#D9E600]/20 bg-[#D9E600]/5 text-[#D9E600]"

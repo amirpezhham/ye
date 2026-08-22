@@ -16,6 +16,7 @@ import { motion } from "motion/react"
 import { ProductGrid } from "@/components/products/ProductGrid"
 import type { Product } from "@/components/products/product-data"
 import { useCart } from "@/context/CartContext"
+import { useFavorites } from "@/context/FavoritesContext"
 import { useProducts } from "@/context/ProductsContext"
 function formatPrice(price: number) {
   return new Intl.NumberFormat("fa-IR").format(price)
@@ -34,10 +35,12 @@ const badgeLabels: Record<
 export function ProductDetails(){
   const { slug } = useParams()
   const [quantity, setQuantity] = useState(1)
-  const [isFavorite, setIsFavorite] = useState(false)
   const { addToCart } = useCart()
+  const { has, toggle } = useFavorites()
   const { products, getProductBySlug } = useProducts()
   const product = getProductBySlug(slug ?? "")
+
+  const isFavorite = product ? has(product.id) : false
 
   const relatedProducts = useMemo(() => {
     if (!product) {
@@ -288,7 +291,7 @@ export function ProductDetails(){
               <motion.button
                 type="button"
                 whileTap={{ scale: 0.94 }}
-                onClick={() => setIsFavorite((value) => !value)}
+                onClick={() => product && toggle(product)}
                 aria-label="افزودن به علاقه‌مندی‌ها"
                 className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border transition-all ${
                   isFavorite

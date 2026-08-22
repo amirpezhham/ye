@@ -5,6 +5,7 @@ import { CategoryPage } from "@/pages/CategoryPage"
 import { ProductDetails } from "@/pages/ProductDetails"
 import { CartPage } from "@/pages/CartPage"
 import { ProductsPage } from "@/pages/ProductsPage"
+import { FavoritesPage } from "@/pages/FavoritesPage"
 import { CheckoutPage } from "@/pages/CheckoutPage"
 import { OrderSuccessPage } from "@/pages/OrderSuccessPage"
 
@@ -40,6 +41,11 @@ export function AppRouter() {
         <Route
           path="/cart"
           element={<CartPage />}
+        />
+
+        <Route
+          path="/favorites"
+          element={<FavoritesPage />}
         />
 
         <Route
