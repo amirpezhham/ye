@@ -71,7 +71,7 @@ const categories = [
 
 export function CategoryShowcase() {
   return (
-    <section className="px-6 py-20">
+    <section id="categories" className="px-6 py-20">
       <div className="mx-auto max-w-7xl">
 
         {/* Section Heading */}

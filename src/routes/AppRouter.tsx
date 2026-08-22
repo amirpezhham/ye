@@ -10,6 +10,8 @@ import { CheckoutPage } from "@/pages/CheckoutPage"
 import { OrderSuccessPage } from "@/pages/OrderSuccessPage"
 import { SearchPage } from "@/pages/SearchPage"
 
+import { StoreLayout } from "@/components/layout/StoreLayout"
+
 import { AdminDashboard } from "@/admin/pages/AdminDashboard"
 import { AdminProducts } from "@/admin/pages/AdminProducts"
 import { AdminAddProduct } from "@/admin/pages/AdminAddProduct"
@@ -20,49 +22,53 @@ export function AppRouter() {
     <BrowserRouter>
       <Routes>
         <Route
-          path="/"
-          element={<Home />}
-        />
+          element={<StoreLayout />}
+        >
+          <Route
+            path="/"
+            element={<Home />}
+          />
 
-        <Route
-          path="/category/:categorySlug"
-          element={<CategoryPage />}
-        />
+          <Route
+            path="/category/:categorySlug"
+            element={<CategoryPage />}
+          />
 
-        <Route
-          path="/products"
-          element={<ProductsPage />}
-        />
+          <Route
+            path="/products"
+            element={<ProductsPage />}
+          />
 
-        <Route
-          path="/product/:slug"
-          element={<ProductDetails />}
-        />
+          <Route
+            path="/product/:slug"
+            element={<ProductDetails />}
+          />
 
-        <Route
-          path="/cart"
-          element={<CartPage />}
-        />
+          <Route
+            path="/cart"
+            element={<CartPage />}
+          />
 
-        <Route
-          path="/favorites"
-          element={<FavoritesPage />}
-        />
+          <Route
+            path="/favorites"
+            element={<FavoritesPage />}
+          />
 
-        <Route
-          path="/search"
-          element={<SearchPage />}
-        />
+          <Route
+            path="/search"
+            element={<SearchPage />}
+          />
 
-        <Route
-          path="/checkout"
-          element={<CheckoutPage />}
-        />
+          <Route
+            path="/checkout"
+            element={<CheckoutPage />}
+          />
 
-        <Route
-          path="/order-success/:orderId"
-          element={<OrderSuccessPage />}
-        />
+          <Route
+            path="/order-success/:orderId"
+            element={<OrderSuccessPage />}
+          />
+        </Route>
 
         <Route
           path="/admin"
