@@ -1,12 +1,36 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
 } from "react"
 
 import type { Product } from "@/components/products/product-data"
+
+
+const CART_STORAGE_KEY = "ye-dood-cart"
+
+function loadCart(): CartItem[] {
+  if (typeof window === "undefined") {
+    return []
+  }
+
+  try {
+    const saved = localStorage.getItem(CART_STORAGE_KEY)
+
+    if (!saved) {
+      return []
+    }
+
+    const parsed = JSON.parse(saved)
+
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
+}
 
 
 export interface CartItem extends Product {
@@ -47,7 +71,19 @@ export function CartProvider({
   children: ReactNode
 }) {
 
-  const [items, setItems] = useState<CartItem[]>([])
+  const [items, setItems] = useState<CartItem[]>(loadCart)
+
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        CART_STORAGE_KEY,
+        JSON.stringify(items),
+      )
+    } catch {
+      /* نادیده گرفتن خطای ذخیره‌سازی */
+    }
+  }, [items])
 
 
 
