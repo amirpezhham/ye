@@ -11,6 +11,7 @@ import { OrderSuccessPage } from "@/pages/OrderSuccessPage"
 import { AdminDashboard } from "@/admin/pages/AdminDashboard"
 import { AdminProducts } from "@/admin/pages/AdminProducts"
 import { AdminAddProduct } from "@/admin/pages/AdminAddProduct"
+import { AdminEditProduct } from "@/admin/pages/AdminEditProduct"
 
 export function AppRouter() {
   return (
@@ -64,6 +65,11 @@ export function AppRouter() {
         <Route
           path="/admin/products/new"
           element={<AdminAddProduct />}
+        />
+
+        <Route
+          path="/admin/products/:productId/edit"
+          element={<AdminEditProduct />}
         />
       </Routes>
     </BrowserRouter>

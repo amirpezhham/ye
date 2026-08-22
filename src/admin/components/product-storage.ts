@@ -52,3 +52,15 @@ export function deleteProduct(productId: string) {
     ),
   )
 }
+
+export function updateProduct(updatedProduct: Product) {
+  const currentProducts = getProducts()
+
+  saveProducts(
+    currentProducts.map((product) =>
+      product.id === updatedProduct.id
+        ? updatedProduct
+        : product,
+    ),
+  )
+}
