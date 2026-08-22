@@ -5,6 +5,7 @@ import App from "./App"
 import "./index.css"
 
 import { CartProvider } from "@/context/CartContext"
+import { OrderProvider } from "@/context/OrderContext"
 import { ProductsProvider } from "@/context/ProductsContext"
 
 
@@ -12,7 +13,9 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ProductsProvider>
       <CartProvider>
-        <App />
+        <OrderProvider>
+          <App />
+        </OrderProvider>
       </CartProvider>
     </ProductsProvider>
   </StrictMode>,

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import {
   ArrowRight,
   Minus,
@@ -15,6 +15,7 @@ function formatPrice(price: number) {
 }
 
 export function CartPage() {
+  const navigate = useNavigate()
   const {
     items,
     totalItems,
@@ -221,6 +222,11 @@ export function CartPage() {
 
             <button
               type="button"
+              onClick={() => {
+                if (items.length > 0) {
+                  navigate("/checkout")
+                }
+              }}
               className="mt-6 flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-[#D9E600] font-black text-[#0D0F0D] transition hover:bg-[#E4EF00]"
             >
               ادامه و ثبت سفارش
