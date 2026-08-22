@@ -9,6 +9,7 @@ import { FavoritesPage } from "@/pages/FavoritesPage"
 import { CheckoutPage } from "@/pages/CheckoutPage"
 import { OrderSuccessPage } from "@/pages/OrderSuccessPage"
 import { SearchPage } from "@/pages/SearchPage"
+import { LoungePage } from "@/pages/LoungePage"
 
 import { StoreLayout } from "@/components/layout/StoreLayout"
 
@@ -57,6 +58,11 @@ export function AppRouter() {
           <Route
             path="/search"
             element={<SearchPage />}
+          />
+
+          <Route
+            path="/lounge"
+            element={<LoungePage />}
           />
 
           <Route
