@@ -105,13 +105,27 @@ export function AdminDashboard() {
               مدیریت محصولات
             </Link>
 
-            <button
-              type="button"
-              className="rounded-xl border border-white/10 bg-[#0D0F0D] px-5 py-4 text-right text-sm font-bold transition hover:border-[#D9E600]/30 hover:text-[#D9E600]"
-            >
-              مشاهده سفارشها
-            </button>
-          </div>
+             <Link
+               to="/admin/about"
+               className="rounded-xl border border-white/10 bg-[#0D0F0D] px-5 py-4 text-right text-sm font-bold transition hover:border-[#D9E600]/30 hover:text-[#D9E600]"
+             >
+               ویرایش درباره ما
+             </Link>
+
+             <Link
+               to="/admin/posts"
+               className="rounded-xl border border-white/10 bg-[#0D0F0D] px-5 py-4 text-right text-sm font-bold transition hover:border-[#D9E600]/30 hover:text-[#D9E600]"
+             >
+               مدیریت پست‌ها
+             </Link>
+
+             <button
+               type="button"
+               className="rounded-xl border border-white/10 bg-[#0D0F0D] px-5 py-4 text-right text-sm font-bold transition hover:border-[#D9E600]/30 hover:text-[#D9E600]"
+             >
+               مشاهده سفارشها
+             </button>
+           </div>
         </div>
       </div>
     </main>

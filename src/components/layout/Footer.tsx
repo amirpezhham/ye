@@ -12,8 +12,9 @@ const siteLinks = [
   { label: "خانه", href: "/" },
   { label: "فروشگاه", href: "/products" },
   { label: "دستهبندیها", href: "/#categories" },
-  { label: "درباره ما", href: "/#about" },
-  { label: "فضای ما", href: "/#lounge" },
+  { label: "درباره ما", href: "/about" },
+  { label: "فضای ما", href: "/lounge" },
+  { label: "وبلاگ", href: "/blog" },
 ]
 
 const socials = [

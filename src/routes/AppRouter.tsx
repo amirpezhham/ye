@@ -10,6 +10,9 @@ import { CheckoutPage } from "@/pages/CheckoutPage"
 import { OrderSuccessPage } from "@/pages/OrderSuccessPage"
 import { SearchPage } from "@/pages/SearchPage"
 import { LoungePage } from "@/pages/LoungePage"
+import { AboutPage } from "@/pages/AboutPage"
+import { BlogPage } from "@/pages/BlogPage"
+import { BlogPostPage } from "@/pages/BlogPostPage"
 
 import { StoreLayout } from "@/components/layout/StoreLayout"
 
@@ -17,6 +20,9 @@ import { AdminDashboard } from "@/admin/pages/AdminDashboard"
 import { AdminProducts } from "@/admin/pages/AdminProducts"
 import { AdminAddProduct } from "@/admin/pages/AdminAddProduct"
 import { AdminEditProduct } from "@/admin/pages/AdminEditProduct"
+import { AdminAbout } from "@/admin/pages/AdminAbout"
+import { AdminPosts } from "@/admin/pages/AdminPosts"
+import { AdminPostEditor } from "@/admin/pages/AdminPostEditor"
 
 export function AppRouter() {
   return (
@@ -66,6 +72,21 @@ export function AppRouter() {
           />
 
           <Route
+            path="/about"
+            element={<AboutPage />}
+          />
+
+          <Route
+            path="/blog"
+            element={<BlogPage />}
+          />
+
+          <Route
+            path="/blog/:slug"
+            element={<BlogPostPage />}
+          />
+
+          <Route
             path="/checkout"
             element={<CheckoutPage />}
           />
@@ -94,6 +115,26 @@ export function AppRouter() {
         <Route
           path="/admin/products/:productId/edit"
           element={<AdminEditProduct />}
+        />
+
+        <Route
+          path="/admin/about"
+          element={<AdminAbout />}
+        />
+
+        <Route
+          path="/admin/posts"
+          element={<AdminPosts />}
+        />
+
+        <Route
+          path="/admin/posts/new"
+          element={<AdminPostEditor />}
+        />
+
+        <Route
+          path="/admin/posts/:postId/edit"
+          element={<AdminPostEditor />}
         />
       </Routes>
     </BrowserRouter>
