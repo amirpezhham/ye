@@ -4,12 +4,21 @@ import {
   Plus,
   Trash2,
 } from "lucide-react"
+import { useState } from "react"
 import { Link } from "react-router-dom"
 
 import { useProducts } from "@/context/ProductsContext"
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog"
 
 export function AdminProducts() {
   const { products, removeProduct } = useProducts()
+  const [pendingDelete, setPendingDelete] = useState<string | null>(
+    null,
+  )
+
+  const productToDelete = products.find(
+    (item) => item.id === pendingDelete,
+  )
 
   return (
     <main
@@ -91,7 +100,7 @@ export function AdminProducts() {
 
                   <button
                     type="button"
-                    onClick={() => removeProduct(product.id)}
+                    onClick={() => setPendingDelete(product.id)}
                     className="flex size-10 items-center justify-center rounded-xl border border-white/10 text-white/50 transition hover:border-red-500/30 hover:text-red-400"
                     aria-label={`حذف ${product.name}`}
                   >
@@ -103,6 +112,25 @@ export function AdminProducts() {
           </div>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={pendingDelete !== null}
+        title="حذف محصول؟"
+        message={
+          productToDelete
+            ? `آیا مطمئن هستید که می‌خواهید «${productToDelete.name}» را حذف کنید؟`
+            : ""
+        }
+        confirmLabel="حذف محصول"
+        onCancel={() => setPendingDelete(null)}
+        onConfirm={() => {
+          if (pendingDelete) {
+            removeProduct(pendingDelete)
+          }
+
+          setPendingDelete(null)
+        }}
+      />
     </main>
   )
 }

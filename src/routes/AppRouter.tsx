@@ -23,6 +23,8 @@ import { AdminEditProduct } from "@/admin/pages/AdminEditProduct"
 import { AdminAbout } from "@/admin/pages/AdminAbout"
 import { AdminPosts } from "@/admin/pages/AdminPosts"
 import { AdminPostEditor } from "@/admin/pages/AdminPostEditor"
+import { AdminOrders } from "@/admin/pages/AdminOrders"
+import { AdminOrderDetail } from "@/admin/pages/AdminOrderDetail"
 
 export function AppRouter() {
   return (
@@ -135,6 +137,16 @@ export function AppRouter() {
         <Route
           path="/admin/posts/:postId/edit"
           element={<AdminPostEditor />}
+        />
+
+        <Route
+          path="/admin/orders"
+          element={<AdminOrders />}
+        />
+
+        <Route
+          path="/admin/orders/:orderId"
+          element={<AdminOrderDetail />}
         />
       </Routes>
     </BrowserRouter>

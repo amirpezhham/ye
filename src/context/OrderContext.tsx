@@ -8,6 +8,12 @@ import {
 } from "react"
 
 import type { CartItem } from "@/context/CartContext"
+import {
+  addOrder as persistAddOrder,
+  getOrders,
+  type Order,
+  type OrderStatus,
+} from "@/admin/components/order-storage"
 
 
 export interface OrderDetails {
@@ -18,16 +24,9 @@ export interface OrderDetails {
 }
 
 
-export interface Order extends OrderDetails {
-  id: string
-  items: CartItem[]
-  totalPrice: number
-  totalItems: number
-  createdAt: number
-}
-
-
 interface OrderContextType {
+  orders: Order[]
+
   lastOrder: Order | null
 
   placeOrder: (
@@ -36,6 +35,8 @@ interface OrderContextType {
     totalPrice: number,
     totalItems: number,
   ) => Order
+
+  updateStatus: (orderId: string, status: OrderStatus) => void
 
   clearLastOrder: () => void
 }
@@ -50,6 +51,10 @@ export function OrderProvider({
 }: {
   children: ReactNode
 }) {
+  const [orders, setOrders] = useState<Order[]>(() =>
+    getOrders(),
+  )
+
   const [lastOrder, setLastOrder] = useState<Order | null>(
     null,
   )
@@ -63,17 +68,48 @@ export function OrderProvider({
       totalItems: number,
     ) => {
       const order: Order = {
-        ...details,
         id: `ORD-${Date.now().toString().slice(-6)}`,
+        fullName: details.fullName,
+        phone: details.phone,
+        address: details.address,
+        note: details.note,
         items: cartItems,
-        totalPrice,
         totalItems,
+        totalPrice,
+        status: "new",
         createdAt: Date.now(),
       }
 
+      persistAddOrder(order)
+      setOrders(getOrders())
       setLastOrder(order)
 
       return order
+    },
+    [],
+  )
+
+
+  const updateStatus = useCallback(
+    (orderId: string, status: OrderStatus) => {
+      const updated = getOrders().map((order) =>
+        order.id === orderId
+          ? {
+              ...order,
+              status,
+            }
+          : order,
+      )
+
+      const storage =
+        window.localStorage
+
+      storage.setItem(
+        "ye-dood-orders",
+        JSON.stringify(updated),
+      )
+
+      setOrders(updated)
     },
     [],
   )
@@ -86,11 +122,19 @@ export function OrderProvider({
 
   const value = useMemo(
     () => ({
+      orders,
       lastOrder,
       placeOrder,
+      updateStatus,
       clearLastOrder,
     }),
-    [lastOrder, placeOrder, clearLastOrder],
+    [
+      orders,
+      lastOrder,
+      placeOrder,
+      updateStatus,
+      clearLastOrder,
+    ],
   )
 
 

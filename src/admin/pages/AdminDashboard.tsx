@@ -7,27 +7,19 @@ import {
 import { Link } from "react-router-dom"
 
 import { useProducts } from "@/context/ProductsContext"
-
-const staticStats = [
-  {
-    title: "سفارشها",
-    value: "۰",
-    icon: ShoppingBag,
-  },
-  {
-    title: "مشتریها",
-    value: "۰",
-    icon: Users,
-  },
-  {
-    title: "فروش",
-    value: "۰ تومان",
-    icon: BarChart3,
-  },
-]
+import { getOrders } from "@/admin/components/order-storage"
 
 export function AdminDashboard() {
   const { products } = useProducts()
+  const orders = getOrders()
+
+  const totalSales = orders
+    .filter((order) => order.status !== "cancelled")
+    .reduce((sum, order) => sum + order.totalPrice, 0)
+
+  const customerCount = new Set(
+    orders.map((order) => order.phone),
+  ).size
 
   const stats = [
     {
@@ -35,7 +27,23 @@ export function AdminDashboard() {
       value: new Intl.NumberFormat("fa-IR").format(products.length),
       icon: Package,
     },
-    ...staticStats,
+    {
+      title: "سفارش‌ها",
+      value: new Intl.NumberFormat("fa-IR").format(orders.length),
+      icon: ShoppingBag,
+    },
+    {
+      title: "مشتری‌ها",
+      value: new Intl.NumberFormat("fa-IR").format(customerCount),
+      icon: Users,
+    },
+    {
+      title: "فروش",
+      value: `${new Intl.NumberFormat("fa-IR").format(
+        totalSales,
+      )} تومان`,
+      icon: BarChart3,
+    },
   ]
 
   return (
@@ -119,12 +127,12 @@ export function AdminDashboard() {
                مدیریت پست‌ها
              </Link>
 
-             <button
-               type="button"
+             <Link
+               to="/admin/orders"
                className="rounded-xl border border-white/10 bg-[#0D0F0D] px-5 py-4 text-right text-sm font-bold transition hover:border-[#D9E600]/30 hover:text-[#D9E600]"
              >
-               مشاهده سفارشها
-             </button>
+               مشاهده سفارش‌ها
+             </Link>
            </div>
         </div>
       </div>
