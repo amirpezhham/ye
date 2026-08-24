@@ -133,6 +133,13 @@ export function AdminDashboard() {
              >
                مشاهده سفارش‌ها
              </Link>
+
+             <Link
+               to="/admin/customers"
+               className="rounded-xl border border-white/10 bg-[#0D0F0D] px-5 py-4 text-right text-sm font-bold transition hover:border-[#D9E600]/30 hover:text-[#D9E600]"
+             >
+               مدیریت مشتری‌ها
+             </Link>
            </div>
         </div>
       </div>
