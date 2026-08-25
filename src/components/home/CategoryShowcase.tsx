@@ -29,7 +29,7 @@ function categoryIcon(index: number) {
 }
 
 function formatIndex(index: number) {
-  return new Intl.NumberFormat("fa-IR", {
+  return new Intl.NumberFormat("fa-IR-u-nu-arabext", {
     minimumIntegerDigits: 2,
   }).format(index + 1)
 }

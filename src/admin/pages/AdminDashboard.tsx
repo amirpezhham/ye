@@ -24,22 +24,22 @@ export function AdminDashboard() {
   const stats = [
     {
       title: "محصولات",
-      value: new Intl.NumberFormat("fa-IR").format(products.length),
+      value: new Intl.NumberFormat("fa-IR-u-nu-arabext").format(products.length),
       icon: Package,
     },
     {
       title: "سفارش‌ها",
-      value: new Intl.NumberFormat("fa-IR").format(orders.length),
+      value: new Intl.NumberFormat("fa-IR-u-nu-arabext").format(orders.length),
       icon: ShoppingBag,
     },
     {
       title: "مشتری‌ها",
-      value: new Intl.NumberFormat("fa-IR").format(customerCount),
+      value: new Intl.NumberFormat("fa-IR-u-nu-arabext").format(customerCount),
       icon: Users,
     },
     {
       title: "فروش",
-      value: `${new Intl.NumberFormat("fa-IR").format(
+      value: `${new Intl.NumberFormat("fa-IR-u-nu-arabext").format(
         totalSales,
       )} تومان`,
       icon: BarChart3,

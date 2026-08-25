@@ -81,7 +81,7 @@ export function CategoryPage() {
 
 
           <p className="mt-4 text-sm text-white/50 sm:text-base">
-            {filteredProducts.length.toLocaleString("fa-IR")}
+            {filteredProducts.length.toLocaleString("fa-IR-u-nu-arabext")}
             {" "}
             محصول موجود در این دسته‌بندی
           </p>

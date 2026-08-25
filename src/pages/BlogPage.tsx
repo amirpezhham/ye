@@ -5,7 +5,7 @@ import { getPosts } from "@/admin/components/post-storage"
 
 function formatDate(timestamp: number) {
   try {
-    return new Intl.DateTimeFormat("fa-IR", {
+    return new Intl.DateTimeFormat("fa-IR-u-nu-arabext", {
       year: "numeric",
       month: "long",
       day: "numeric",

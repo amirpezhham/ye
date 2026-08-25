@@ -9,7 +9,7 @@ import {
 } from "@/admin/components/order-storage"
 
 function formatPrice(price: number) {
-  return new Intl.NumberFormat("fa-IR").format(price)
+  return new Intl.NumberFormat("fa-IR-u-nu-arabext").format(price)
 }
 
 export function AdminOrderDetail() {
@@ -63,7 +63,7 @@ export function AdminOrderDetail() {
 
             <p className="mt-2 text-sm text-white/40">
               ثبت شده در{" "}
-              {new Intl.DateTimeFormat("fa-IR", {
+              {new Intl.DateTimeFormat("fa-IR-u-nu-arabext", {
                 dateStyle: "medium",
                 timeStyle: "short",
               }).format(new Date(order.createdAt))}
@@ -115,7 +115,7 @@ export function AdminOrderDetail() {
                     </p>
 
                     <p className="mt-1 text-xs text-white/40">
-                      {item.quantity.toLocaleString("fa-IR")} عدد ×
+                      {item.quantity.toLocaleString("fa-IR-u-nu-arabext")} عدد ×
                       {" "}
                       {formatPrice(item.price)} تومان
                     </p>
@@ -164,7 +164,7 @@ export function AdminOrderDetail() {
                 </span>
 
                 <span>
-                  {order.totalItems.toLocaleString("fa-IR")}
+                  {order.totalItems.toLocaleString("fa-IR-u-nu-arabext")}
                 </span>
               </div>
 

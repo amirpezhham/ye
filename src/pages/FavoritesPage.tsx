@@ -30,7 +30,7 @@ export function FavoritesPage() {
           </h1>
 
           <p className="mt-3 text-sm text-white/40">
-            {favoriteProducts.length.toLocaleString("fa-IR")} محصول در
+            {favoriteProducts.length.toLocaleString("fa-IR-u-nu-arabext")} محصول در
             لیست علاقه‌مندی‌ها
           </p>
         </div>

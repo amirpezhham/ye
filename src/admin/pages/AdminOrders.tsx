@@ -14,7 +14,7 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog"
 import { useState } from "react"
 
 function formatPrice(price: number) {
-  return new Intl.NumberFormat("fa-IR").format(price)
+  return new Intl.NumberFormat("fa-IR-u-nu-arabext").format(price)
 }
 
 const statusStyles: Record<OrderStatus, string> = {
@@ -56,7 +56,7 @@ export function AdminOrders() {
           </h1>
 
           <p className="mt-3 text-sm text-white/40">
-            {orders.length.toLocaleString("fa-IR")} سفارش ثبت شده
+            {orders.length.toLocaleString("fa-IR-u-nu-arabext")} سفارش ثبت شده
           </p>
         </div>
 
@@ -101,7 +101,7 @@ export function AdminOrders() {
                   </p>
 
                   <p className="mt-1 text-xs text-white/40">
-                    {order.totalItems.toLocaleString("fa-IR")} محصول
+                    {order.totalItems.toLocaleString("fa-IR-u-nu-arabext")} محصول
                     {" • "}
                     {formatPrice(order.totalPrice)} تومان
                   </p>

@@ -23,7 +23,7 @@ const statusLabels: Record<Product["status"], string> = {
 }
 
 function formatPrice(price: number) {
-  return new Intl.NumberFormat("fa-IR").format(price)
+  return new Intl.NumberFormat("fa-IR-u-nu-arabext").format(price)
 }
 
 export function ProductCard({
@@ -130,7 +130,7 @@ export function ProductCard({
               <Star className="size-3.5 fill-[#D9E600] text-[#D9E600]" />
 
               <span>
-                {product.rating.toLocaleString("fa-IR")}
+                {product.rating.toLocaleString("fa-IR-u-nu-arabext")}
               </span>
             </div>
           )}

@@ -11,7 +11,7 @@ import { motion } from "motion/react"
 import { useCart } from "@/context/CartContext"
 
 function formatPrice(price: number) {
-  return new Intl.NumberFormat("fa-IR").format(price)
+  return new Intl.NumberFormat("fa-IR-u-nu-arabext").format(price)
 }
 
 export function CartPage() {
@@ -77,7 +77,7 @@ export function CartPage() {
           </h1>
 
           <p className="mt-3 text-sm text-white/40">
-            {totalItems.toLocaleString("fa-IR")} کالا در سبد خرید شما
+            {totalItems.toLocaleString("fa-IR-u-nu-arabext")} کالا در سبد خرید شما
           </p>
         </div>
 
@@ -149,7 +149,7 @@ export function CartPage() {
                     </button>
 
                     <span className="min-w-8 text-center text-sm font-bold">
-                      {item.quantity.toLocaleString("fa-IR")}
+                      {item.quantity.toLocaleString("fa-IR-u-nu-arabext")}
                     </span>
 
                     <button
@@ -179,7 +179,7 @@ export function CartPage() {
                 </span>
 
                 <span>
-                  {totalItems.toLocaleString("fa-IR")}
+                  {totalItems.toLocaleString("fa-IR-u-nu-arabext")}
                 </span>
               </div>
 

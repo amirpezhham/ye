@@ -19,7 +19,7 @@ import { useCart } from "@/context/CartContext"
 import { useFavorites } from "@/context/FavoritesContext"
 import { useProducts } from "@/context/ProductsContext"
 function formatPrice(price: number) {
-  return new Intl.NumberFormat("fa-IR").format(price)
+  return new Intl.NumberFormat("fa-IR-u-nu-arabext").format(price)
 }
 
 const badgeLabels: Record<
@@ -178,13 +178,13 @@ export function ProductDetails(){
                   <Star className="size-5 fill-[#D9E600] text-[#D9E600]" />
 
                   <span className="font-bold">
-                    {product.rating.toLocaleString("fa-IR")}
+                    {product.rating.toLocaleString("fa-IR-u-nu-arabext")}
                   </span>
                 </div>
 
                 {product.reviewCount !== undefined && (
                   <span className="text-sm text-white/35">
-                    ({product.reviewCount.toLocaleString("fa-IR")} نظر)
+                    ({product.reviewCount.toLocaleString("fa-IR-u-nu-arabext")} نظر)
                   </span>
                 )}
               </div>
@@ -251,7 +251,7 @@ export function ProductDetails(){
                 </motion.button>
 
                 <span className="font-bold">
-                  {quantity.toLocaleString("fa-IR")}
+                  {quantity.toLocaleString("fa-IR-u-nu-arabext")}
                 </span>
 
                 <motion.button

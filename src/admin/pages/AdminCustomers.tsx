@@ -5,7 +5,7 @@ import { motion } from "motion/react"
 import { getOrders, ORDER_STATUS_LABELS } from "@/admin/components/order-storage"
 
 function formatPrice(price: number) {
-  return new Intl.NumberFormat("fa-IR").format(price)
+  return new Intl.NumberFormat("fa-IR-u-nu-arabext").format(price)
 }
 
 interface CustomerSummary {
@@ -71,8 +71,8 @@ export function AdminCustomers() {
           </h1>
 
           <p className="mt-3 text-sm text-white/40">
-            {customers.length.toLocaleString("fa-IR")} مشتری از{" "}
-            {orders.length.toLocaleString("fa-IR")} سفارش
+            {customers.length.toLocaleString("fa-IR-u-nu-arabext")} مشتری از{" "}
+            {orders.length.toLocaleString("fa-IR-u-nu-arabext")} سفارش
           </p>
         </div>
 
@@ -122,7 +122,7 @@ export function AdminCustomers() {
                     </p>
 
                     <p className="mt-1 font-black">
-                      {customer.orderCount.toLocaleString("fa-IR")}
+                      {customer.orderCount.toLocaleString("fa-IR-u-nu-arabext")}
                     </p>
                   </div>
 
@@ -160,7 +160,7 @@ export function AdminCustomers() {
                     </span>
 
                     <span className="text-white/35">
-                      {order.totalItems.toLocaleString("fa-IR")} کالا
+                      {order.totalItems.toLocaleString("fa-IR-u-nu-arabext")} کالا
                     </span>
 
                     <span className="mr-auto text-[#D9E600]">

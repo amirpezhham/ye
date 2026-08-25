@@ -56,7 +56,7 @@ export function AdminProducts() {
               <Package className="size-5 text-[#D9E600]" />
 
               <span className="font-bold">
-                {products.length.toLocaleString("fa-IR")} محصول
+                {products.length.toLocaleString("fa-IR-u-nu-arabext")} محصول
               </span>
             </div>
           </div>
@@ -83,7 +83,7 @@ export function AdminProducts() {
                   </p>
 
                   <p className="mt-2 text-sm font-bold text-[#D9E600]">
-                    {new Intl.NumberFormat("fa-IR").format(product.price)}
+                    {new Intl.NumberFormat("fa-IR-u-nu-arabext").format(product.price)}
                     {" "}
                     تومان
                   </p>

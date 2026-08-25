@@ -278,7 +278,7 @@ export function AdminCategories() {
               <Layers className="size-5 text-[#D9E600]" />
 
               <span className="font-bold">
-                {categories.length.toLocaleString("fa-IR")} دستهبندی
+                {categories.length.toLocaleString("fa-IR-u-nu-arabext")} دستهبندی
               </span>
             </div>
           </div>

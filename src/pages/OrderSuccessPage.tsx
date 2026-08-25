@@ -10,7 +10,7 @@ import { motion } from "motion/react"
 import { useOrder } from "@/context/OrderContext"
 
 function formatPrice(price: number) {
-  return new Intl.NumberFormat("fa-IR").format(price)
+  return new Intl.NumberFormat("fa-IR-u-nu-arabext").format(price)
 }
 
 export function OrderSuccessPage() {
@@ -87,7 +87,7 @@ export function OrderSuccessPage() {
                 </span>
 
                 <span>
-                  {order.totalItems.toLocaleString("fa-IR")} عدد
+                  {order.totalItems.toLocaleString("fa-IR-u-nu-arabext")} عدد
                 </span>
               </div>
 

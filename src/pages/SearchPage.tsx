@@ -99,7 +99,7 @@ export function SearchPage() {
 
         {query && (
           <p className="mt-6 text-sm text-white/40">
-            {results.length.toLocaleString("fa-IR")} نتیجه برای «{query}»
+            {results.length.toLocaleString("fa-IR-u-nu-arabext")} نتیجه برای «{query}»
           </p>
         )}
 

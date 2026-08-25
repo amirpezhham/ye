@@ -12,7 +12,7 @@ import { useCart } from "@/context/CartContext"
 import { useOrder } from "@/context/OrderContext"
 
 function formatPrice(price: number) {
-  return new Intl.NumberFormat("fa-IR").format(price)
+  return new Intl.NumberFormat("fa-IR-u-nu-arabext").format(price)
 }
 
 export function CheckoutPage() {
@@ -223,7 +223,7 @@ export function CheckoutPage() {
                     </p>
 
                     <p className="text-xs text-white/40">
-                      {item.quantity.toLocaleString("fa-IR")} عدد
+                      {item.quantity.toLocaleString("fa-IR-u-nu-arabext")} عدد
                     </p>
                   </div>
 
@@ -241,7 +241,7 @@ export function CheckoutPage() {
                 </span>
 
                 <span>
-                  {totalItems.toLocaleString("fa-IR")}
+                  {totalItems.toLocaleString("fa-IR-u-nu-arabext")}
                 </span>
               </div>
 

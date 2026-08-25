@@ -89,7 +89,7 @@ body {
     ),
     var(--background);
   color: var(--foreground);
-  font-family: "Vazir", Tahoma, Arial, sans-serif;
+  font-family: "Vazirmatn", Tahoma, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }

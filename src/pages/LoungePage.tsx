@@ -196,7 +196,7 @@ export function LoungePage() {
                     </h3>
 
                     <p className="mt-1 text-sm text-[#D9E600]">
-                      {new Intl.NumberFormat("fa-IR").format(
+                      {new Intl.NumberFormat("fa-IR-u-nu-arabext").format(
                         product.price,
                       )}{" "}
                       تومان
