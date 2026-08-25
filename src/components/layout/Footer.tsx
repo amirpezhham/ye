@@ -31,23 +31,13 @@ export function Footer() {
         <div>
           <Link
             to="/"
-            className="flex items-center gap-3"
+            className="flex items-center"
           >
-            <div className="flex size-11 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-              <span className="text-xl font-black">۲</span>
-            </div>
-
-            <div className="leading-none">
-              <div className="text-lg font-black tracking-tight">
-                یه دود
-                <span className="text-primary">۲</span>
-                دود
-              </div>
-
-              <div className="mt-1 text-[10px] tracking-[0.2em] text-muted-foreground">
-                SMOKE • COFFEE • LOUNGE
-              </div>
-            </div>
+            <img
+              src="/images/logo.jpg"
+              alt="یه دود ۲ دود"
+              className="h-11 w-auto rounded-lg object-contain"
+            />
           </Link>
 
           <p className="mt-5 max-w-xs text-sm leading-7 text-white/45">

@@ -43,40 +43,15 @@ export function Header() {
 
         <Link
           to="/"
-          className="group flex items-center gap-3"
+          className="group flex items-center"
           aria-label="یه دود ۲ دود"
         >
 
-          <div className="flex size-11 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-[0_0_25px_rgba(244,208,0,0.12)] transition-transform duration-300 group-hover:scale-105">
-
-            <span className="text-xl font-black">
-              ۲
-            </span>
-
-          </div>
-
-
-          <div className="hidden leading-none sm:block">
-
-            <div className="text-lg font-black tracking-tight">
-
-              یه دود
-              <span className="text-primary">
-                ۲
-              </span>
-              دود
-
-            </div>
-
-
-            <div className="mt-1 text-[10px] tracking-[0.2em] text-muted-foreground">
-
-              SMOKE • COFFEE • LOUNGE
-
-            </div>
-
-
-          </div>
+          <img
+            src="/images/logo.jpg"
+            alt="یه دود ۲ دود"
+            className="h-11 w-auto rounded-lg object-contain transition-transform duration-300 group-hover:scale-105"
+          />
 
         </Link>
 
