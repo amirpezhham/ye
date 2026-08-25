@@ -4,6 +4,18 @@ import { motion } from "motion/react"
 
 import { getPosts } from "@/admin/components/post-storage"
 
+function formatDate(timestamp: number) {
+  try {
+    return new Intl.DateTimeFormat("fa-IR-u-nu-arabext", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }).format(new Date(timestamp))
+  } catch {
+    return ""
+  }
+}
+
 export function BlogPostPage() {
   const { slug } = useParams()
   const post = getPosts().find((item) => item.slug === slug)
@@ -62,6 +74,10 @@ export function BlogPostPage() {
           <h1 className="mt-6 text-3xl font-black sm:text-4xl lg:text-5xl">
             {post.title}
           </h1>
+
+          <p className="mt-3 text-sm text-white/40">
+            {formatDate(post.createdAt)}
+          </p>
 
           <div className="mt-8 whitespace-pre-line text-base leading-9 text-white/65 sm:text-lg">
             {post.body}
