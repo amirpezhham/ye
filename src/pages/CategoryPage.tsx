@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import { ArrowLeft } from "lucide-react"
 import { motion } from "motion/react"
@@ -7,19 +8,62 @@ import { useProducts } from "@/context/ProductsContext"
 import { getCategories } from "@/admin/components/category-storage"
 
 
+const sortOptions = [
+  { label: "پیش‌فرض", value: "default" },
+  { label: "محبوب‌ترین", value: "popular" },
+  { label: "ارزان‌ترین", value: "price-asc" },
+  { label: "گران‌ترین", value: "price-desc" },
+  { label: "جدیدترین", value: "newest" },
+]
+
+
 export function CategoryPage() {
 
   const { categorySlug } = useParams()
 
+  const [sort, setSort] = useState("default")
+
 
   const { getByCategorySlug } = useProducts()
 
-  const filteredProducts = getByCategorySlug(categorySlug ?? "")
+  const categoryProducts = getByCategorySlug(categorySlug ?? "")
 
   const categoryTitle =
     getCategories().find(
       (category) => category.slug === categorySlug,
     )?.name ?? "محصولات"
+
+  const filteredProducts = useMemo(() => {
+    const list = [...categoryProducts]
+
+    switch (sort) {
+      case "popular":
+        return list.sort(
+          (a, b) => (b.rating ?? 0) - (a.rating ?? 0),
+        )
+
+      case "price-asc":
+        return list.sort((a, b) => a.price - b.price)
+
+      case "price-desc":
+        return list.sort((a, b) => b.price - a.price)
+
+      case "newest":
+        return list.sort((a, b) => {
+          const aNew = a.badge === "new" ? 1 : 0
+          const bNew = b.badge === "new" ? 1 : 0
+
+          if (aNew !== bNew) {
+            return bNew - aNew
+          }
+
+          return (b.rating ?? 0) - (a.rating ?? 0)
+        })
+
+      default:
+        return list
+    }
+  }, [categoryProducts, sort])
 
 
 
@@ -88,6 +132,40 @@ export function CategoryPage() {
 
 
         </motion.div>
+
+
+
+        {/* Sort */}
+
+        {filteredProducts.length > 0 && (
+          <div className="mb-8 flex justify-end">
+            <label className="relative">
+              <span className="sr-only">
+                مرتب‌سازی
+              </span>
+
+              <select
+                value={sort}
+                onChange={(event) => setSort(event.target.value)}
+                className="appearance-none rounded-xl border border-white/10 bg-[#151814] px-10 py-3 text-sm text-white/80 outline-none transition hover:border-[#D9E600]/40 focus:border-[#D9E600]"
+              >
+                {sortOptions.map((option) => (
+                  <option
+                    key={option.value}
+                    value={option.value}
+                    className="bg-[#151814] text-white"
+                  >
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+
+              <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/40">
+                ▼
+              </span>
+            </label>
+          </div>
+        )}
 
 
 
