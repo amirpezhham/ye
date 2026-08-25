@@ -15,6 +15,7 @@ import { BlogPage } from "@/pages/BlogPage"
 import { BlogPostPage } from "@/pages/BlogPostPage"
 
 import { StoreLayout } from "@/components/layout/StoreLayout"
+import { AdminLayout } from "@/admin/components/AdminLayout"
 
 import { AdminDashboard } from "@/admin/pages/AdminDashboard"
 import { AdminProducts } from "@/admin/pages/AdminProducts"
@@ -103,63 +104,68 @@ export function AppRouter() {
 
         <Route
           path="/admin"
-          element={<AdminDashboard />}
-        />
+          element={<AdminLayout />}
+        >
+          <Route
+            index
+            element={<AdminDashboard />}
+          />
 
-        <Route
-          path="/admin/products"
-          element={<AdminProducts />}
-        />
+          <Route
+            path="products"
+            element={<AdminProducts />}
+          />
 
-        <Route
-          path="/admin/products/new"
-          element={<AdminAddProduct />}
-        />
+          <Route
+            path="products/new"
+            element={<AdminAddProduct />}
+          />
 
-        <Route
-          path="/admin/products/:productId/edit"
-          element={<AdminEditProduct />}
-        />
+          <Route
+            path="products/:productId/edit"
+            element={<AdminEditProduct />}
+          />
 
-        <Route
-          path="/admin/about"
-          element={<AdminAbout />}
-        />
+          <Route
+            path="about"
+            element={<AdminAbout />}
+          />
 
-        <Route
-          path="/admin/posts"
-          element={<AdminPosts />}
-        />
+          <Route
+            path="posts"
+            element={<AdminPosts />}
+          />
 
-        <Route
-          path="/admin/posts/new"
-          element={<AdminPostEditor />}
-        />
+          <Route
+            path="posts/new"
+            element={<AdminPostEditor />}
+          />
 
-        <Route
-          path="/admin/posts/:postId/edit"
-          element={<AdminPostEditor />}
-        />
+          <Route
+            path="posts/:postId/edit"
+            element={<AdminPostEditor />}
+          />
 
-        <Route
-          path="/admin/orders"
-          element={<AdminOrders />}
-        />
+          <Route
+            path="orders"
+            element={<AdminOrders />}
+          />
 
-        <Route
-          path="/admin/orders/:orderId"
-          element={<AdminOrderDetail />}
-        />
+          <Route
+            path="orders/:orderId"
+            element={<AdminOrderDetail />}
+          />
 
-        <Route
-          path="/admin/customers"
-          element={<AdminCustomers />}
-        />
+          <Route
+            path="customers"
+            element={<AdminCustomers />}
+          />
 
-        <Route
-          path="/admin/categories"
-          element={<AdminCategories />}
-        />
+          <Route
+            path="categories"
+            element={<AdminCategories />}
+          />
+        </Route>
       </Routes>
     </BrowserRouter>
   )
