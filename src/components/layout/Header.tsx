@@ -17,6 +17,7 @@ const navigation = [
   { label: "خانه", href: "/" },
   { label: "فروشگاه", href: "/shop" },
   { label: "دسته‌بندی‌ها", href: "/products" },
+  { label: "وبلاگ", href: "/blog" },
   { label: "فضای ما", href: "/lounge" },
   { label: "درباره ما", href: "/about" },
 ]
