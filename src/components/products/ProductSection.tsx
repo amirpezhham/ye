@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react"
+import { Link } from "react-router-dom"
 import { motion } from "motion/react"
 
 import { ProductFilters } from "./ProductFilters"
@@ -62,10 +63,8 @@ export function ProductSection() {
             </p>
           </div>
 
-          <motion.button
-            type="button"
-            whileHover={{ x: -4 }}
-            whileTap={{ scale: 0.97 }}
+          <Link
+            to="/products"
             className="group inline-flex w-fit items-center gap-2 text-sm font-bold text-[#D9E600]"
           >
             مشاهده همه محصولات
@@ -73,7 +72,7 @@ export function ProductSection() {
             <span className="transition-transform duration-300 group-hover:-translate-x-1">
               ←
             </span>
-          </motion.button>
+          </Link>
         </motion.div>
 
         {/* Category filters */}

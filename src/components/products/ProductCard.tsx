@@ -117,9 +117,12 @@ export function ProductCard({
 
         <div className="flex items-center justify-between gap-3">
 
-          <span className="text-xs font-medium text-[#A8B86B]">
+          <Link
+            to={`/category/${product.categorySlug}`}
+            className="relative z-10 text-xs font-medium text-[#A8B86B] transition hover:text-[#D9E600]"
+          >
             {product.category}
-          </span>
+          </Link>
 
 
           {product.rating !== undefined && (

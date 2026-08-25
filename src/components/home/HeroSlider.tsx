@@ -9,6 +9,7 @@ import {
   ShoppingBag,
 } from "lucide-react"
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 const slides = [
   {
@@ -46,6 +47,7 @@ const AUTOPLAY_DELAY = 4800
 export function HeroSlider() {
   const [current, setCurrent] = useState(0)
   const shouldReduceMotion = useReducedMotion()
+  const navigate = useNavigate()
 
   const nextSlide = () => {
     setCurrent((previous) => (previous + 1) % slides.length)
@@ -247,6 +249,7 @@ export function HeroSlider() {
                       }
                 }
                 className="inline-flex h-12 items-center gap-2 rounded-xl bg-primary px-6 font-bold text-primary-foreground shadow-[0_8px_30px_rgba(210,220,0,0.10)] transition-colors duration-300 hover:bg-lime"
+                onClick={() => navigate("/products")}
               >
                 <ShoppingBag className="size-4" />
 
@@ -270,6 +273,7 @@ export function HeroSlider() {
                       }
                 }
                 className="h-12 rounded-xl border border-white/25 bg-black/20 px-6 font-medium text-white backdrop-blur-sm transition-all duration-300 hover:border-primary hover:bg-primary hover:text-black"
+                onClick={() => navigate("/products")}
               >
                 دسته‌بندی‌ها
               </motion.button>
