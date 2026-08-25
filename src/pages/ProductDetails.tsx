@@ -101,7 +101,7 @@ export function ProductDetails(){
           <span>/</span>
 
           <Link
-            to={`/category/${product.categorySlug}`}
+            to={`/products/${product.categorySlug}`}
             className="transition-colors hover:text-[#D9E600]"
           >
             {product.category}

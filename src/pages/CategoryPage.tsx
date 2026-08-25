@@ -24,14 +24,17 @@ export function CategoryPage() {
   const [sort, setSort] = useState("default")
 
 
-  const { getByCategorySlug } = useProducts()
+  const { products, getByCategorySlug } = useProducts()
 
-  const categoryProducts = getByCategorySlug(categorySlug ?? "")
+  const categoryProducts = categorySlug
+    ? getByCategorySlug(categorySlug)
+    : products
 
-  const categoryTitle =
-    getCategories().find(
-      (category) => category.slug === categorySlug,
-    )?.name ?? "محصولات"
+  const categoryTitle = categorySlug
+    ? getCategories().find(
+        (category) => category.slug === categorySlug,
+      )?.name ?? "محصولات"
+    : "همه محصولات"
 
   const filteredProducts = useMemo(() => {
     const list = [...categoryProducts]
@@ -195,7 +198,7 @@ export function CategoryPage() {
 
 
               <Link
-                to="/"
+                to="/shop"
                 className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#D9E600] px-6 py-3 font-bold text-[#0D0F0D]"
               >
                 بازگشت به فروشگاه

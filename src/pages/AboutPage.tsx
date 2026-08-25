@@ -163,7 +163,7 @@ export function AboutPage() {
       <div className="px-6 pb-20 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <Link
-            to="/products"
+            to="/shop"
             className="inline-flex h-12 items-center gap-2 rounded-xl bg-primary px-6 font-bold text-primary-foreground transition hover:bg-lime"
           >
             مشاهده محصولات

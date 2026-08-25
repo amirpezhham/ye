@@ -249,7 +249,7 @@ export function HeroSlider() {
                       }
                 }
                 className="inline-flex h-12 items-center gap-2 rounded-xl bg-primary px-6 font-bold text-primary-foreground shadow-[0_8px_30px_rgba(210,220,0,0.10)] transition-colors duration-300 hover:bg-lime"
-                onClick={() => navigate("/products")}
+                onClick={() => navigate("/shop")}
               >
                 <ShoppingBag className="size-4" />
 

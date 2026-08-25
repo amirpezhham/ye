@@ -146,7 +146,7 @@ export function CategoryShowcase() {
 
                   {/* Link */}
                   <Link
-                    to={`/category/${category.slug}`}
+                    to={`/products/${category.slug}`}
                     className="mt-5 flex items-center gap-2 text-sm font-bold text-white transition-colors duration-300 group-hover:text-[#D9E600]"
                   >
                     مشاهده محصولات

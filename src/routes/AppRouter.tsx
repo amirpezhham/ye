@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom"
+﻿import { BrowserRouter, Route, Routes } from "react-router-dom"
 
 import { Home } from "@/pages/Home"
 import { CategoryPage } from "@/pages/CategoryPage"
@@ -41,14 +41,19 @@ export function AppRouter() {
             element={<Home />}
           />
 
-          <Route
-            path="/category/:categorySlug"
-            element={<CategoryPage />}
+                    <Route
+            path="/shop"
+            element={<ProductsPage />}
           />
 
           <Route
             path="/products"
-            element={<ProductsPage />}
+            element={<CategoryPage />}
+          />
+
+          <Route
+            path="/products/:categorySlug"
+            element={<CategoryPage />}
           />
 
           <Route

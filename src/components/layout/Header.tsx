@@ -15,7 +15,7 @@ import { useFavorites } from "@/context/FavoritesContext"
 
 const navigation = [
   { label: "خانه", href: "/" },
-  { label: "فروشگاه", href: "/products" },
+  { label: "فروشگاه", href: "/shop" },
   { label: "دسته‌بندی‌ها", href: "/products" },
   { label: "فضای ما", href: "/lounge" },
   { label: "درباره ما", href: "/about" },

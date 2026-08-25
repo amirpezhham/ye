@@ -56,7 +56,7 @@ export function CheckoutPage() {
           </p>
 
           <Link
-            to="/products"
+            to="/shop"
             className="mt-7 inline-flex items-center gap-2 rounded-xl bg-[#D9E600] px-6 py-3.5 text-sm font-black text-[#0D0F0D] transition hover:bg-[#E4EF00]"
           >
             مشاهده محصولات

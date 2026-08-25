@@ -96,7 +96,7 @@ export function LoungePage() {
             className="mt-8 flex flex-wrap gap-3"
           >
             <Link
-              to="/products"
+              to="/shop"
               className="inline-flex h-12 items-center gap-2 rounded-xl bg-primary px-6 font-bold text-primary-foreground transition hover:bg-lime"
             >
               <GlassWater className="size-4" />

@@ -146,7 +146,7 @@ export function ProductsPage() {
             {categoryTiles.map((category) => (
               <Link
                 key={category.slug}
-                to={`/category/${category.slug}`}
+                to={`/products/${category.slug}`}
                 className="group relative block aspect-[4/3] overflow-hidden rounded-2xl border border-white/10 bg-[#151814]"
               >
                 <img

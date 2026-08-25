@@ -64,7 +64,7 @@ export function ProductSection() {
           </div>
 
           <Link
-            to="/products"
+            to="/shop"
             className="group inline-flex w-fit items-center gap-2 text-sm font-bold text-[#D9E600]"
           >
             مشاهده همه محصولات

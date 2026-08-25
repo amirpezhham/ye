@@ -106,7 +106,7 @@ export function OrderSuccessPage() {
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Link
-            to="/products"
+            to="/shop"
             className="flex h-12 items-center justify-center gap-2 rounded-xl bg-[#D9E600] px-6 font-black text-[#0D0F0D] transition hover:bg-[#E4EF00]"
           >
             <ShoppingBag className="size-4" />
