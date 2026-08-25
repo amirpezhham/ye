@@ -2,24 +2,7 @@ import { useRef, useState } from "react"
 import { ImagePlus, Save } from "lucide-react"
 
 import type { Product } from "@/components/products/product-data"
-
-const categoryNames: Record<string, string> = {
-  cigarettes: "سیگار",
-  tobacco: "تنباکو",
-  hookah: "قلیان",
-  vape: "ویپ",
-  charcoal: "ذغال",
-  lighters: "فندک",
-  accessories: "اکسسوری",
-  coffee: "قهوه",
-}
-
-const categoryOptions = Object.keys(categoryNames).map(
-  (value) => ({
-    value,
-    label: categoryNames[value],
-  }),
-)
+import { getCategories } from "@/admin/components/category-storage"
 
 interface ProductFormProps {
   initialProduct?: Product
@@ -33,6 +16,11 @@ export function ProductForm({
   submitLabel,
 }: ProductFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const categoryOptions = getCategories().map((category) => ({
+    value: category.slug,
+    label: category.name,
+  }))
 
   const [name, setName] = useState(initialProduct?.name ?? "")
   const [price, setPrice] = useState(
@@ -101,7 +89,9 @@ export function ProductForm({
       name: name.trim(),
       slug:
         initialProduct?.slug ?? `${category}-${Date.now()}`,
-      category: categoryNames[category] ?? category,
+      category: getCategories().find(
+        (item) => item.slug === category,
+      )?.name ?? category,
       categorySlug: category,
       description: description.trim(),
       price: finalPrice,

@@ -4,17 +4,14 @@ import { motion } from "motion/react"
 import { ProductFilters } from "@/components/products/ProductFilters"
 import { ProductGrid } from "@/components/products/ProductGrid"
 import { useProducts } from "@/context/ProductsContext"
+import { getCategories } from "@/admin/components/category-storage"
 
 const categories = [
   { label: "همه محصولات", value: "all" },
-  { label: "سیگار", value: "cigarettes" },
-  { label: "تنباکو", value: "tobacco" },
-  { label: "قلیان", value: "hookah" },
-  { label: "ویپ", value: "vape" },
-  { label: "ذغال", value: "charcoal" },
-  { label: "فندک", value: "lighters" },
-  { label: "اکسسوری", value: "accessories" },
-  { label: "قهوه", value: "coffee" },
+  ...getCategories().map((category) => ({
+    label: category.name,
+    value: category.slug,
+  })),
 ]
 
 export function ProductsPage() {

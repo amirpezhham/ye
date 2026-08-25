@@ -26,6 +26,7 @@ import { AdminPostEditor } from "@/admin/pages/AdminPostEditor"
 import { AdminOrders } from "@/admin/pages/AdminOrders"
 import { AdminOrderDetail } from "@/admin/pages/AdminOrderDetail"
 import { AdminCustomers } from "@/admin/pages/AdminCustomers"
+import { AdminCategories } from "@/admin/pages/AdminCategories"
 
 export function AppRouter() {
   return (
@@ -153,6 +154,11 @@ export function AppRouter() {
         <Route
           path="/admin/customers"
           element={<AdminCustomers />}
+        />
+
+        <Route
+          path="/admin/categories"
+          element={<AdminCategories />}
         />
       </Routes>
     </BrowserRouter>

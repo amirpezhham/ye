@@ -4,18 +4,7 @@ import { motion } from "motion/react"
 
 import { ProductGrid } from "@/components/products/ProductGrid"
 import { useProducts } from "@/context/ProductsContext"
-
-
-const categoryNames: Record<string, string> = {
-  cigarettes: "سیگار",
-  tobacco: "تنباکو",
-  hookah: "قلیان",
-  vape: "ویپ",
-  charcoal: "ذغال",
-  lighters: "فندک",
-  accessories: "اکسسوری",
-  coffee: "قهوه",
-}
+import { getCategories } from "@/admin/components/category-storage"
 
 
 export function CategoryPage() {
@@ -27,9 +16,10 @@ export function CategoryPage() {
 
   const filteredProducts = getByCategorySlug(categorySlug ?? "")
 
-
   const categoryTitle =
-    categoryNames[categorySlug ?? ""] ?? "محصولات"
+    getCategories().find(
+      (category) => category.slug === categorySlug,
+    )?.name ?? "محصولات"
 
 
 

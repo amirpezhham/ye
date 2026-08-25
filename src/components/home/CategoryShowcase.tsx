@@ -8,68 +8,35 @@ import {
   Coffee,
   Wrench,
 } from "lucide-react"
+import { Link } from "react-router-dom"
 import { motion } from "motion/react"
 
-const categories = [
-  {
-    id: "01",
-    title: "سیگار",
-    description: "انتخابی متفاوت برای هر سلیقه",
-    image: "/images/categories/cigarettes.jpg",
-    icon: Cigarette,
-  },
-  {
-    id: "02",
-    title: "تنباکو",
-    description: "تنباکوهای منتخب و خاص",
-    image: "/images/categories/tobacco.jpg",
-    icon: Wind,
-  },
-  {
-    id: "03",
-    title: "قلیان",
-    description: "قلیان و متعلقات آن",
-    image: "/images/categories/hookah.jpg",
-    icon: GlassWater,
-  },
-  {
-    id: "04",
-    title: "ویپ",
-    description: "دنیای ویپ و محصولات مرتبط",
-    image: "/images/categories/vape.jpg",
-    icon: Sparkles,
-  },
-  {
-    id: "05",
-    title: "ذغال",
-    description: "ذغال و محصولات مرتبط",
-    image: "/images/categories/Charcoal.jpg",
-    icon: Flame,
-  },
-  {
-    id: "06",
-    title: "فندک",
-    description: "فندک‌های خاص و کاربردی",
-    image: "/images/categories/Lighters.jpg",
-    icon: Sparkles,
-  },
-  {
-    id: "07",
-    title: "اکسسوری",
-    description: "لوازم جانبی و ابزارهای خاص",
-    image: "/images/categories/Accessories.jpg",
-    icon: Wrench,
-  },
-  {
-    id: "08",
-    title: "قهوه",
-    description: "قهوه و تجربه‌ای متفاوت در یه دود ۲ دود",
-    image: "/images/categories/Coffee.jpg",
-    icon: Coffee,
-  },
+import { getCategories } from "@/admin/components/category-storage"
+
+const iconPool = [
+  Cigarette,
+  Wind,
+  GlassWater,
+  Sparkles,
+  Flame,
+  Sparkles,
+  Wrench,
+  Coffee,
 ]
 
+function categoryIcon(index: number) {
+  return iconPool[index % iconPool.length]
+}
+
+function formatIndex(index: number) {
+  return new Intl.NumberFormat("fa-IR", {
+    minimumIntegerDigits: 2,
+  }).format(index + 1)
+}
+
 export function CategoryShowcase() {
+  const categories = getCategories()
+
   return (
     <section id="categories" className="px-6 py-20">
       <div className="mx-auto max-w-7xl">
@@ -113,7 +80,7 @@ export function CategoryShowcase() {
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
 
           {categories.map((category, index) => {
-            const Icon = category.icon
+            const Icon = categoryIcon(index)
 
             return (
               <motion.article
@@ -151,7 +118,7 @@ export function CategoryShowcase() {
 
                 {/* Number */}
                 <div className="absolute right-5 top-5 flex size-8 items-center justify-center rounded-full border border-white/10 bg-black/20 text-[11px] font-bold text-white/40 backdrop-blur-md">
-                  {category.id}
+                  {formatIndex(index)}
                 </div>
 
 
@@ -169,7 +136,7 @@ export function CategoryShowcase() {
 
                   {/* Title */}
                   <h3 className="text-2xl font-black text-white">
-                    {category.title}
+                    {category.name}
                   </h3>
 
 
@@ -180,11 +147,14 @@ export function CategoryShowcase() {
 
 
                   {/* Link */}
-                  <div className="mt-5 flex items-center gap-2 text-sm font-bold text-white transition-colors duration-300 group-hover:text-[#D9E600]">
+                  <Link
+                    to={`/category/${category.slug}`}
+                    className="mt-5 flex items-center gap-2 text-sm font-bold text-white transition-colors duration-300 group-hover:text-[#D9E600]"
+                  >
                     مشاهده محصولات
 
                     <ArrowLeft className="size-4 transition-transform duration-300 group-hover:-translate-x-1" />
-                  </div>
+                  </Link>
 
                 </div>
 
