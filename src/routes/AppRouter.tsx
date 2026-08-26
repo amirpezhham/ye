@@ -28,6 +28,7 @@ import { AdminOrders } from "@/admin/pages/AdminOrders"
 import { AdminOrderDetail } from "@/admin/pages/AdminOrderDetail"
 import { AdminCustomers } from "@/admin/pages/AdminCustomers"
 import { AdminCategories } from "@/admin/pages/AdminCategories"
+import { AdminSeo } from "@/admin/pages/AdminSeo"
 
 export function AppRouter() {
   return (
@@ -169,6 +170,11 @@ export function AppRouter() {
           <Route
             path="categories"
             element={<AdminCategories />}
+          />
+
+          <Route
+            path="seo"
+            element={<AdminSeo />}
           />
         </Route>
       </Routes>

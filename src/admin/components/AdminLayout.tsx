@@ -1,6 +1,7 @@
 import { Link, NavLink, Outlet } from "react-router-dom"
 import {
   FileText,
+  Globe,
   Info,
   LayoutDashboard,
   Package,
@@ -18,6 +19,7 @@ const navItems = [
   { to: "/admin/customers", label: "مشتری‌ها", icon: Users },
   { to: "/admin/posts", label: "وبلاگ", icon: FileText },
   { to: "/admin/about", label: "درباره ما", icon: Info },
+  { to: "/admin/seo", label: "SEO", icon: Globe },
 ]
 
 export function AdminLayout() {

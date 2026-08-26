@@ -36,6 +36,9 @@ export interface Product {
   reviewCount?: number
 
   featured?: boolean
+
+  seoTitle?: string
+  seoDescription?: string
 }
 
 /**

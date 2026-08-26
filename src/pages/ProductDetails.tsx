@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import {
   ArrowLeft,
@@ -18,6 +18,8 @@ import type { Product } from "@/components/products/product-data"
 import { useCart } from "@/context/CartContext"
 import { useFavorites } from "@/context/FavoritesContext"
 import { useProducts } from "@/context/ProductsContext"
+import { setSeoMeta } from "@/lib/seo"
+import { getSeoSettings } from "@/admin/components/seo-storage"
 function formatPrice(price: number) {
   return new Intl.NumberFormat("fa-IR-u-nu-arabext").format(price)
 }
@@ -42,6 +44,19 @@ export function ProductDetails(){
 
   const isFavorite = product ? has(product.id) : false
 
+  useEffect(() => {
+    if (!product) {
+      return
+    }
+
+    const seo = getSeoSettings()
+
+    setSeoMeta({
+      title: product.seoTitle || product.name,
+      description: product.seoDescription || product.description,
+      image: product.image || seo.ogImage,
+    })
+  }, [product])
   const relatedProducts = useMemo(() => {
     if (!product) {
       return []

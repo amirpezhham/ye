@@ -37,6 +37,12 @@ export function ProductForm({
   const [description, setDescription] = useState(
     initialProduct?.description ?? "",
   )
+  const [seoTitle, setSeoTitle] = useState(
+    initialProduct?.seoTitle ?? "",
+  )
+  const [seoDescription, setSeoDescription] = useState(
+    initialProduct?.seoDescription ?? "",
+  )
   const [stock, setStock] = useState(
     initialProduct?.stock ? String(initialProduct.stock) : "1",
   )
@@ -94,6 +100,8 @@ export function ProductForm({
       )?.name ?? category,
       categorySlug: category,
       description: description.trim(),
+      seoTitle: seoTitle.trim() || undefined,
+      seoDescription: seoDescription.trim() || undefined,
       price: finalPrice,
       oldPrice: finalOldPrice,
       image,
@@ -207,6 +215,50 @@ export function ProductForm({
               }
               placeholder="توضیح کوتاهی درباره محصول بنویسید..."
               rows={4}
+              className="w-full resize-none rounded-xl border border-white/10 bg-[#0D0F0D] px-4 py-3 text-sm leading-7 outline-none transition placeholder:text-white/20 focus:border-[#D9E600]/50"
+            />
+          </label>
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-white/10 bg-[#151814] p-6">
+        <h2 className="text-lg font-black">
+          بهینه‌سازی موتور جستجو (SEO)
+        </h2>
+
+        <p className="mt-2 text-xs text-white/40">
+          در صورت خالی بودن، عنوان و توضیحات محصول استفاده
+          می‌شوند.
+        </p>
+
+        <div className="mt-5 space-y-5">
+          <label className="block">
+            <span className="mb-2 block text-sm font-bold">
+              SEO Title
+            </span>
+
+            <input
+              value={seoTitle}
+              onChange={(event) =>
+                setSeoTitle(event.target.value)
+              }
+              placeholder="عنوان برای موتورهای جستجو"
+              className="h-12 w-full rounded-xl border border-white/10 bg-[#0D0F0D] px-4 text-sm outline-none transition placeholder:text-white/20 focus:border-[#D9E600]/50"
+            />
+          </label>
+
+          <label className="block">
+            <span className="mb-2 block text-sm font-bold">
+              SEO Description
+            </span>
+
+            <textarea
+              value={seoDescription}
+              onChange={(event) =>
+                setSeoDescription(event.target.value)
+              }
+              placeholder="توضیحات برای موتورهای جستجو"
+              rows={3}
               className="w-full resize-none rounded-xl border border-white/10 bg-[#0D0F0D] px-4 py-3 text-sm leading-7 outline-none transition placeholder:text-white/20 focus:border-[#D9E600]/50"
             />
           </label>
