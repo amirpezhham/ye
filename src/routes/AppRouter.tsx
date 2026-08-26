@@ -30,6 +30,7 @@ import { AdminCustomers } from "@/admin/pages/AdminCustomers"
 import { AdminCategories } from "@/admin/pages/AdminCategories"
 import { AdminSeo } from "@/admin/pages/AdminSeo"
 import { AdminLogin } from "@/admin/pages/AdminLogin"
+import { AdminSettings } from "@/admin/pages/AdminSettings"
 import { AdminRouteGuard } from "@/admin/components/AdminRouteGuard"
 
 export function AppRouter() {
@@ -185,6 +186,11 @@ export function AppRouter() {
             <Route
               path="seo"
               element={<AdminSeo />}
+            />
+
+            <Route
+              path="settings"
+              element={<AdminSettings />}
             />
           </Route>
         </Route>

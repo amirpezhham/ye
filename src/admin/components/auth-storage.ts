@@ -80,3 +80,28 @@ export function isAuthenticated(): boolean {
 
   return localStorage.getItem(SESSION_KEY) === "1"
 }
+
+export function changePassword(
+  currentPassword: string,
+  newPassword: string,
+): { ok: boolean; error?: string } {
+  const credentials = getCredentials()
+
+  if (hash(currentPassword) !== credentials.passwordHash) {
+    return { ok: false, error: "رمز عبور فعلی اشتباه است." }
+  }
+
+  if (!newPassword || newPassword.length < 4) {
+    return {
+      ok: false,
+      error: "رمز عبور جدید باید حداقل ۴ کاراکتر باشد.",
+    }
+  }
+
+  saveCredentials({
+    username: credentials.username,
+    passwordHash: hash(newPassword),
+  })
+
+  return { ok: true }
+}

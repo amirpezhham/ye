@@ -5,6 +5,7 @@ import {
   FileText,
   Globe,
   Info,
+  KeyRound,
   LayoutDashboard,
   LogOut,
   Package,
@@ -23,6 +24,7 @@ const navItems = [
   { to: "/admin/posts", label: "وبلاگ", icon: FileText },
   { to: "/admin/about", label: "درباره ما", icon: Info },
   { to: "/admin/seo", label: "SEO", icon: Globe },
+  { to: "/admin/settings", label: "تنظیمات", icon: KeyRound },
 ]
 
 export function AdminLayout() {
