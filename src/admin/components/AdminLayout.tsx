@@ -1,9 +1,12 @@
-import { Link, NavLink, Outlet } from "react-router-dom"
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom"
+
+import { logout } from "@/admin/components/auth-storage"
 import {
   FileText,
   Globe,
   Info,
   LayoutDashboard,
+  LogOut,
   Package,
   ShoppingBag,
   Store,
@@ -23,6 +26,13 @@ const navItems = [
 ]
 
 export function AdminLayout() {
+  const navigate = useNavigate()
+
+  function handleLogout() {
+    logout()
+    navigate("/admin/login", { replace: true })
+  }
+
   return (
     <div dir="rtl" className="flex min-h-screen bg-[#0D0F0D] text-white">
       <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-l border-white/10 bg-[#111311] px-5 py-6 lg:flex">
@@ -62,9 +72,18 @@ export function AdminLayout() {
           })}
         </nav>
 
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="flex items-center gap-2 rounded-xl border border-white/10 px-4 py-3 text-sm text-white/60 transition hover:border-red-500/30 hover:text-red-400"
+        >
+          <LogOut className="size-5" />
+          خروج از پنل
+        </button>
+
         <Link
           to="/"
-          className="mt-auto flex items-center gap-2 rounded-xl border border-white/10 px-4 py-3 text-sm text-white/60 transition hover:border-[#D9E600]/30 hover:text-[#D9E600]"
+          className="flex items-center gap-2 rounded-xl border border-white/10 px-4 py-3 text-sm text-white/60 transition hover:border-[#D9E600]/30 hover:text-[#D9E600]"
         >
           <Store className="size-5" />
           مشاهده فروشگاه

@@ -29,6 +29,8 @@ import { AdminOrderDetail } from "@/admin/pages/AdminOrderDetail"
 import { AdminCustomers } from "@/admin/pages/AdminCustomers"
 import { AdminCategories } from "@/admin/pages/AdminCategories"
 import { AdminSeo } from "@/admin/pages/AdminSeo"
+import { AdminLogin } from "@/admin/pages/AdminLogin"
+import { AdminRouteGuard } from "@/admin/components/AdminRouteGuard"
 
 export function AppRouter() {
   return (
@@ -109,73 +111,82 @@ export function AppRouter() {
         </Route>
 
         <Route
-          path="/admin"
-          element={<AdminLayout />}
+          path="/admin/login"
+          element={<AdminLogin />}
+        />
+
+        <Route
+          element={<AdminRouteGuard />}
         >
           <Route
-            index
-            element={<AdminDashboard />}
-          />
+            path="/admin"
+            element={<AdminLayout />}
+          >
+            <Route
+              index
+              element={<AdminDashboard />}
+            />
 
-          <Route
-            path="products"
-            element={<AdminProducts />}
-          />
+            <Route
+              path="products"
+              element={<AdminProducts />}
+            />
 
-          <Route
-            path="products/new"
-            element={<AdminAddProduct />}
-          />
+            <Route
+              path="products/new"
+              element={<AdminAddProduct />}
+            />
 
-          <Route
-            path="products/:productId/edit"
-            element={<AdminEditProduct />}
-          />
+            <Route
+              path="products/:productId/edit"
+              element={<AdminEditProduct />}
+            />
 
-          <Route
-            path="about"
-            element={<AdminAbout />}
-          />
+            <Route
+              path="about"
+              element={<AdminAbout />}
+            />
 
-          <Route
-            path="posts"
-            element={<AdminPosts />}
-          />
+            <Route
+              path="posts"
+              element={<AdminPosts />}
+            />
 
-          <Route
-            path="posts/new"
-            element={<AdminPostEditor />}
-          />
+            <Route
+              path="posts/new"
+              element={<AdminPostEditor />}
+            />
 
-          <Route
-            path="posts/:postId/edit"
-            element={<AdminPostEditor />}
-          />
+            <Route
+              path="posts/:postId/edit"
+              element={<AdminPostEditor />}
+            />
 
-          <Route
-            path="orders"
-            element={<AdminOrders />}
-          />
+            <Route
+              path="orders"
+              element={<AdminOrders />}
+            />
 
-          <Route
-            path="orders/:orderId"
-            element={<AdminOrderDetail />}
-          />
+            <Route
+              path="orders/:orderId"
+              element={<AdminOrderDetail />}
+            />
 
-          <Route
-            path="customers"
-            element={<AdminCustomers />}
-          />
+            <Route
+              path="customers"
+              element={<AdminCustomers />}
+            />
 
-          <Route
-            path="categories"
-            element={<AdminCategories />}
-          />
+            <Route
+              path="categories"
+              element={<AdminCategories />}
+            />
 
-          <Route
-            path="seo"
-            element={<AdminSeo />}
-          />
+            <Route
+              path="seo"
+              element={<AdminSeo />}
+            />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>
