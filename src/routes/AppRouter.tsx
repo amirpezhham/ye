@@ -1,41 +1,50 @@
-﻿import { BrowserRouter, Route, Routes } from "react-router-dom"
+import { lazy, Suspense } from "react"
+import { BrowserRouter, Route, Routes } from "react-router-dom"
 
-import { Home } from "@/pages/Home"
-import { CategoryPage } from "@/pages/CategoryPage"
-import { ProductDetails } from "@/pages/ProductDetails"
-import { CartPage } from "@/pages/CartPage"
-import { ProductsPage } from "@/pages/ProductsPage"
-import { FavoritesPage } from "@/pages/FavoritesPage"
-import { CheckoutPage } from "@/pages/CheckoutPage"
-import { OrderSuccessPage } from "@/pages/OrderSuccessPage"
-import { SearchPage } from "@/pages/SearchPage"
-import { LoungePage } from "@/pages/LoungePage"
-import { AboutPage } from "@/pages/AboutPage"
-import { BlogPage } from "@/pages/BlogPage"
-import { BlogPostPage } from "@/pages/BlogPostPage"
+const Home = lazy(() => import("@/pages/Home").then((module) => ({ default: module.Home })))
+const CategoryPage = lazy(() => import("@/pages/CategoryPage").then((module) => ({ default: module.CategoryPage })))
+const ProductDetails = lazy(() => import("@/pages/ProductDetails").then((module) => ({ default: module.ProductDetails })))
+const CartPage = lazy(() => import("@/pages/CartPage").then((module) => ({ default: module.CartPage })))
+const ProductsPage = lazy(() => import("@/pages/ProductsPage").then((module) => ({ default: module.ProductsPage })))
+const FavoritesPage = lazy(() => import("@/pages/FavoritesPage").then((module) => ({ default: module.FavoritesPage })))
+const CheckoutPage = lazy(() => import("@/pages/CheckoutPage").then((module) => ({ default: module.CheckoutPage })))
+const OrderSuccessPage = lazy(() => import("@/pages/OrderSuccessPage").then((module) => ({ default: module.OrderSuccessPage })))
+const SearchPage = lazy(() => import("@/pages/SearchPage").then((module) => ({ default: module.SearchPage })))
+const LoungePage = lazy(() => import("@/pages/LoungePage").then((module) => ({ default: module.LoungePage })))
+const AboutPage = lazy(() => import("@/pages/AboutPage").then((module) => ({ default: module.AboutPage })))
+const BlogPage = lazy(() => import("@/pages/BlogPage").then((module) => ({ default: module.BlogPage })))
+const BlogPostPage = lazy(() => import("@/pages/BlogPostPage").then((module) => ({ default: module.BlogPostPage })))
 
 import { StoreLayout } from "@/components/layout/StoreLayout"
 import { AdminLayout } from "@/admin/components/AdminLayout"
 
-import { AdminDashboard } from "@/admin/pages/AdminDashboard"
-import { AdminProducts } from "@/admin/pages/AdminProducts"
-import { AdminAddProduct } from "@/admin/pages/AdminAddProduct"
-import { AdminEditProduct } from "@/admin/pages/AdminEditProduct"
-import { AdminAbout } from "@/admin/pages/AdminAbout"
-import { AdminPosts } from "@/admin/pages/AdminPosts"
-import { AdminPostEditor } from "@/admin/pages/AdminPostEditor"
-import { AdminOrders } from "@/admin/pages/AdminOrders"
-import { AdminOrderDetail } from "@/admin/pages/AdminOrderDetail"
-import { AdminCustomers } from "@/admin/pages/AdminCustomers"
-import { AdminCategories } from "@/admin/pages/AdminCategories"
-import { AdminSeo } from "@/admin/pages/AdminSeo"
-import { AdminLogin } from "@/admin/pages/AdminLogin"
-import { AdminSettings } from "@/admin/pages/AdminSettings"
+const AdminDashboard = lazy(() => import("@/admin/pages/AdminDashboard").then((module) => ({ default: module.AdminDashboard })))
+const AdminProducts = lazy(() => import("@/admin/pages/AdminProducts").then((module) => ({ default: module.AdminProducts })))
+const AdminAddProduct = lazy(() => import("@/admin/pages/AdminAddProduct").then((module) => ({ default: module.AdminAddProduct })))
+const AdminEditProduct = lazy(() => import("@/admin/pages/AdminEditProduct").then((module) => ({ default: module.AdminEditProduct })))
+const AdminAbout = lazy(() => import("@/admin/pages/AdminAbout").then((module) => ({ default: module.AdminAbout })))
+const AdminPosts = lazy(() => import("@/admin/pages/AdminPosts").then((module) => ({ default: module.AdminPosts })))
+const AdminPostEditor = lazy(() => import("@/admin/pages/AdminPostEditor").then((module) => ({ default: module.AdminPostEditor })))
+const AdminOrders = lazy(() => import("@/admin/pages/AdminOrders").then((module) => ({ default: module.AdminOrders })))
+const AdminOrderDetail = lazy(() => import("@/admin/pages/AdminOrderDetail").then((module) => ({ default: module.AdminOrderDetail })))
+const AdminCustomers = lazy(() => import("@/admin/pages/AdminCustomers").then((module) => ({ default: module.AdminCustomers })))
+const AdminCategories = lazy(() => import("@/admin/pages/AdminCategories").then((module) => ({ default: module.AdminCategories })))
+const AdminSeo = lazy(() => import("@/admin/pages/AdminSeo").then((module) => ({ default: module.AdminSeo })))
+const AdminLogin = lazy(() => import("@/admin/pages/AdminLogin").then((module) => ({ default: module.AdminLogin })))
+const AdminSettings = lazy(() => import("@/admin/pages/AdminSettings").then((module) => ({ default: module.AdminSettings })))
 import { AdminRouteGuard } from "@/admin/components/AdminRouteGuard"
+import { NotFoundPage } from "@/pages/NotFoundPage"
 
 export function AppRouter() {
   return (
     <BrowserRouter>
+      <Suspense
+        fallback={
+          <div className="flex min-h-screen items-center justify-center bg-[#0D0F0D] text-[#D9E600]">
+            در حال بارگذاری...
+          </div>
+        }
+      >
       <Routes>
         <Route
           element={<StoreLayout />}
@@ -109,6 +118,7 @@ export function AppRouter() {
             path="/order-success/:orderId"
             element={<OrderSuccessPage />}
           />
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
 
         <Route
@@ -194,7 +204,9 @@ export function AppRouter() {
             />
           </Route>
         </Route>
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      </Suspense>
     </BrowserRouter>
   )
 }

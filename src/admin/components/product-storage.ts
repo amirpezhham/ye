@@ -1,5 +1,7 @@
 import type { Product } from "@/components/products/product-data"
 import { products as initialProducts } from "@/components/products/product-data"
+import { readStorage, writeStorage } from "@/lib/storage"
+import { isProduct } from "@/lib/validation"
 
 const STORAGE_KEY = "ye-dood-products"
 
@@ -8,30 +10,16 @@ export function getProducts(): Product[] {
     return initialProducts
   }
 
-  const savedProducts = localStorage.getItem(STORAGE_KEY)
-
-  if (!savedProducts) {
-    return initialProducts
-  }
-
-  try {
-    const parsedProducts = JSON.parse(savedProducts)
-
-    if (!Array.isArray(parsedProducts)) {
-      return initialProducts
-    }
-
-    return parsedProducts
-  } catch {
-    return initialProducts
-  }
+  return readStorage(
+    STORAGE_KEY,
+    initialProducts,
+    (value): value is Product[] =>
+      Array.isArray(value) && value.every(isProduct),
+  )
 }
 
 export function saveProducts(products: Product[]) {
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify(products),
-  )
+  writeStorage(STORAGE_KEY, products)
 }
 
 export function addProduct(product: Product) {

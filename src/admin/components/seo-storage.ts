@@ -7,6 +7,8 @@ export interface SeoSettings {
 }
 
 const STORAGE_KEY = "ye-dood-seo"
+import { readStorage, writeStorage } from "@/lib/storage"
+import { isSeoSettings } from "@/lib/validation"
 
 const defaultSeo: SeoSettings = {
   siteTitle: "یه دود ۲ دود",
@@ -23,24 +25,9 @@ export function getSeoSettings(): SeoSettings {
     return defaultSeo
   }
 
-  const saved = localStorage.getItem(STORAGE_KEY)
-
-  if (!saved) {
-    return defaultSeo
-  }
-
-  try {
-    const parsed = JSON.parse(saved)
-
-    return {
-      ...defaultSeo,
-      ...(typeof parsed === "object" && parsed ? parsed : {}),
-    }
-  } catch {
-    return defaultSeo
-  }
+  return readStorage(STORAGE_KEY, defaultSeo, isSeoSettings)
 }
 
 export function saveSeoSettings(settings: SeoSettings) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(settings))
+  writeStorage(STORAGE_KEY, settings)
 }

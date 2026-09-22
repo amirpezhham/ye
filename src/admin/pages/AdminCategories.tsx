@@ -18,6 +18,7 @@ import {
   type Category,
 } from "@/admin/components/category-storage"
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog"
+import { validateImageFile } from "@/lib/storage"
 
 export function AdminCategories() {
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -71,6 +72,13 @@ export function AdminCategories() {
     const file = event.target.files?.[0]
 
     if (!file) {
+      return
+    }
+
+    const imageError = validateImageFile(file)
+
+    if (imageError) {
+      setError(imageError)
       return
     }
 

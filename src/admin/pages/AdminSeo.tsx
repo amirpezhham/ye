@@ -7,6 +7,7 @@ import {
   saveSeoSettings,
   type SeoSettings,
 } from "@/admin/components/seo-storage"
+import { validateImageFile } from "@/lib/storage"
 
 export function AdminSeo() {
   const navigate = useNavigate()
@@ -29,6 +30,12 @@ export function AdminSeo() {
     const file = event.target.files?.[0]
 
     if (!file) {
+      return
+    }
+
+    const imageError = validateImageFile(file)
+
+    if (imageError) {
       return
     }
 

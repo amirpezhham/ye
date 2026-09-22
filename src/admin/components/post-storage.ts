@@ -9,6 +9,8 @@ export interface Post {
 }
 
 const STORAGE_KEY = "ye-dood-posts"
+import { readStorage, writeStorage } from "@/lib/storage"
+import { isPosts } from "@/lib/validation"
 
 const defaultPosts: Post[] = [
   {
@@ -28,23 +30,11 @@ export function getPosts(): Post[] {
     return defaultPosts
   }
 
-  const saved = localStorage.getItem(STORAGE_KEY)
-
-  if (!saved) {
-    return defaultPosts
-  }
-
-  try {
-    const parsed = JSON.parse(saved)
-
-    return Array.isArray(parsed) ? parsed : defaultPosts
-  } catch {
-    return defaultPosts
-  }
+  return readStorage(STORAGE_KEY, defaultPosts, isPosts)
 }
 
 export function savePosts(posts: Post[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(posts))
+  writeStorage(STORAGE_KEY, posts)
 }
 
 export function addPost(post: Post) {

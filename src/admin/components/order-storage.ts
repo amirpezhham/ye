@@ -1,4 +1,6 @@
 import type { CartItem } from "@/context/CartContext"
+import { readStorage, writeStorage } from "@/lib/storage"
+import { isOrders } from "@/lib/validation"
 
 export type OrderStatus =
   | "new"
@@ -37,23 +39,11 @@ export function getOrders(): Order[] {
     return []
   }
 
-  const saved = localStorage.getItem(STORAGE_KEY)
-
-  if (!saved) {
-    return []
-  }
-
-  try {
-    const parsed = JSON.parse(saved)
-
-    return Array.isArray(parsed) ? parsed : []
-  } catch {
-    return []
-  }
+  return readStorage(STORAGE_KEY, [], isOrders)
 }
 
 export function saveOrders(orders: Order[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(orders))
+  writeStorage(STORAGE_KEY, orders)
 }
 
 export function addOrder(order: Order) {

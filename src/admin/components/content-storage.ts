@@ -13,6 +13,8 @@ export interface AboutContent {
 }
 
 const STORAGE_KEY = "ye-dood-about"
+import { readStorage, writeStorage } from "@/lib/storage"
+import { isAboutContent } from "@/lib/validation"
 
 const defaultContent: AboutContent = {
   heroTitle: "یه دود ۲ دود چیست؟",
@@ -48,30 +50,9 @@ export function getAboutContent(): AboutContent {
     return defaultContent
   }
 
-  const saved = localStorage.getItem(STORAGE_KEY)
-
-  if (!saved) {
-    return defaultContent
-  }
-
-  try {
-    const parsed = JSON.parse(saved)
-
-    if (
-      parsed &&
-      typeof parsed === "object" &&
-      typeof parsed.heroTitle === "string" &&
-      Array.isArray(parsed.pillars)
-    ) {
-      return parsed as AboutContent
-    }
-
-    return defaultContent
-  } catch {
-    return defaultContent
-  }
+  return readStorage(STORAGE_KEY, defaultContent, isAboutContent)
 }
 
 export function saveAboutContent(content: AboutContent) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(content))
+  writeStorage(STORAGE_KEY, content)
 }

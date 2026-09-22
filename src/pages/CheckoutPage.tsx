@@ -10,6 +10,11 @@ import {
 
 import { useCart } from "@/context/CartContext"
 import { useOrder } from "@/context/OrderContext"
+import {
+  isIranianPhone,
+  normalizeIranianPhone,
+} from "@/lib/storage"
+import { calculateCartSummary } from "@/lib/cart-summary"
 
 function formatPrice(price: number) {
   return new Intl.NumberFormat("fa-IR-u-nu-arabext").format(price)
@@ -17,7 +22,7 @@ function formatPrice(price: number) {
 
 export function CheckoutPage() {
   const navigate = useNavigate()
-  const { items, totalItems, totalPrice, clearCart } = useCart()
+  const { items, totalItems, clearCart } = useCart()
   const { placeOrder } = useOrder()
 
   const [fullName, setFullName] = useState("")
@@ -25,16 +30,11 @@ export function CheckoutPage() {
   const [address, setAddress] = useState("")
   const [note, setNote] = useState("")
   const [error, setError] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const shippingFee = useMemo(() => {
-    if (items.length === 0) {
-      return 0
-    }
-
-    return totalPrice >= 2000000 ? 0 : 30000
-  }, [items.length, totalPrice])
-
-  const finalTotal = totalPrice + shippingFee
+  const summary = useMemo(() => calculateCartSummary(items), [items])
+  const shippingFee = summary.shippingFee
+  const finalTotal = summary.total
 
   if (items.length === 0) {
     return (
@@ -72,28 +72,51 @@ export function CheckoutPage() {
   ) {
     event.preventDefault()
 
-    if (!fullName.trim() || !phone.trim() || !address.trim()) {
+    const normalizedName = fullName.trim()
+    const normalizedPhone = normalizeIranianPhone(phone.trim())
+    const normalizedAddress = address.trim()
+    const normalizedNote = note.trim()
+
+    if (!normalizedName || !normalizedPhone || !normalizedAddress) {
       setError("لطفاً نام، شماره تماس و آدرس را وارد کنید.")
 
       return
     }
 
-    if (!/^09\d{9}$/.test(phone.trim())) {
+    if (normalizedName.length < 2 || normalizedName.length > 80) {
+      setError("نام باید بین ۲ تا ۸۰ کاراکتر باشد.")
+
+      return
+    }
+
+    if (!isIranianPhone(normalizedPhone)) {
       setError("شماره تماس باید ۱۱ رقم و با ۰۹ شروع شود.")
 
       return
     }
 
+    if (normalizedAddress.length < 10 || normalizedAddress.length > 500) {
+      setError("آدرس باید بین ۱۰ تا ۵۰۰ کاراکتر باشد.")
+
+      return
+    }
+
+    if (normalizedNote.length > 500) {
+      setError("توضیحات سفارش نمی‌تواند بیشتر از ۵۰۰ کاراکتر باشد.")
+
+      return
+    }
+
+    setIsSubmitting(true)
+
     const order = placeOrder(
       {
-        fullName: fullName.trim(),
-        phone: phone.trim(),
-        address: address.trim(),
-        note: note.trim() || undefined,
+        fullName: normalizedName,
+        phone: normalizedPhone,
+        address: normalizedAddress,
+        note: normalizedNote || undefined,
       },
       items,
-      finalTotal,
-      totalItems,
     )
 
     clearCart()
@@ -156,6 +179,7 @@ export function CheckoutPage() {
                       setPhone(event.target.value)
                     }
                     inputMode="numeric"
+                    aria-invalid={Boolean(error)}
                     placeholder="۰۹۱۲۳۴۵۶۷۸۹"
                     className="h-12 w-full rounded-xl border border-white/10 bg-[#0D0F0D] px-4 text-sm outline-none transition placeholder:text-white/20 focus:border-[#D9E600]/50"
                   />
@@ -172,6 +196,7 @@ export function CheckoutPage() {
                       setAddress(event.target.value)
                     }
                     rows={3}
+                    maxLength={500}
                     placeholder="استان، شهر، خیابان، پلاک، واحد"
                     className="w-full resize-none rounded-xl border border-white/10 bg-[#0D0F0D] px-4 py-3 text-sm leading-7 outline-none transition placeholder:text-white/20 focus:border-[#D9E600]/50"
                   />
@@ -187,6 +212,7 @@ export function CheckoutPage() {
                     onChange={(event) =>
                       setNote(event.target.value)
                     }
+                    maxLength={500}
                     placeholder="نکته‌ای برای پیک یا شما؟"
                     className="h-12 w-full rounded-xl border border-white/10 bg-[#0D0F0D] px-4 text-sm outline-none transition placeholder:text-white/20 focus:border-[#D9E600]/50"
                   />
@@ -274,10 +300,11 @@ export function CheckoutPage() {
 
             <button
               type="submit"
-              className="mt-6 flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-[#D9E600] font-black text-[#0D0F0D] transition hover:bg-[#E4EF00]"
+              disabled={isSubmitting}
+              className="mt-6 flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-[#D9E600] font-black text-[#0D0F0D] transition hover:bg-[#E4EF00] disabled:cursor-not-allowed disabled:opacity-60"
             >
               <Check className="size-5" />
-              ثبت نهایی سفارش
+              {isSubmitting ? "در حال ثبت سفارش..." : "ثبت نهایی سفارش"}
             </button>
 
             <Link

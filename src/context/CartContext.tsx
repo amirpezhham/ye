@@ -8,6 +8,9 @@ import {
 } from "react"
 
 import type { Product } from "@/components/products/product-data"
+import { writeStorage, readStorage } from "@/lib/storage"
+import { isCart as isValidCart } from "@/lib/validation"
+import { calculateCartSummary } from "@/lib/cart-summary"
 
 
 const CART_STORAGE_KEY = "ye-dood-cart"
@@ -17,19 +20,17 @@ function loadCart(): CartItem[] {
     return []
   }
 
-  try {
-    const saved = localStorage.getItem(CART_STORAGE_KEY)
+  const loaded = readStorage(CART_STORAGE_KEY, [], isValidCart)
 
-    if (!saved) {
-      return []
-    }
-
-    const parsed = JSON.parse(saved)
-
-    return Array.isArray(parsed) ? parsed : []
-  } catch {
-    return []
-  }
+  return loaded
+    .filter((item) => item.status !== "out-of-stock")
+    .map((item) => ({
+      ...item,
+      quantity: Math.min(
+        Math.max(1, item.quantity),
+        item.stock && item.stock > 0 ? item.stock : Number.MAX_SAFE_INTEGER,
+      ),
+    }))
 }
 
 
@@ -75,14 +76,7 @@ export function CartProvider({
 
 
   useEffect(() => {
-    try {
-      localStorage.setItem(
-        CART_STORAGE_KEY,
-        JSON.stringify(items),
-      )
-    } catch {
-      /* نادیده گرفتن خطای ذخیره‌سازی */
-    }
+    writeStorage(CART_STORAGE_KEY, items)
   }, [items])
 
 
@@ -91,6 +85,15 @@ export function CartProvider({
     product: Product,
     quantity = 1,
   ) {
+    const safeQuantity = Math.max(1, Math.floor(quantity))
+
+    if (
+      !Number.isFinite(quantity) ||
+      product.price < 0 ||
+      product.status === "out-of-stock"
+    ) {
+      return
+    }
 
     setItems((currentItems) => {
 
@@ -105,8 +108,12 @@ export function CartProvider({
           item.id === product.id
             ? {
                 ...item,
-                quantity:
-                  item.quantity + quantity,
+                quantity: Math.min(
+                  item.quantity + safeQuantity,
+                product.stock && product.stock > 0
+                  ? product.stock
+                  : Number.MAX_SAFE_INTEGER,
+                ),
               }
             : item,
         )
@@ -118,7 +125,7 @@ export function CartProvider({
         ...currentItems,
         {
           ...product,
-          quantity,
+          quantity: safeQuantity,
         },
       ]
 
@@ -147,7 +154,12 @@ export function CartProvider({
         item.id === productId
           ? {
               ...item,
-              quantity: item.quantity + 1,
+              quantity: Math.min(
+                item.quantity + 1,
+                item.stock && item.stock > 0
+                  ? item.stock
+                  : Number.MAX_SAFE_INTEGER,
+              ),
             }
           : item,
       ),
@@ -185,27 +197,7 @@ export function CartProvider({
 
 
 
-  const totalItems = useMemo(() => {
-
-    return items.reduce(
-      (total, item) =>
-        total + item.quantity,
-      0,
-    )
-
-  }, [items])
-
-
-
-  const totalPrice = useMemo(() => {
-
-    return items.reduce(
-      (total, item) =>
-        total + item.price * item.quantity,
-      0,
-    )
-
-  }, [items])
+  const summary = useMemo(() => calculateCartSummary(items), [items])
 
 
 
@@ -218,8 +210,8 @@ export function CartProvider({
         increaseQuantity,
         decreaseQuantity,
         clearCart,
-        totalItems,
-        totalPrice,
+        totalItems: summary.totalItems,
+        totalPrice: summary.subtotal,
       }}
     >
       {children}

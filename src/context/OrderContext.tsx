@@ -13,7 +13,9 @@ import {
   getOrders,
   type Order,
   type OrderStatus,
+  updateOrderStatus as persistUpdateOrderStatus,
 } from "@/admin/components/order-storage"
+import { calculateCartSummary } from "@/lib/cart-summary"
 
 
 export interface OrderDetails {
@@ -32,8 +34,6 @@ interface OrderContextType {
   placeOrder: (
     details: OrderDetails,
     cartItems: CartItem[],
-    totalPrice: number,
-    totalItems: number,
   ) => Order
 
   updateStatus: (orderId: string, status: OrderStatus) => void
@@ -64,18 +64,17 @@ export function OrderProvider({
     (
       details: OrderDetails,
       cartItems: CartItem[],
-      totalPrice: number,
-      totalItems: number,
     ) => {
+      const summary = calculateCartSummary(cartItems)
       const order: Order = {
-        id: `ORD-${Date.now().toString().slice(-6)}`,
+        id: `ORD-${crypto.randomUUID()}`,
         fullName: details.fullName,
         phone: details.phone,
         address: details.address,
         note: details.note,
         items: cartItems,
-        totalItems,
-        totalPrice,
+        totalItems: summary.totalItems,
+        totalPrice: summary.total,
         status: "new",
         createdAt: Date.now(),
       }
@@ -92,24 +91,8 @@ export function OrderProvider({
 
   const updateStatus = useCallback(
     (orderId: string, status: OrderStatus) => {
-      const updated = getOrders().map((order) =>
-        order.id === orderId
-          ? {
-              ...order,
-              status,
-            }
-          : order,
-      )
-
-      const storage =
-        window.localStorage
-
-      storage.setItem(
-        "ye-dood-orders",
-        JSON.stringify(updated),
-      )
-
-      setOrders(updated)
+      persistUpdateOrderStatus(orderId, status)
+      setOrders(getOrders())
     },
     [],
   )

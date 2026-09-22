@@ -7,6 +7,8 @@ export interface Category {
 }
 
 const STORAGE_KEY = "ye-dood-categories"
+import { readStorage, writeStorage } from "@/lib/storage"
+import { isCategories } from "@/lib/validation"
 
 const defaultCategories: Category[] = [
   {
@@ -72,23 +74,11 @@ export function getCategories(): Category[] {
     return defaultCategories
   }
 
-  const saved = localStorage.getItem(STORAGE_KEY)
-
-  if (!saved) {
-    return defaultCategories
-  }
-
-  try {
-    const parsed = JSON.parse(saved)
-
-    return Array.isArray(parsed) ? parsed : defaultCategories
-  } catch {
-    return defaultCategories
-  }
+  return readStorage(STORAGE_KEY, defaultCategories, isCategories)
 }
 
 export function saveCategories(categories: Category[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(categories))
+  writeStorage(STORAGE_KEY, categories)
 }
 
 export function addCategory(category: Category) {

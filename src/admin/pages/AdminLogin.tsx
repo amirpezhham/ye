@@ -53,6 +53,9 @@ export function AdminLogin() {
           <p className="mt-2 text-sm text-white/40">
             برای دسترسی به بخش مدیریت وارد شوید.
           </p>
+          <p className="mt-3 rounded-lg border border-amber-400/30 bg-amber-400/10 px-3 py-2 text-xs leading-6 text-amber-200">
+            هشدار: این نسخه فقط frontend است و احراز هویت آن برای استفاده در محیط واقعی امن نیست.
+          </p>
         </div>
 
         <form

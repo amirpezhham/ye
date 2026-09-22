@@ -5,6 +5,9 @@ export interface AdminCredentials {
 
 const CREDENTIALS_KEY = "ye-dood-admin-auth"
 const SESSION_KEY = "ye-dood-admin-session"
+const ATTEMPTS_KEY = "ye-dood-admin-login-attempts"
+const LOCKOUT_MS = 60_000
+const MAX_ATTEMPTS = 5
 
 function hash(value: string): string {
   let result = 0
@@ -57,6 +60,19 @@ export function saveCredentials(credentials: AdminCredentials) {
 }
 
 export function login(username: string, password: string): boolean {
+  if (typeof window === "undefined") {
+    return false
+  }
+
+  const attempts = Number(localStorage.getItem(ATTEMPTS_KEY) || "0")
+  const lockedUntil = Number(
+    localStorage.getItem(`${ATTEMPTS_KEY}-until`) || "0",
+  )
+
+  if (lockedUntil > Date.now()) {
+    return false
+  }
+
   const credentials = getCredentials()
   const ok =
     username.trim() === credentials.username &&
@@ -64,6 +80,18 @@ export function login(username: string, password: string): boolean {
 
   if (ok) {
     localStorage.setItem(SESSION_KEY, "1")
+    localStorage.removeItem(ATTEMPTS_KEY)
+    localStorage.removeItem(`${ATTEMPTS_KEY}-until`)
+  } else {
+    const nextAttempts = attempts + 1
+    localStorage.setItem(ATTEMPTS_KEY, String(nextAttempts))
+
+    if (nextAttempts >= MAX_ATTEMPTS) {
+      localStorage.setItem(
+        `${ATTEMPTS_KEY}-until`,
+        String(Date.now() + LOCKOUT_MS),
+      )
+    }
   }
 
   return ok

@@ -2,6 +2,7 @@ import { useRef, useState } from "react"
 import { ImagePlus, Save } from "lucide-react"
 
 import type { Post } from "@/admin/components/post-storage"
+import { validateImageFile } from "@/lib/storage"
 
 interface PostFormProps {
   initialPost?: Post
@@ -35,6 +36,13 @@ export function PostForm({
       return
     }
 
+    const imageError = validateImageFile(file)
+
+    if (imageError) {
+      setError(imageError)
+      return
+    }
+
     const reader = new FileReader()
 
     reader.onload = () => setImage(String(reader.result))
@@ -50,6 +58,16 @@ export function PostForm({
     if (!title.trim() || !body.trim()) {
       setError("لطفاً عنوان و متن پست را وارد کنید.")
 
+      return
+    }
+
+    if (title.trim().length > 150) {
+      setError("عنوان پست نمی‌تواند بیشتر از ۱۵۰ کاراکتر باشد.")
+      return
+    }
+
+    if (excerpt.trim().length > 300 || body.trim().length > 20_000) {
+      setError("طول خلاصه یا متن پست بیش از حد مجاز است.")
       return
     }
 

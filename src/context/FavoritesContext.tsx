@@ -2,12 +2,14 @@ import {
   createContext,
   useContext,
   useEffect,
+  useCallback,
   useMemo,
   useState,
   type ReactNode,
 } from "react"
 
 import type { Product } from "@/components/products/product-data"
+import { readStorage, writeStorage } from "@/lib/storage"
 
 
 interface FavoritesContextType {
@@ -28,19 +30,13 @@ function loadFavorites(): string[] {
     return []
   }
 
-  try {
-    const saved = localStorage.getItem(FAVORITES_STORAGE_KEY)
-
-    if (!saved) {
-      return []
-    }
-
-    const parsed = JSON.parse(saved)
-
-    return Array.isArray(parsed) ? parsed : []
-  } catch {
-    return []
-  }
+  return readStorage(
+    FAVORITES_STORAGE_KEY,
+    [],
+    (value): value is string[] =>
+      Array.isArray(value) &&
+      value.every((item) => typeof item === "string"),
+  )
 }
 
 
@@ -57,14 +53,7 @@ export function FavoritesProvider({
 
 
   useEffect(() => {
-    try {
-      localStorage.setItem(
-        FAVORITES_STORAGE_KEY,
-        JSON.stringify(ids),
-      )
-    } catch {
-      /* نادیده گرفتن خطای ذخیره‌سازی */
-    }
+    writeStorage(FAVORITES_STORAGE_KEY, ids)
   }, [ids])
 
 
@@ -74,18 +63,18 @@ export function FavoritesProvider({
   )
 
 
-  function toggle(product: Product) {
+  const toggle = useCallback((product: Product) => {
     setIds((current) =>
       current.includes(product.id)
         ? current.filter((id) => id !== product.id)
         : [...current, product.id],
     )
-  }
+  }, [])
 
 
-  function clear() {
+  const clear = useCallback(() => {
     setIds([])
-  }
+  }, [])
 
 
   const value = useMemo(

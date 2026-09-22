@@ -3,6 +3,7 @@ import { ImagePlus, Save } from "lucide-react"
 
 import type { Product } from "@/components/products/product-data"
 import { getCategories } from "@/admin/components/category-storage"
+import { validateImageFile } from "@/lib/storage"
 
 interface ProductFormProps {
   initialProduct?: Product
@@ -60,6 +61,13 @@ export function ProductForm({
       return
     }
 
+    const imageError = validateImageFile(file)
+
+    if (imageError) {
+      setError(imageError)
+      return
+    }
+
     const reader = new FileReader()
 
     reader.onload = () => {
@@ -84,8 +92,35 @@ export function ProductForm({
     const finalOldPrice = oldPrice ? Number(oldPrice) : undefined
     const finalStock = stock ? Number(stock) : 1
 
-    if (finalPrice <= 0) {
-      setError("قیمت باید بیشتر از صفر باشد.")
+    if (!Number.isInteger(finalPrice) || finalPrice <= 0) {
+      setError("قیمت باید یک عدد صحیح بیشتر از صفر باشد.")
+
+      return
+    }
+
+    if (
+      finalOldPrice !== undefined &&
+      (!Number.isInteger(finalOldPrice) || finalOldPrice <= finalPrice)
+    ) {
+      setError("قیمت قبلی باید عددی صحیح و بیشتر از قیمت فعلی باشد.")
+
+      return
+    }
+
+    if (!Number.isInteger(finalStock) || finalStock < 0) {
+      setError("موجودی باید یک عدد صحیح صفر یا بیشتر باشد.")
+
+      return
+    }
+
+    if (name.trim().length < 2 || name.trim().length > 150) {
+      setError("نام محصول باید بین ۲ تا ۱۵۰ کاراکتر باشد.")
+
+      return
+    }
+
+    if (description.trim().length > 2000) {
+      setError("توضیحات محصول نمی‌تواند بیشتر از ۲۰۰۰ کاراکتر باشد.")
 
       return
     }

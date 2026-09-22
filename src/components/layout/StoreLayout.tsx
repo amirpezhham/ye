@@ -17,6 +17,7 @@ export function StoreLayout() {
       title: seo.siteTitle,
       description: seo.siteDescription,
       image: seo.ogImage,
+      url: window.location.href,
     })
   }, [location.pathname])
 
