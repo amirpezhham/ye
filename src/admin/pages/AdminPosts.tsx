@@ -1,15 +1,20 @@
 import { Link } from "react-router-dom"
 import { ArrowRight, Edit3, Plus, Trash2 } from "lucide-react"
+import { useState } from "react"
 
 import {
   getPosts,
   deletePost,
 } from "@/admin/components/post-storage"
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog"
 
 export function AdminPosts() {
+  const [posts, setPosts] = useState(() => getPosts())
+  const [pendingDelete, setPendingDelete] = useState<string | null>(null)
+
   function handleDelete(postId: string) {
     deletePost(postId)
-    window.location.reload()
+    setPosts(getPosts())
   }
 
   return (
@@ -51,13 +56,13 @@ export function AdminPosts() {
         </div>
 
         <div className="mt-8 space-y-3">
-          {getPosts().length === 0 && (
+          {posts.length === 0 && (
             <div className="rounded-2xl border border-white/10 bg-[#151814] p-8 text-center text-white/40">
               هنوز پستی ندارید.
             </div>
           )}
 
-          {getPosts().map((post) => (
+          {posts.map((post) => (
             <div
               key={post.id}
               className="flex items-center gap-4 rounded-2xl border border-white/10 bg-[#151814] p-4"
@@ -89,7 +94,7 @@ export function AdminPosts() {
 
                 <button
                   type="button"
-                  onClick={() => handleDelete(post.id)}
+                  onClick={() => setPendingDelete(post.id)}
                   className="flex size-10 items-center justify-center rounded-xl border border-white/10 text-white/50 transition hover:border-red-500/30 hover:text-red-400"
                   aria-label={`حذف ${post.title}`}
                 >
@@ -100,6 +105,19 @@ export function AdminPosts() {
           ))}
         </div>
       </div>
+      <ConfirmDialog
+        open={pendingDelete !== null}
+        title="حذف پست؟"
+        message="این پست از وبلاگ حذف می‌شود. آیا مطمئن هستید؟"
+        confirmLabel="حذف پست"
+        onCancel={() => setPendingDelete(null)}
+        onConfirm={() => {
+          if (pendingDelete) {
+            handleDelete(pendingDelete)
+          }
+          setPendingDelete(null)
+        }}
+      />
     </main>
   )
 }

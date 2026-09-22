@@ -13,6 +13,7 @@ export function AdminAbout() {
   const [content, setContent] = useState<AboutContent>(
     getAboutContent(),
   )
+  const [error, setError] = useState("")
 
   function update(
     field: keyof AboutContent,
@@ -69,6 +70,20 @@ export function AdminAbout() {
     event: React.FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault()
+
+    if (
+      !content.heroTitle.trim() ||
+      !content.heroDescription.trim() ||
+      !content.storyTitle.trim() ||
+      !content.storyText.trim() ||
+      content.pillars.some(
+        (pillar) => !pillar.title.trim() || !pillar.description.trim(),
+      )
+    ) {
+      setError("لطفاً همه عنوان‌ها و توضیحات را کامل کنید.")
+      return
+    }
+
     saveAboutContent(content)
     navigate("/admin")
   }
@@ -100,6 +115,12 @@ export function AdminAbout() {
             متن‌های صفحه درباره ما را ویرایش کنید.
           </p>
         </div>
+
+        {error && (
+          <div className="mt-5 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-5">
           {/* Hero */}

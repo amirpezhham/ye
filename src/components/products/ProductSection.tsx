@@ -7,21 +7,20 @@ import { ProductGrid } from "./ProductGrid"
 import { useProducts } from "@/context/ProductsContext"
 import { getCategories } from "@/admin/components/category-storage"
 
-const categories = [
-  {
-    label: "همه محصولات",
-    value: "all",
-  },
-  ...getCategories().map((category) => ({
-    label: category.name,
-    value: category.slug,
-  })),
-]
-
 export function ProductSection() {
   const [activeCategory, setActiveCategory] = useState("all")
 
   const { products } = useProducts()
+  const categories = [
+    {
+      label: "همه محصولات",
+      value: "all",
+    },
+    ...getCategories().map((category) => ({
+      label: category.name,
+      value: category.slug,
+    })),
+  ]
 
   const filteredProducts = useMemo(() => {
     if (activeCategory === "all") {

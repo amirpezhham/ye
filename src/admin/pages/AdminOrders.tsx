@@ -27,7 +27,7 @@ const statusStyles: Record<OrderStatus, string> = {
 }
 
 export function AdminOrders() {
-  const orders = getOrders()
+  const [orders, setOrders] = useState(() => getOrders())
   const [pendingDelete, setPendingDelete] = useState<Order | null>(
     null,
   )
@@ -111,10 +111,11 @@ export function AdminOrders() {
                   <select
                     value={order.status}
                     onChange={(event) =>
-                      updateOrderStatus(
-                        order.id,
-                        event.target.value as OrderStatus,
-                      )
+                      (() => {
+                        const status = event.target.value as OrderStatus
+                        updateOrderStatus(order.id, status)
+                        setOrders(getOrders())
+                      })()
                     }
                     className="h-10 rounded-xl border border-white/10 bg-[#0D0F0D] px-3 text-sm outline-none"
                   >
@@ -155,10 +156,10 @@ export function AdminOrders() {
         onConfirm={() => {
           if (pendingDelete) {
             deleteOrder(pendingDelete.id)
+            setOrders(getOrders())
           }
 
           setPendingDelete(null)
-          window.location.reload()
         }}
       />
     </main>

@@ -1,5 +1,7 @@
 import {
   BarChart3,
+  BookOpen,
+  HelpCircle,
   Package,
   ShoppingBag,
   Users,
@@ -147,6 +149,32 @@ export function AdminDashboard() {
              >
                مدیریت مشتری‌ها
              </Link>
+           </div>
+
+           <div className="mt-8 grid gap-4 lg:grid-cols-[1fr_1fr]">
+             <section className="rounded-2xl border border-[#D9E600]/20 bg-[#D9E600]/5 p-6">
+               <div className="flex items-center gap-3">
+                 <HelpCircle className="size-5 text-[#D9E600]" />
+                 <h2 className="text-lg font-black">راهنمای خیلی سریع</h2>
+               </div>
+               <ol className="mt-4 space-y-3 text-sm leading-7 text-white/70">
+                 <li><b className="text-white">۱.</b> برای فروش کالا، از «محصولات» گزینه افزودن محصول را بزنید.</li>
+                 <li><b className="text-white">۲.</b> برای نوشتن مطلب، وارد «وبلاگ» و سپس افزودن پست شوید.</li>
+                 <li><b className="text-white">۳.</b> سفارش‌های جدید را از بخش «سفارش‌ها» بررسی و وضعیتشان را تغییر دهید.</li>
+               </ol>
+             </section>
+
+             <section className="rounded-2xl border border-white/10 bg-[#151814] p-6">
+               <div className="flex items-center gap-3">
+                 <BookOpen className="size-5 text-[#D9E600]" />
+                 <h2 className="text-lg font-black">قبل از ذخیره این‌ها را چک کنید</h2>
+               </div>
+               <ul className="mt-4 space-y-3 text-sm leading-7 text-white/60">
+                 <li>قیمت را به تومان و بدون جداکننده وارد کنید.</li>
+                 <li>تصاویر بهتر است کمتر از ۲ مگابایت باشند.</li>
+                 <li>اطلاعات این نسخه آزمایشی در همین مرورگر ذخیره می‌شود.</li>
+               </ul>
+             </section>
            </div>
         </div>
       </div>

@@ -107,6 +107,16 @@ export function AdminLayout() {
             <Store className="size-4" />
             فروشگاه
           </Link>
+
+          <button
+            type="button"
+            onClick={handleLogout}
+            aria-label="خروج از پنل مدیریت"
+            className="flex items-center gap-1 rounded-lg border border-white/10 px-2.5 py-2 text-xs text-white/60"
+          >
+            <LogOut className="size-4" />
+            خروج
+          </button>
         </div>
 
         <div className="flex gap-2 overflow-x-auto border-b border-white/10 bg-[#0D0F0D] px-4 py-2 lg:hidden">

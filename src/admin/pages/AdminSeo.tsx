@@ -16,6 +16,7 @@ export function AdminSeo() {
   const [settings, setSettings] = useState<SeoSettings>(
     getSeoSettings(),
   )
+  const [error, setError] = useState("")
 
   function update(field: keyof SeoSettings, value: string) {
     setSettings((previous) => ({
@@ -36,6 +37,7 @@ export function AdminSeo() {
     const imageError = validateImageFile(file)
 
     if (imageError) {
+      setError(imageError)
       return
     }
 
@@ -74,12 +76,21 @@ export function AdminSeo() {
           <h1 className="mt-3 text-3xl font-black sm:text-4xl">
             تنظیمات SEO سایت
           </h1>
+          <p className="mt-3 text-sm text-white/40">
+            عنوان و توضیحی را بنویسید که در گوگل و شبکه‌های اجتماعی دیده می‌شود.
+          </p>
 
           <p className="mt-3 text-sm text-white/40">
             عنوان و توضیحاتی که در نتایج جستجو و شبکه‌های
             اجتماعی نمایش داده می‌شوند.
           </p>
         </div>
+
+        {error && (
+          <div className="mt-5 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-5">
           <div className="rounded-2xl border border-white/10 bg-[#151814] p-6">

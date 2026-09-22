@@ -62,6 +62,18 @@ export function AdminProducts() {
           </div>
 
           <div className="divide-y divide-white/8">
+            {products.length === 0 && (
+              <div className="p-10 text-center text-white/45">
+                <Package className="mx-auto size-10 text-white/20" />
+                <p className="mt-3">هنوز محصولی ثبت نشده است.</p>
+                <Link
+                  to="/admin/products/new"
+                  className="mt-4 inline-flex rounded-xl bg-[#D9E600] px-4 py-2 text-sm font-black text-[#0D0F0D]"
+                >
+                  افزودن اولین محصول
+                </Link>
+              </div>
+            )}
             {products.map((product) => (
               <div
                 key={product.id}
