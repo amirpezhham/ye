@@ -4,7 +4,7 @@ import {
   Plus,
   Trash2,
 } from "lucide-react"
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { Link } from "react-router-dom"
 
 import { useProducts } from "@/context/ProductsContext"
@@ -15,10 +15,26 @@ export function AdminProducts() {
   const [pendingDelete, setPendingDelete] = useState<string | null>(
     null,
   )
+  const [search, setSearch] = useState("")
 
   const productToDelete = products.find(
     (item) => item.id === pendingDelete,
   )
+  const filteredProducts = useMemo(() => {
+    const normalizedSearch = search.trim().toLocaleLowerCase()
+
+    if (!normalizedSearch) {
+      return products
+    }
+
+    return products.filter((product) =>
+      [product.name, product.category, product.brand, product.sku]
+        .filter(Boolean)
+        .some((value) =>
+          value?.toLocaleLowerCase().includes(normalizedSearch),
+        ),
+    )
+  }, [products, search])
 
   return (
     <main
@@ -52,12 +68,24 @@ export function AdminProducts() {
 
         <div className="mt-8 overflow-hidden rounded-2xl border border-white/10 bg-[#151814]">
           <div className="border-b border-white/8 px-5 py-4">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <label className="flex-1">
+                <span className="sr-only">جستجوی محصولات</span>
+                <input
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                  placeholder="جستجوی نام، دسته، برند یا کد محصول..."
+                  className="h-11 w-full rounded-xl border border-white/10 bg-[#0D0F0D] px-4 text-sm outline-none transition placeholder:text-white/30 focus:border-[#D9E600]/50"
+                />
+              </label>
+
+              <div className="flex shrink-0 items-center gap-2">
               <Package className="size-5 text-[#D9E600]" />
 
               <span className="font-bold">
-                {products.length.toLocaleString("fa-IR-u-nu-arabext")} محصول
+                {filteredProducts.length.toLocaleString("fa-IR-u-nu-arabext")} محصول
               </span>
+              </div>
             </div>
           </div>
 
@@ -74,7 +102,12 @@ export function AdminProducts() {
                 </Link>
               </div>
             )}
-            {products.map((product) => (
+            {products.length > 0 && filteredProducts.length === 0 && (
+              <div className="p-10 text-center text-white/45">
+                محصولی با این عبارت پیدا نشد.
+              </div>
+            )}
+            {filteredProducts.map((product) => (
               <div
                 key={product.id}
                 className="flex flex-col gap-4 p-5 transition hover:bg-white/[0.02] sm:flex-row sm:items-center"

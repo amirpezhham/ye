@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom"
 import { ArrowRight, Package, Trash2 } from "lucide-react"
 import { motion } from "motion/react"
+import { useMemo, useState } from "react"
 
 import {
   getOrders,
@@ -11,7 +12,6 @@ import {
   type OrderStatus,
 } from "@/admin/components/order-storage"
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog"
-import { useState } from "react"
 
 function formatPrice(price: number) {
   return new Intl.NumberFormat("fa-IR-u-nu-arabext").format(price)
@@ -31,6 +31,26 @@ export function AdminOrders() {
   const [pendingDelete, setPendingDelete] = useState<Order | null>(
     null,
   )
+  const [search, setSearch] = useState("")
+  const [statusFilter, setStatusFilter] = useState<"all" | OrderStatus>(
+    "all",
+  )
+  const filteredOrders = useMemo(() => {
+    const normalizedSearch = search.trim().toLocaleLowerCase()
+
+    return orders.filter((order) => {
+      const matchesStatus =
+        statusFilter === "all" || order.status === statusFilter
+      const matchesSearch =
+        !normalizedSearch ||
+        [order.id, order.fullName, order.phone]
+          .some((value) =>
+            value.toLocaleLowerCase().includes(normalizedSearch),
+          )
+
+      return matchesStatus && matchesSearch
+    })
+  }, [orders, search, statusFilter])
 
   return (
     <main
@@ -61,6 +81,37 @@ export function AdminOrders() {
         </div>
 
         <div className="mt-8 space-y-3">
+          <div className="grid gap-3 rounded-2xl border border-white/10 bg-[#151814] p-4 sm:grid-cols-[1fr_auto]">
+            <label>
+              <span className="sr-only">جستجوی سفارش‌ها</span>
+              <input
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="جستجوی شماره سفارش، نام یا تلفن..."
+                className="h-11 w-full rounded-xl border border-white/10 bg-[#0D0F0D] px-4 text-sm outline-none transition placeholder:text-white/30 focus:border-[#D9E600]/50"
+              />
+            </label>
+            <label>
+              <span className="sr-only">فیلتر وضعیت سفارش</span>
+              <select
+                value={statusFilter}
+                onChange={(event) =>
+                  setStatusFilter(event.target.value as "all" | OrderStatus)
+                }
+                className="h-11 w-full rounded-xl border border-white/10 bg-[#0D0F0D] px-3 text-sm outline-none sm:w-48"
+              >
+                <option value="all">همه وضعیت‌ها</option>
+                {(Object.keys(ORDER_STATUS_LABELS) as OrderStatus[]).map(
+                  (status) => (
+                    <option key={status} value={status}>
+                      {ORDER_STATUS_LABELS[status]}
+                    </option>
+                  ),
+                )}
+              </select>
+            </label>
+          </div>
+
           {orders.length === 0 && (
             <div className="rounded-2xl border border-white/10 bg-[#151814] p-10 text-center text-white/40">
               <Package className="mx-auto size-10 text-white/20" />
@@ -69,7 +120,13 @@ export function AdminOrders() {
             </div>
           )}
 
-          {orders.map((order, index) => (
+          {orders.length > 0 && filteredOrders.length === 0 && (
+            <div className="rounded-2xl border border-white/10 bg-[#151814] p-10 text-center text-white/45">
+              سفارشی با این فیلتر پیدا نشد.
+            </div>
+          )}
+
+          {filteredOrders.map((order, index) => (
             <motion.div
               key={order.id}
               initial={{ opacity: 0, y: 15 }}

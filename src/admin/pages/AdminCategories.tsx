@@ -19,6 +19,7 @@ import {
 } from "@/admin/components/category-storage"
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog"
 import { validateImageFile } from "@/lib/storage"
+import { getProducts } from "@/admin/components/product-storage"
 
 export function AdminCategories() {
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -39,6 +40,7 @@ export function AdminCategories() {
     "/images/products/placeholder.svg",
   )
   const [error, setError] = useState("")
+  const [listError, setListError] = useState("")
 
   function refresh() {
     setCategories(getCategories())
@@ -54,6 +56,7 @@ export function AdminCategories() {
   function openAdd() {
     setEditing(null)
     resetForm()
+    setListError("")
     setFormOpen(true)
   }
 
@@ -63,6 +66,7 @@ export function AdminCategories() {
     setDescription(category.description)
     setImage(category.image)
     setError("")
+    setListError("")
     setFormOpen(true)
   }
 
@@ -169,6 +173,12 @@ export function AdminCategories() {
               دستهبندیهای فروشگاه را مدیریت کنید.
             </p>
           </div>
+
+          {listError && (
+            <div className="mt-5 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+              {listError}
+            </div>
+          )}
 
           <button
             type="button"
@@ -350,6 +360,18 @@ export function AdminCategories() {
         onCancel={() => setPendingDelete(null)}
         onConfirm={() => {
           if (pendingDelete) {
+            const hasProducts = getProducts().some(
+              (product) => product.categorySlug === pendingDelete.slug,
+            )
+
+            if (hasProducts) {
+              setListError(
+                "این دسته‌بندی محصول دارد و حذف نمی‌شود. ابتدا محصولات آن را جابه‌جا یا حذف کنید.",
+              )
+              setPendingDelete(null)
+              return
+            }
+
             deleteCategory(pendingDelete.id)
             refresh()
           }
