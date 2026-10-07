@@ -1,24 +1,36 @@
-import { useState } from "react"
-import { Navigate, useNavigate } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { useLocation, useNavigate } from "react-router-dom"
 import { Lock, UserRound } from "lucide-react"
 
 import {
-  isAuthenticated,
-  login,
-} from "@/admin/components/auth-storage"
+  apiGet,
+  apiPost,
+} from "@/lib/api"
 
 export function AdminLogin() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
+  const [checkingSession, setCheckingSession] = useState(true)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  if (isAuthenticated()) {
-    return <Navigate to="/admin" replace />
-  }
+  useEffect(() => {
+    void apiGet("/admin/session")
+      .then(() => navigate("/admin", { replace: true }))
+      .catch((sessionError: unknown) => {
+        if (!(sessionError instanceof Error && "status" in sessionError && sessionError.status === 401)) {
+          console.error("بررسی نشست ورود ناموفق بود.", sessionError)
+          setError("ارتباط با سرور برقرار نشد.")
+        }
+      })
+      .finally(() => setCheckingSession(false))
+  }, [navigate])
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    setError("")
 
     if (!username.trim() || !password) {
       setError("لطفاً نام کاربری و رمز عبور را وارد کنید.")
@@ -26,13 +38,20 @@ export function AdminLogin() {
       return
     }
 
-    if (login(username, password)) {
+    setIsSubmitting(true)
+    try {
+      await apiPost("/admin/login", { username, password })
       navigate("/admin", { replace: true })
-
-      return
+    } catch (loginError) {
+      console.error("ورود مدیر ناموفق بود.", loginError)
+      setError(loginError instanceof Error ? loginError.message : "ورود ناموفق بود.")
+    } finally {
+      setIsSubmitting(false)
     }
+  }
 
-    setError("نام کاربری یا رمز عبور اشتباه است.")
+  if (checkingSession) {
+    return <main dir="rtl" className="flex min-h-screen items-center justify-center bg-[#0D0F0D] text-[#D9E600]">در حال بررسی نشست...</main>
   }
 
   return (
@@ -53,10 +72,13 @@ export function AdminLogin() {
           <p className="mt-2 text-sm text-white/40">
             برای دسترسی به بخش مدیریت وارد شوید.
           </p>
-          <p className="mt-3 rounded-lg border border-amber-400/30 bg-amber-400/10 px-3 py-2 text-xs leading-6 text-amber-200">
-            هشدار: این نسخه فقط frontend است و احراز هویت آن برای استفاده در محیط واقعی امن نیست.
-          </p>
         </div>
+
+        {typeof location.state?.message === "string" && (
+          <p className="mb-4 rounded-xl border border-[#D9E600]/30 bg-[#D9E600]/10 px-4 py-3 text-sm text-[#D9E600]">
+            {location.state.message}
+          </p>
+        )}
 
         <form
           onSubmit={handleSubmit}
@@ -111,15 +133,13 @@ export function AdminLogin() {
 
           <button
             type="submit"
+            disabled={isSubmitting}
             className="flex h-12 w-full items-center justify-center rounded-xl bg-[#D9E600] font-black text-[#0D0F0D] transition hover:bg-[#E4EF00]"
           >
-            ورود به پنل
+            {isSubmitting ? "در حال ورود..." : "ورود به پنل"}
           </button>
         </form>
 
-        <p className="mt-4 text-center text-xs text-white/25">
-          نام کاربری و رمز پیش‌فرض: admin / admin123
-        </p>
       </div>
     </main>
   )

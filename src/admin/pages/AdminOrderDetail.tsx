@@ -1,12 +1,9 @@
+import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import { ArrowRight, Phone, MapPin } from "lucide-react"
 
-import {
-  getOrders,
-  updateOrderStatus,
-  ORDER_STATUS_LABELS,
-  type OrderStatus,
-} from "@/admin/components/order-storage"
+import { ORDER_STATUS_LABELS, type OrderStatus } from "@/admin/components/order-storage"
+import { useOrder } from "@/context/OrderContext"
 
 function formatPrice(price: number) {
   return new Intl.NumberFormat("fa-IR-u-nu-arabext").format(price)
@@ -14,7 +11,23 @@ function formatPrice(price: number) {
 
 export function AdminOrderDetail() {
   const { orderId } = useParams()
-  const order = getOrders().find((item) => item.id === orderId)
+  const { orders, refreshOrders, updateStatus } = useOrder()
+  const order = orders.find((item) => item.id === orderId)
+  const [error, setError] = useState("")
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    void refreshOrders()
+      .catch((loadError: unknown) => {
+        console.error("دریافت جزئیات سفارش ناموفق بود.", loadError)
+        setError(loadError instanceof Error ? loadError.message : "دریافت سفارش ناموفق بود.")
+      })
+      .finally(() => setLoading(false))
+  }, [refreshOrders])
+
+  if (loading) {
+    return <main dir="rtl" className="flex min-h-screen items-center justify-center bg-[#0D0F0D] text-[#D9E600]">در حال دریافت سفارش...</main>
+  }
 
   if (!order) {
     return (
@@ -23,7 +36,8 @@ export function AdminOrderDetail() {
         className="flex min-h-screen items-center justify-center bg-[#0D0F0D] px-6 text-white"
       >
         <div className="text-center">
-          <h1 className="text-3xl font-black">سفارش پیدا نشد</h1>
+          <h1 className="text-3xl font-black">{error ? "بارگذاری سفارش ناموفق بود" : "سفارش پیدا نشد"}</h1>
+          {error && <p role="alert" className="mt-3 text-sm text-red-300">{error}</p>}
 
           <Link
             to="/admin/orders"
@@ -73,12 +87,14 @@ export function AdminOrderDetail() {
           <div className="flex items-center gap-2">
             <select
               value={order.status}
-              onChange={(event) =>
-                updateOrderStatus(
-                  order.id,
-                  event.target.value as OrderStatus,
-                )
-              }
+              onChange={(event) => {
+                const status = event.target.value as OrderStatus
+                setError("")
+                void updateStatus(order.id, status).catch((updateError: unknown) => {
+                  console.error("تغییر وضعیت سفارش ناموفق بود.", updateError)
+                  setError(updateError instanceof Error ? updateError.message : "تغییر وضعیت سفارش انجام نشد.")
+                })
+              }}
               className="h-11 rounded-xl border border-white/10 bg-[#151814] px-4 text-sm outline-none"
             >
               {(Object.keys(
@@ -93,6 +109,7 @@ export function AdminOrderDetail() {
         </div>
 
         <div className="mt-8 grid gap-5 lg:grid-cols-[1fr_360px]">
+          {error && <p role="alert" className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300 lg:col-span-2">{error}</p>}
           {/* Products */}
           <div className="rounded-2xl border border-white/10 bg-[#151814] p-5">
             <h2 className="mb-4 text-lg font-black">محصولات سفارش</h2>

@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom"
 import { ArrowRight, Package, Phone, Users } from "lucide-react"
 import { motion } from "motion/react"
+import { useEffect, useState } from "react"
 
-import { getOrders, ORDER_STATUS_LABELS } from "@/admin/components/order-storage"
+import { ORDER_STATUS_LABELS, type Order } from "@/admin/components/order-storage"
+import { useOrder } from "@/context/OrderContext"
 
 function formatPrice(price: number) {
   return new Intl.NumberFormat("fa-IR-u-nu-arabext").format(price)
@@ -13,11 +15,19 @@ interface CustomerSummary {
   phone: string
   orderCount: number
   totalSpent: number
-  orders: ReturnType<typeof getOrders>
+  orders: Order[]
 }
 
 export function AdminCustomers() {
-  const orders = getOrders()
+  const { orders, refreshOrders } = useOrder()
+  const [error, setError] = useState("")
+
+  useEffect(() => {
+    void refreshOrders().catch((loadError: unknown) => {
+      console.error("دریافت سفارش‌های مشتری‌ها ناموفق بود.", loadError)
+      setError(loadError instanceof Error ? loadError.message : "دریافت مشتری‌ها ناموفق بود.")
+    })
+  }, [refreshOrders])
 
   const customerMap = new Map<string, CustomerSummary>()
 
@@ -77,6 +87,7 @@ export function AdminCustomers() {
         </div>
 
         <div className="mt-8 space-y-3">
+          {error && <p role="alert" className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">{error}</p>}
           {customers.length === 0 && (
             <div className="rounded-2xl border border-white/10 bg-[#151814] p-10 text-center text-white/40">
               <Users className="mx-auto size-10 text-white/20" />

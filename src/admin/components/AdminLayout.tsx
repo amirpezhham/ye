@@ -1,6 +1,7 @@
+import { useState } from "react"
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom"
 
-import { logout } from "@/admin/components/auth-storage"
+import { apiPost } from "@/lib/api"
 import {
   FileText,
   Globe,
@@ -29,10 +30,17 @@ const navItems = [
 
 export function AdminLayout() {
   const navigate = useNavigate()
+  const [logoutError, setLogoutError] = useState("")
 
-  function handleLogout() {
-    logout()
-    navigate("/admin/login", { replace: true })
+  async function handleLogout() {
+    setLogoutError("")
+    try {
+      await apiPost<void>("/admin/logout")
+      navigate("/admin/login", { replace: true })
+    } catch (error) {
+      console.error("خروج از پنل ناموفق بود.", error)
+      setLogoutError(error instanceof Error ? error.message : "خروج انجام نشد.")
+    }
   }
 
   return (
@@ -74,14 +82,17 @@ export function AdminLayout() {
           })}
         </nav>
 
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="flex items-center gap-2 rounded-xl border border-white/10 px-4 py-3 text-sm text-white/60 transition hover:border-red-500/30 hover:text-red-400"
-        >
-          <LogOut className="size-5" />
-          خروج از پنل
-        </button>
+        <div className="mt-auto">
+          {logoutError && <p role="alert" className="mb-2 text-xs text-red-300">{logoutError}</p>}
+          <button
+            type="button"
+            onClick={() => void handleLogout()}
+            className="flex w-full items-center gap-2 rounded-xl border border-white/10 px-4 py-3 text-sm text-white/60 transition hover:border-red-500/30 hover:text-red-400"
+          >
+            <LogOut className="size-5" />
+            خروج از پنل
+          </button>
+        </div>
 
         <Link
           to="/"
@@ -110,7 +121,7 @@ export function AdminLayout() {
 
           <button
             type="button"
-            onClick={handleLogout}
+            onClick={() => void handleLogout()}
             aria-label="خروج از پنل مدیریت"
             className="flex items-center gap-1 rounded-lg border border-white/10 px-2.5 py-2 text-xs text-white/60"
           >
@@ -119,6 +130,7 @@ export function AdminLayout() {
           </button>
         </div>
 
+        {logoutError && <p role="alert" className="px-4 py-2 text-xs text-red-300 lg:hidden">{logoutError}</p>}
         <div className="flex gap-2 overflow-x-auto border-b border-white/10 bg-[#0D0F0D] px-4 py-2 lg:hidden">
           {navItems.map((item) => {
             const Icon = item.icon

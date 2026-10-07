@@ -2,12 +2,12 @@ import { useRef, useState } from "react"
 import { ImagePlus, Save } from "lucide-react"
 
 import type { Product } from "@/components/products/product-data"
-import { getCategories } from "@/admin/components/category-storage"
 import { validateImageFile } from "@/lib/storage"
+import { useCategories } from "@/context/CategoriesContext"
 
 interface ProductFormProps {
   initialProduct?: Product
-  onSubmit: (product: Product) => void
+  onSubmit: (product: Product) => void | Promise<void>
   submitLabel: string
 }
 
@@ -18,7 +18,8 @@ export function ProductForm({
 }: ProductFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const categoryOptions = getCategories().map((category) => ({
+  const { categories } = useCategories()
+  const categoryOptions = categories.map((category) => ({
     value: category.slug,
     label: category.name,
   }))
@@ -51,6 +52,7 @@ export function ProductForm({
     initialProduct?.image ?? "/images/products/placeholder.svg",
   )
   const [error, setError] = useState("")
+  const [isSaving, setIsSaving] = useState(false)
 
   function handleImageChange(
     event: React.ChangeEvent<HTMLInputElement>,
@@ -126,11 +128,11 @@ export function ProductForm({
     }
 
     const product: Product = {
-      id: initialProduct?.id ?? `product-${Date.now()}`,
+      id: initialProduct?.id ?? `product-${crypto.randomUUID()}`,
       name: name.trim(),
       slug:
         initialProduct?.slug ?? `${category}-${Date.now()}`,
-      category: getCategories().find(
+      category: categories.find(
         (item) => item.slug === category,
       )?.name ?? category,
       categorySlug: category,
@@ -150,7 +152,14 @@ export function ProductForm({
       featured: initialProduct?.featured,
     }
 
-    onSubmit(product)
+    setError("")
+    setIsSaving(true)
+    void Promise.resolve(onSubmit(product))
+      .catch((saveError: unknown) => {
+        console.error("ذخیره محصول ناموفق بود.", saveError)
+        setError(saveError instanceof Error ? saveError.message : "ذخیره محصول انجام نشد.")
+      })
+      .finally(() => setIsSaving(false))
   }
 
   return (
@@ -331,8 +340,7 @@ export function ProductForm({
             </button>
 
             <p className="mt-2 text-xs text-white/30">
-              فرمت‌های JPG/PNG. تصویر مستقیماً در مرورگر ذخیره
-              می‌شود.
+              فرمت‌های JPG/PNG. در نسخه فعلی تصویر به‌صورت داده در پایگاه‌داده ذخیره می‌شود.
             </p>
           </div>
         </div>
@@ -346,10 +354,11 @@ export function ProductForm({
 
       <button
         type="submit"
-        className="flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-[#D9E600] font-black text-[#0D0F0D] transition hover:bg-[#E4EF00]"
+        disabled={isSaving}
+        className="flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-[#D9E600] font-black text-[#0D0F0D] transition hover:bg-[#E4EF00] disabled:cursor-not-allowed disabled:opacity-60"
       >
         <Save className="size-5" />
-        {submitLabel}
+        {isSaving ? "در حال ذخیره..." : submitLabel}
       </button>
     </form>
   )

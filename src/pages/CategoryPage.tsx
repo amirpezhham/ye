@@ -5,7 +5,7 @@ import { motion } from "motion/react"
 
 import { ProductGrid } from "@/components/products/ProductGrid"
 import { useProducts } from "@/context/ProductsContext"
-import { getCategories } from "@/admin/components/category-storage"
+import { useCategories } from "@/context/CategoriesContext"
 
 
 const sortOptions = [
@@ -24,14 +24,15 @@ export function CategoryPage() {
   const [sort, setSort] = useState("default")
 
 
-  const { products, getByCategorySlug } = useProducts()
+  const { products, getByCategorySlug, error: productsError, loading: productsLoading } = useProducts()
+  const { categories, error: categoriesError } = useCategories()
 
   const categoryProducts = categorySlug
     ? getByCategorySlug(categorySlug)
     : products
 
   const categoryTitle = categorySlug
-    ? getCategories().find(
+    ? categories.find(
         (category) => category.slug === categorySlug,
       )?.name ?? "محصولات"
     : "همه محصولات"
@@ -135,6 +136,11 @@ export function CategoryPage() {
 
 
         </motion.div>
+        {(productsError || categoriesError || productsLoading) && (
+          <p role={productsError || categoriesError ? "alert" : undefined} className={`mb-6 text-sm ${productsError || categoriesError ? "text-red-300" : "text-white/45"}`}>
+            {productsError || categoriesError || "در حال دریافت محصولات..."}
+          </p>
+        )}
 
 
 

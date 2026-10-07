@@ -7,13 +7,22 @@ import {
   Users,
 } from "lucide-react"
 import { Link } from "react-router-dom"
+import { useEffect, useState } from "react"
 
 import { useProducts } from "@/context/ProductsContext"
-import { getOrders } from "@/admin/components/order-storage"
+import { useOrder } from "@/context/OrderContext"
 
 export function AdminDashboard() {
   const { products } = useProducts()
-  const orders = getOrders()
+  const { orders, refreshOrders } = useOrder()
+  const [orderError, setOrderError] = useState("")
+
+  useEffect(() => {
+    void refreshOrders().catch((error: unknown) => {
+      console.error("دریافت آمار سفارش‌ها ناموفق بود.", error)
+      setOrderError(error instanceof Error ? error.message : "دریافت آمار سفارش‌ها ناموفق بود.")
+    })
+  }, [refreshOrders])
 
   const totalSales = orders
     .filter((order) => order.status !== "cancelled")
@@ -90,6 +99,7 @@ export function AdminDashboard() {
                 <div className="mt-5 text-2xl font-black">
                   {stat.value}
                 </div>
+                {orderError && <p role="alert" className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">{orderError}</p>}
               </div>
             )
           })}

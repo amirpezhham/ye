@@ -10,23 +10,24 @@ import {
   Trash2,
 } from "lucide-react"
 
-import {
-  addCategory,
-  deleteCategory,
-  getCategories,
-  updateCategory,
-  type Category,
-} from "@/admin/components/category-storage"
+import type { Category } from "@/admin/components/category-storage"
+import { useCategories } from "@/context/CategoriesContext"
+import { useProducts } from "@/context/ProductsContext"
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog"
 import { validateImageFile } from "@/lib/storage"
-import { getProducts } from "@/admin/components/product-storage"
 
 export function AdminCategories() {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const [categories, setCategories] = useState<Category[]>(() =>
-    getCategories(),
-  )
+  const {
+    categories,
+    loading,
+    error: categoriesError,
+    addCategory,
+    deleteCategory,
+    updateCategory,
+  } = useCategories()
+  const { products } = useProducts()
 
   const [formOpen, setFormOpen] = useState(false)
   const [editing, setEditing] = useState<Category | null>(null)
@@ -41,10 +42,6 @@ export function AdminCategories() {
   )
   const [error, setError] = useState("")
   const [listError, setListError] = useState("")
-
-  function refresh() {
-    setCategories(getCategories())
-  }
 
   function resetForm() {
     setName("")
@@ -93,7 +90,7 @@ export function AdminCategories() {
     reader.readAsDataURL(file)
   }
 
-  function handleSubmit(
+  async function handleSubmit(
     event: React.FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault()
@@ -123,26 +120,30 @@ export function AdminCategories() {
       return
     }
 
-    if (editing) {
-      updateCategory({
-        ...editing,
-        name: name.trim(),
-        description: description.trim(),
-        image,
-      })
-    } else {
-      addCategory({
-        id: `cat-${Date.now()}`,
-        name: name.trim(),
-        slug,
-        description: description.trim(),
-        image,
-      })
+    setListError("")
+    try {
+      if (editing) {
+        await updateCategory({
+          ...editing,
+          name: name.trim(),
+          description: description.trim(),
+          image,
+        })
+      } else {
+        await addCategory({
+          id: `cat-${crypto.randomUUID()}`,
+          name: name.trim(),
+          slug,
+          description: description.trim(),
+          image,
+        })
+      }
+      setFormOpen(false)
+      resetForm()
+    } catch (saveError) {
+      console.error("ذخیره دسته‌بندی ناموفق بود.", saveError)
+      setError(saveError instanceof Error ? saveError.message : "ذخیره دسته‌بندی انجام نشد.")
     }
-
-    refresh()
-    setFormOpen(false)
-    resetForm()
   }
 
   return (
@@ -174,9 +175,9 @@ export function AdminCategories() {
             </p>
           </div>
 
-          {listError && (
+          {(listError || categoriesError) && (
             <div className="mt-5 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
-              {listError}
+              {listError || categoriesError}
             </div>
           )}
 
@@ -280,6 +281,7 @@ export function AdminCategories() {
 
               <button
                 type="submit"
+                disabled={loading}
                 className="flex h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-[#D9E600] font-black text-[#0D0F0D] transition hover:bg-[#E4EF00]"
               >
                 <Save className="size-4" />
@@ -302,6 +304,7 @@ export function AdminCategories() {
           </div>
 
           <div className="divide-y divide-white/8">
+            {loading && <p className="p-8 text-center text-sm text-white/45">در حال دریافت دسته‌بندی‌ها...</p>}
             {categories.map((category) => (
               <div
                 key={category.id}
@@ -360,7 +363,7 @@ export function AdminCategories() {
         onCancel={() => setPendingDelete(null)}
         onConfirm={() => {
           if (pendingDelete) {
-            const hasProducts = getProducts().some(
+            const hasProducts = products.some(
               (product) => product.categorySlug === pendingDelete.slug,
             )
 
@@ -372,8 +375,11 @@ export function AdminCategories() {
               return
             }
 
-            deleteCategory(pendingDelete.id)
-            refresh()
+            setListError("")
+            void deleteCategory(pendingDelete.id).catch((deleteError: unknown) => {
+              console.error("حذف دسته‌بندی ناموفق بود.", deleteError)
+              setListError(deleteError instanceof Error ? deleteError.message : "حذف دسته‌بندی انجام نشد.")
+            })
           }
 
           setPendingDelete(null)

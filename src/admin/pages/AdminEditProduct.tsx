@@ -8,10 +8,14 @@ import { useProducts } from "@/context/ProductsContext"
 export function AdminEditProduct() {
   const navigate = useNavigate()
   const { productId } = useParams()
-  const { products, addProduct, removeProduct } =
+  const { products, updateProduct, loading } =
     useProducts()
 
   const product = products.find((item) => item.id === productId)
+
+  if (loading) {
+    return <main dir="rtl" className="flex min-h-screen items-center justify-center bg-[#0D0F0D] text-[#D9E600]">در حال دریافت محصول...</main>
+  }
 
   if (!product) {
     return (
@@ -34,9 +38,8 @@ export function AdminEditProduct() {
     )
   }
 
-  function handleSubmit(updated: Product) {
-    removeProduct(product!.id)
-    addProduct(updated)
+  async function handleSubmit(updated: Product) {
+    await updateProduct(updated)
     navigate("/admin/products")
   }
 

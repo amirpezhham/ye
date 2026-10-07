@@ -1,13 +1,16 @@
 import { useState } from "react"
-import { Link } from "react-router-dom"
-import { ArrowRight, Save } from "lucide-react"
-
-import {
-  changePassword,
-  getCredentials,
-} from "@/admin/components/auth-storage"
+import { Link, useNavigate } from "react-router-dom"
+import { ArrowRight, Database, Save } from "lucide-react"
+import { apiPatch, apiPost } from "@/lib/api"
+import { getProducts } from "@/admin/components/product-storage"
+import { getCategories } from "@/admin/components/category-storage"
+import { getPosts } from "@/admin/components/post-storage"
+import { getOrders } from "@/admin/components/order-storage"
+import { getSeoSettings } from "@/admin/components/seo-storage"
+import { getAboutContent } from "@/admin/components/content-storage"
 
 export function AdminSettings() {
+  const navigate = useNavigate()
   const [currentPassword, setCurrentPassword] = useState("")
   const [newPassword, setNewPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
@@ -15,10 +18,36 @@ export function AdminSettings() {
     type: "success" | "error"
     text: string
   } | null>(null)
+  const [migrationResult, setMigrationResult] = useState("")
+  const [isMigrating, setIsMigrating] = useState(false)
 
-  const username = getCredentials().username
+  async function handleLocalDataMigration() {
+    setMigrationResult("")
+    setIsMigrating(true)
+    try {
+      const result = await apiPost<{
+        imported: { products: number; categories: number; posts: number; orders: number }
+      }>("/admin/migrate-local-data", {
+        products: getProducts(),
+        categories: getCategories(),
+        posts: getPosts(),
+        orders: getOrders(),
+        seo: getSeoSettings(),
+        about: getAboutContent(),
+      })
+      const counts = result.imported
+      setMigrationResult(
+        `انتقال انجام شد: ${counts.products} محصول، ${counts.categories} دسته‌بندی، ${counts.posts} مطلب و ${counts.orders} سفارش. صفحه را برای دریافت داده‌های جدید بازخوانی کنید.`,
+      )
+    } catch (error) {
+      console.error("انتقال داده‌های مرورگر ناموفق بود.", error)
+      setMigrationResult(error instanceof Error ? error.message : "انتقال داده‌ها انجام نشد.")
+    } finally {
+      setIsMigrating(false)
+    }
+  }
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setMessage(null)
 
@@ -40,20 +69,26 @@ export function AdminSettings() {
       return
     }
 
-    const result = changePassword(currentPassword, newPassword)
-
-    if (!result.ok) {
-      setMessage({ type: "error", text: result.error ?? "خطا" })
-
+    try {
+      await apiPatch<void>("/admin/password", {
+        currentPassword,
+        newPassword,
+      })
+    } catch (error) {
+      console.error("تغییر رمز عبور ناموفق بود.", error)
+      setMessage({
+        type: "error",
+        text: error instanceof Error ? error.message : "تغییر رمز انجام نشد.",
+      })
       return
     }
 
     setCurrentPassword("")
     setNewPassword("")
     setConfirmPassword("")
-    setMessage({
-      type: "success",
-      text: "رمز عبور با موفقیت تغییر کرد.",
+    navigate("/admin/login", {
+      replace: true,
+      state: { message: "رمز عبور تغییر کرد. با رمز جدید وارد شوید." },
     })
   }
 
@@ -81,27 +116,38 @@ export function AdminSettings() {
           </h1>
 
           <p className="mt-3 text-sm text-white/40">
-            نام کاربری و رمز عبور دسترسی به پنل مدیریت.
+            رمز پنل توسط سرور بررسی می‌شود و در مرورگر ذخیره نمی‌شود.
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+          <section className="rounded-2xl border border-white/10 bg-[#151814] p-6">
+            <h2 className="flex items-center gap-2 text-lg font-black">
+              <Database className="size-5 text-[#D9E600]" />
+              انتقال اطلاعات این مرورگر
+            </h2>
+            <p className="mt-3 text-sm leading-7 text-white/50">
+              این انتقال فقط یک‌بار برای کل پایگاه‌داده انجام می‌شود؛ پیش از اجرا مطمئن شوید مرورگری که اطلاعات کامل‌تری دارد باز است. محصولات، دسته‌بندی‌ها، مطالب، سفارش‌ها و تنظیمات ذخیره‌شده در همان مرورگر به سرور منتقل می‌شوند. فایل‌های تصویری نیز همراه داده‌ها ارسال می‌شوند.
+            </p>
+            <button
+              type="button"
+              onClick={() => void handleLocalDataMigration()}
+              disabled={isMigrating}
+              className="mt-4 rounded-xl border border-[#D9E600]/30 px-4 py-3 text-sm font-bold text-[#D9E600] disabled:opacity-50"
+            >
+              {isMigrating ? "در حال انتقال..." : "انتقال یک‌باره اطلاعات"}
+            </button>
+            {migrationResult && (
+              <p role="status" className="mt-4 rounded-xl border border-white/10 bg-[#0D0F0D] px-4 py-3 text-sm leading-6 text-white/70">
+                {migrationResult}
+              </p>
+            )}
+          </section>
+
           <div className="rounded-2xl border border-white/10 bg-[#151814] p-6">
             <h2 className="text-lg font-black">تغییر رمز عبور</h2>
 
             <div className="mt-5 space-y-5">
-              <label className="block">
-                <span className="mb-2 block text-sm font-bold">
-                  نام کاربری فعلی
-                </span>
-
-                <input
-                  value={username}
-                  disabled
-                  className="h-12 w-full rounded-xl border border-white/10 bg-[#0D0F0D] px-4 text-sm text-white/40 outline-none"
-                />
-              </label>
-
               <label className="block">
                 <span className="mb-2 block text-sm font-bold">
                   رمز عبور فعلی

@@ -1,16 +1,12 @@
+import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { ArrowRight, Package, Trash2 } from "lucide-react"
 import { motion } from "motion/react"
-import { useMemo, useState } from "react"
+import { useMemo } from "react"
 
-import {
-  getOrders,
-  updateOrderStatus,
-  deleteOrder,
-  ORDER_STATUS_LABELS,
-  type Order,
-  type OrderStatus,
-} from "@/admin/components/order-storage"
+import { ORDER_STATUS_LABELS, type Order, type OrderStatus } from "@/admin/components/order-storage"
+import { useOrder } from "@/context/OrderContext"
+import { apiDelete } from "@/lib/api"
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog"
 
 function formatPrice(price: number) {
@@ -27,7 +23,10 @@ const statusStyles: Record<OrderStatus, string> = {
 }
 
 export function AdminOrders() {
-  const [orders, setOrders] = useState(() => getOrders())
+  const { orders, refreshOrders, updateStatus } = useOrder()
+  const [loadError, setLoadError] = useState("")
+  const [actionError, setActionError] = useState("")
+  const [busyOrderId, setBusyOrderId] = useState<string | null>(null)
   const [pendingDelete, setPendingDelete] = useState<Order | null>(
     null,
   )
@@ -35,6 +34,12 @@ export function AdminOrders() {
   const [statusFilter, setStatusFilter] = useState<"all" | OrderStatus>(
     "all",
   )
+  useEffect(() => {
+    void refreshOrders().catch((error: unknown) => {
+      console.error("دریافت سفارش‌ها ناموفق بود.", error)
+      setLoadError(error instanceof Error ? error.message : "دریافت سفارش‌ها ناموفق بود.")
+    })
+  }, [refreshOrders])
   const filteredOrders = useMemo(() => {
     const normalizedSearch = search.trim().toLocaleLowerCase()
 
@@ -81,6 +86,11 @@ export function AdminOrders() {
         </div>
 
         <div className="mt-8 space-y-3">
+          {(loadError || actionError) && (
+            <p role="alert" className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+              {actionError || loadError}
+            </p>
+          )}
           <div className="grid gap-3 rounded-2xl border border-white/10 bg-[#151814] p-4 sm:grid-cols-[1fr_auto]">
             <label>
               <span className="sr-only">جستجوی سفارش‌ها</span>
@@ -168,13 +178,21 @@ export function AdminOrders() {
                   <select
                     value={order.status}
                     onChange={(event) =>
-                      (() => {
+                      {
                         const status = event.target.value as OrderStatus
-                        updateOrderStatus(order.id, status)
-                        setOrders(getOrders())
-                      })()
+                        setActionError("")
+                        setBusyOrderId(order.id)
+                        void updateStatus(order.id, status)
+                          .catch((error: unknown) => {
+                            console.error("تغییر وضعیت سفارش ناموفق بود.", error)
+                            setActionError(error instanceof Error ? error.message : "تغییر وضعیت سفارش انجام نشد.")
+                            void refreshOrders().catch((refreshError: unknown) => console.error("بازیابی سفارش‌ها ناموفق بود.", refreshError))
+                          })
+                          .finally(() => setBusyOrderId(null))
+                      }
                     }
-                    className="h-10 rounded-xl border border-white/10 bg-[#0D0F0D] px-3 text-sm outline-none"
+                    disabled={busyOrderId === order.id}
+                    className="h-10 rounded-xl border border-white/10 bg-[#0D0F0D] px-3 text-sm outline-none disabled:opacity-50"
                   >
                     {(Object.keys(
                       ORDER_STATUS_LABELS,
@@ -212,8 +230,15 @@ export function AdminOrders() {
         onCancel={() => setPendingDelete(null)}
         onConfirm={() => {
           if (pendingDelete) {
-            deleteOrder(pendingDelete.id)
-            setOrders(getOrders())
+            setActionError("")
+            setBusyOrderId(pendingDelete.id)
+            void apiDelete(`/admin/orders/${encodeURIComponent(pendingDelete.id)}`)
+              .then(() => refreshOrders())
+              .catch((error: unknown) => {
+                console.error("حذف سفارش ناموفق بود.", error)
+                setActionError(error instanceof Error ? error.message : "حذف سفارش انجام نشد.")
+              })
+              .finally(() => setBusyOrderId(null))
           }
 
           setPendingDelete(null)

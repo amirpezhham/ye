@@ -11,11 +11,12 @@ import { useProducts } from "@/context/ProductsContext"
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog"
 
 export function AdminProducts() {
-  const { products, removeProduct } = useProducts()
+  const { products, removeProduct, loading, error } = useProducts()
   const [pendingDelete, setPendingDelete] = useState<string | null>(
     null,
   )
   const [search, setSearch] = useState("")
+  const [actionError, setActionError] = useState("")
 
   const productToDelete = products.find(
     (item) => item.id === pendingDelete,
@@ -67,6 +68,11 @@ export function AdminProducts() {
         </div>
 
         <div className="mt-8 overflow-hidden rounded-2xl border border-white/10 bg-[#151814]">
+          {(error || actionError) && (
+            <p role="alert" className="border-b border-red-500/20 bg-red-500/10 px-5 py-3 text-sm text-red-300">
+              {actionError || error}
+            </p>
+          )}
           <div className="border-b border-white/8 px-5 py-4">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <label className="flex-1">
@@ -90,7 +96,8 @@ export function AdminProducts() {
           </div>
 
           <div className="divide-y divide-white/8">
-            {products.length === 0 && (
+            {loading && <div className="p-10 text-center text-white/45">در حال دریافت محصولات...</div>}
+            {!loading && products.length === 0 && !error && (
               <div className="p-10 text-center text-white/45">
                 <Package className="mx-auto size-10 text-white/20" />
                 <p className="mt-3">هنوز محصولی ثبت نشده است.</p>
@@ -102,7 +109,7 @@ export function AdminProducts() {
                 </Link>
               </div>
             )}
-            {products.length > 0 && filteredProducts.length === 0 && (
+            {!loading && products.length > 0 && filteredProducts.length === 0 && (
               <div className="p-10 text-center text-white/45">
                 محصولی با این عبارت پیدا نشد.
               </div>
@@ -170,7 +177,11 @@ export function AdminProducts() {
         onCancel={() => setPendingDelete(null)}
         onConfirm={() => {
           if (pendingDelete) {
-            removeProduct(pendingDelete)
+            setActionError("")
+            void removeProduct(pendingDelete).catch((deleteError: unknown) => {
+              console.error("حذف محصول ناموفق بود.", deleteError)
+              setActionError(deleteError instanceof Error ? deleteError.message : "حذف محصول انجام نشد.")
+            })
           }
 
           setPendingDelete(null)

@@ -11,7 +11,7 @@ import {
 import { Link } from "react-router-dom"
 import { motion } from "motion/react"
 
-import { getCategories } from "@/admin/components/category-storage"
+import { useCategories } from "@/context/CategoriesContext"
 
 const iconPool = [
   Cigarette,
@@ -35,7 +35,7 @@ function formatIndex(index: number) {
 }
 
 export function CategoryShowcase() {
-  const categories = getCategories()
+  const { categories, error } = useCategories()
 
   return (
     <section id="categories" className="px-6 py-20">
@@ -74,6 +74,7 @@ export function CategoryShowcase() {
         </motion.div>
 
 
+        {error && <p role="alert" className="mb-5 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">{error}</p>}
         {/* Category Grid */}
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
 

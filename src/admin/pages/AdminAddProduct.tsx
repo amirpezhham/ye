@@ -9,8 +9,8 @@ export function AdminAddProduct() {
   const navigate = useNavigate()
   const { addProduct } = useProducts()
 
-  function handleSubmit(product: Product) {
-    addProduct(product)
+  async function handleSubmit(product: Product) {
+    await addProduct(product)
     navigate("/admin/products")
   }
 

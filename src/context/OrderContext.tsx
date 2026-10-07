@@ -3,19 +3,17 @@ import {
   useCallback,
   useContext,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react"
 
 import type { CartItem } from "@/context/CartContext"
 import {
-  addOrder as persistAddOrder,
-  getOrders,
   type Order,
   type OrderStatus,
-  updateOrderStatus as persistUpdateOrderStatus,
 } from "@/admin/components/order-storage"
-import { calculateCartSummary } from "@/lib/cart-summary"
+import { apiGet, apiPatch, apiPost } from "@/lib/api"
 
 
 export interface OrderDetails {
@@ -34,9 +32,11 @@ interface OrderContextType {
   placeOrder: (
     details: OrderDetails,
     cartItems: CartItem[],
-  ) => Order
+  ) => Promise<Order>
 
-  updateStatus: (orderId: string, status: OrderStatus) => void
+  updateStatus: (orderId: string, status: OrderStatus) => Promise<void>
+
+  refreshOrders: () => Promise<void>
 
   clearLastOrder: () => void
 }
@@ -51,38 +51,38 @@ export function OrderProvider({
 }: {
   children: ReactNode
 }) {
-  const [orders, setOrders] = useState<Order[]>(() =>
-    getOrders(),
-  )
+  const [orders, setOrders] = useState<Order[]>([])
 
   const [lastOrder, setLastOrder] = useState<Order | null>(
     null,
   )
+  const pendingIdempotencyKey = useRef<string | null>(null)
 
+  const refreshOrders = useCallback(async () => {
+    const savedOrders = await apiGet<Order[]>("/admin/orders")
+    setOrders(savedOrders)
+  }, [])
 
   const placeOrder = useCallback(
-    (
+    async (
       details: OrderDetails,
       cartItems: CartItem[],
-    ) => {
-      const summary = calculateCartSummary(cartItems)
-      const order: Order = {
-        id: `ORD-${crypto.randomUUID()}`,
+    ): Promise<Order> => {
+      const idempotencyKey = pendingIdempotencyKey.current ?? crypto.randomUUID()
+      pendingIdempotencyKey.current = idempotencyKey
+      const order = await apiPost<Order>("/orders", {
         fullName: details.fullName,
         phone: details.phone,
         address: details.address,
         note: details.note,
-        items: cartItems,
-        totalItems: summary.totalItems,
-        totalPrice: summary.total,
-        status: "new",
-        createdAt: Date.now(),
-      }
-
-      persistAddOrder(order)
-      setOrders(getOrders())
+        items: cartItems.map(({ id, quantity }) => ({
+          productId: id,
+          quantity,
+        })),
+      }, { "Idempotency-Key": idempotencyKey })
+      pendingIdempotencyKey.current = null
       setLastOrder(order)
-
+      setOrders((current) => [order, ...current.filter((item) => item.id !== order.id)])
       return order
     },
     [],
@@ -90,9 +90,9 @@ export function OrderProvider({
 
 
   const updateStatus = useCallback(
-    (orderId: string, status: OrderStatus) => {
-      persistUpdateOrderStatus(orderId, status)
-      setOrders(getOrders())
+    async (orderId: string, status: OrderStatus) => {
+      const updated = await apiPatch<Order>(`/admin/orders/${encodeURIComponent(orderId)}`, { status })
+      setOrders((current) => current.map((order) => order.id === orderId ? updated : order))
     },
     [],
   )
@@ -109,6 +109,7 @@ export function OrderProvider({
       lastOrder,
       placeOrder,
       updateStatus,
+      refreshOrders,
       clearLastOrder,
     }),
     [
@@ -116,6 +117,7 @@ export function OrderProvider({
       lastOrder,
       placeOrder,
       updateStatus,
+      refreshOrders,
       clearLastOrder,
     ],
   )

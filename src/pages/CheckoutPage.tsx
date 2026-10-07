@@ -67,7 +67,7 @@ export function CheckoutPage() {
     )
   }
 
-  function handleSubmit(
+  async function handleSubmit(
     event: React.FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault()
@@ -107,21 +107,30 @@ export function CheckoutPage() {
       return
     }
 
+    setError("")
     setIsSubmitting(true)
-
-    const order = placeOrder(
-      {
-        fullName: normalizedName,
-        phone: normalizedPhone,
-        address: normalizedAddress,
-        note: normalizedNote || undefined,
-      },
-      items,
-    )
-
-    clearCart()
-
-    navigate(`/order-success/${order.id}`)
+    try {
+      const order = await placeOrder(
+        {
+          fullName: normalizedName,
+          phone: normalizedPhone,
+          address: normalizedAddress,
+          note: normalizedNote || undefined,
+        },
+        items,
+      )
+      clearCart()
+      navigate(`/order-success/${order.id}`)
+    } catch (submitError) {
+      console.error("ثبت سفارش ناموفق بود.", submitError)
+      setError(
+        submitError instanceof Error
+          ? submitError.message
+          : "ثبت سفارش انجام نشد. لطفاً دوباره تلاش کنید.",
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (

@@ -12,7 +12,7 @@ import { ProductFilters } from "@/components/products/ProductFilters"
 import { ProductGrid } from "@/components/products/ProductGrid"
 import type { Product } from "@/components/products/product-data"
 import { useProducts } from "@/context/ProductsContext"
-import { getCategories } from "@/admin/components/category-storage"
+import { useCategories } from "@/context/CategoriesContext"
 
 const trustItems = [
   { icon: Truck, label: "ارسال سریع در تبریز", hint: "در کمترین زمان" },
@@ -53,10 +53,11 @@ function StoreSection({
 
 export function ProductsPage() {
   const [activeCategory, setActiveCategory] = useState("all")
-  const { products } = useProducts()
+  const { products, error: productsError, loading: productsLoading } = useProducts()
+  const { categories: storedCategories, error: categoriesError } = useCategories()
   const categories = [
     { label: "همه محصولات", value: "all" },
-    ...getCategories().map((category) => ({
+    ...storedCategories.map((category) => ({
       label: category.name,
       value: category.slug,
     })),
@@ -90,7 +91,7 @@ export function ProductsPage() {
     [products],
   )
 
-  const categoryTiles = getCategories()
+  const categoryTiles = storedCategories
 
   return (
     <main
@@ -129,6 +130,11 @@ export function ProductsPage() {
           </motion.p>
         </div>
       </section>
+      {(productsError || categoriesError || productsLoading) && (
+        <p role={productsError || categoriesError ? "alert" : undefined} className={`mx-auto max-w-7xl px-6 py-4 text-sm ${productsError || categoriesError ? "text-red-300" : "text-white/45"}`}>
+          {productsError || categoriesError || "در حال دریافت محصولات..."}
+        </p>
+      )}
 
       {/* Category tiles */}
       <section className="px-4 py-12 sm:px-6 lg:px-8">

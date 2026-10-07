@@ -7,8 +7,7 @@ import {
 } from "lucide-react"
 import { motion } from "motion/react"
 
-import { useMemo } from "react"
-import { getOrders } from "@/admin/components/order-storage"
+import { useOrder } from "@/context/OrderContext"
 
 function formatPrice(price: number) {
   return new Intl.NumberFormat("fa-IR-u-nu-arabext").format(price)
@@ -16,13 +15,8 @@ function formatPrice(price: number) {
 
 export function OrderSuccessPage() {
   const { orderId } = useParams()
-  const order = useMemo(
-    () =>
-      orderId
-        ? getOrders().find((item) => item.id === orderId) ?? null
-        : null,
-    [orderId],
-  )
+  const { lastOrder } = useOrder()
+  const order = orderId && lastOrder?.id === orderId ? lastOrder : null
 
   return (
     <main

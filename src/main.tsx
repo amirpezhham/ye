@@ -13,18 +13,21 @@ import { CartProvider } from "@/context/CartContext"
 import { FavoritesProvider } from "@/context/FavoritesContext"
 import { OrderProvider } from "@/context/OrderContext"
 import { ProductsProvider } from "@/context/ProductsContext"
+import { CategoriesProvider } from "@/context/CategoriesContext"
 
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ProductsProvider>
-      <CartProvider>
-        <FavoritesProvider>
-          <OrderProvider>
-            <App />
-          </OrderProvider>
-        </FavoritesProvider>
-      </CartProvider>
+      <CategoriesProvider>
+        <CartProvider>
+          <FavoritesProvider>
+            <OrderProvider>
+              <App />
+            </OrderProvider>
+          </FavoritesProvider>
+        </CartProvider>
+      </CategoriesProvider>
     </ProductsProvider>
   </StrictMode>,
 )

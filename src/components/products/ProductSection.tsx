@@ -5,18 +5,19 @@ import { motion } from "motion/react"
 import { ProductFilters } from "./ProductFilters"
 import { ProductGrid } from "./ProductGrid"
 import { useProducts } from "@/context/ProductsContext"
-import { getCategories } from "@/admin/components/category-storage"
+import { useCategories } from "@/context/CategoriesContext"
 
 export function ProductSection() {
   const [activeCategory, setActiveCategory] = useState("all")
 
-  const { products } = useProducts()
+  const { products, error: productsError, loading: productsLoading } = useProducts()
+  const { categories: storedCategories } = useCategories()
   const categories = [
     {
       label: "همه محصولات",
       value: "all",
     },
-    ...getCategories().map((category) => ({
+    ...storedCategories.map((category) => ({
       label: category.name,
       value: category.slug,
     })),
@@ -75,6 +76,8 @@ export function ProductSection() {
         </motion.div>
 
         {/* Category filters */}
+        {productsError && <p role="alert" className="mb-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">{productsError}</p>}
+        {productsLoading && <p className="mb-4 text-sm text-white/45">در حال دریافت محصولات...</p>}
         <ProductFilters
           categories={categories}
           activeCategory={activeCategory}
