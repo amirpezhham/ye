@@ -5,7 +5,9 @@ import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: './',
+  // باید «/» باشد (نه './')، وگرنه در مسیرهای تودرتوی SPA مثل /product/xyz
+  // دارایی‌ها نسبت به همان مسیر درخواست می‌شوند و صفحه سفید می‌شود.
+  base: process.env.VITE_BASE_PATH ?? '/',
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -16,7 +18,7 @@ export default defineConfig({
     port: 4173,
     proxy: {
       '/api': {
-        target: 'http://localhost:4000',
+        target: `http://localhost:${process.env.API_PORT ?? 4000}`,
         changeOrigin: true,
       },
     },

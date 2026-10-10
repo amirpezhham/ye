@@ -2,11 +2,17 @@ import { readFile } from "node:fs/promises"
 import { fileURLToPath } from "node:url"
 import pg from "pg"
 
-import { config } from "./config.js"
+import { config, isProduction } from "./config.js"
+
+function resolveSsl() {
+  const mode = config.DATABASE_SSL ?? (isProduction ? "true" : "false")
+  if (mode === "false") return undefined
+  return { rejectUnauthorized: mode === "true" }
+}
 
 export const pool = new pg.Pool({
   connectionString: config.DATABASE_URL,
-  ssl: config.NODE_ENV === "production" ? { rejectUnauthorized: true } : undefined,
+  ssl: resolveSsl(),
   max: 10,
   idleTimeoutMillis: 30_000,
   connectionTimeoutMillis: 5_000,
