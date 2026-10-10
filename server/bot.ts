@@ -129,15 +129,19 @@ export const HELP_TEXT = [
   "/start admin_<کد اتصال>",
 ].join("\n")
 
-/** شناسهٔ سفارش را از متن کاربر بیرون می‌کشد (هم ORD-xxx و هم uuid تنها). */
+/**
+ * شناسهٔ سفارش را از متن کاربر بیرون می‌کشد.
+ * عمداً «در هر جای متن» جست‌وجو می‌کند تا اگر کاربر شماره را همراه با
+ * توضیح یا کپی‌کردن کل لینک فرستاد هم پیدا شود.
+ */
 function extractOrderId(text: string): string | null {
-  const trimmed = text.trim().replace(/^order_/i, "")
+  const normalized = text.trim().replace(/^order_/i, "")
 
-  const withPrefix = /^(ORD-[0-9a-fA-F-]{8,})$/i.exec(trimmed)
+  const withPrefix = /(ORD-[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/i.exec(normalized)
   if (withPrefix) return withPrefix[1]
 
-  const bareUuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.exec(trimmed)
-  if (bareUuid) return `ORD-${trimmed}`
+  const bareUuid = /([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})/.exec(normalized)
+  if (bareUuid) return `ORD-${bareUuid[1].toLowerCase()}`
 
   return null
 }
@@ -334,11 +338,26 @@ export async function handleTelegramUpdate(update: TelegramUpdate): Promise<void
     return
   }
 
-  // اگر کاربر فقط شمارهٔ سفارش را فرستاده باشد، همان را نشان بده.
+  // اگر کاربر شمارهٔ سفارش را فرستاده باشد، همان را نشان بده.
   const typedOrderId = extractOrderId(message.text)
   if (typedOrderId) {
     await showOrderConfirmation(message.chat.id, typedOrderId)
+    return
   }
+
+  // پیام نامفهوم نباید بی‌پاسخ بماند؛ وگرنه کاربر فکر می‌کند ربات خراب است.
+  await sendMessage(
+    message.chat.id,
+    [
+      "متوجه نشدم 🤔",
+      "",
+      "برای دیدن دکمهٔ «✅ تأیید سفارش»، شمارهٔ سفارش را بفرستید.",
+      "شمارهٔ سفارش در صفحهٔ «سفارش ثبت شد» سایت، و چیزی شبیه این است:",
+      "ORD-019fbdd6-c258-4c1e-b89f-8aae20a71c9d",
+      "",
+      "برای دیدن همهٔ امکانات /help را بزنید.",
+    ].join("\n"),
+  )
 }
 
 async function pollOnce() {
