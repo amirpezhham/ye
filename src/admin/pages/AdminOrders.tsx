@@ -161,6 +161,12 @@ export function AdminOrders() {
                     >
                       {ORDER_STATUS_LABELS[order.status]}
                     </span>
+
+                    {order.telegramConfirmedAt && (
+                      <span className="rounded-full bg-[#29A9EB]/15 px-3 py-1 text-xs font-bold text-[#29A9EB]">
+                        تأیید در تلگرام ✅
+                      </span>
+                    )}
                   </div>
 
                   <p className="mt-2 text-sm text-white/70">

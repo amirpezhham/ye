@@ -74,7 +74,25 @@ function mapOrder(row: Record<string, unknown>) {
   }
 }
 
-async function fetchOrder(client: Pool | PoolClient, orderId: string) {
+/**
+ * نگاشت مخصوص پنل ادمین.
+ * اطلاعات تلگرام (شناسهٔ چت و زمان تأیید) فقط در پاسخ‌های ادمین برمی‌گردد و
+ * هرگز در پاسخ عمومی «ثبت سفارش» قرار نمی‌گیرد.
+ */
+function mapAdminOrder(row: Record<string, unknown>) {
+  return {
+    ...mapOrder(row),
+    telegramChatId:
+      row.telegram_chat_id === null || row.telegram_chat_id === undefined
+        ? undefined
+        : String(row.telegram_chat_id),
+    telegramConfirmedAt: row.telegram_confirmed_at
+      ? new Date(String(row.telegram_confirmed_at)).getTime()
+      : undefined,
+  }
+}
+
+async function fetchOrder(client: Pool | PoolClient, orderId: string, forAdmin = false) {
   const result = await client.query(
     `SELECT o.*,
        COALESCE(jsonb_agg(oi.data ORDER BY oi.id) FILTER (WHERE oi.id IS NOT NULL), '[]'::jsonb) AS items
@@ -84,7 +102,8 @@ async function fetchOrder(client: Pool | PoolClient, orderId: string) {
      GROUP BY o.id`,
     [orderId],
   )
-  return result.rows[0] ? mapOrder(result.rows[0]) : null
+  if (!result.rows[0]) return null
+  return forAdmin ? mapAdminOrder(result.rows[0]) : mapOrder(result.rows[0])
 }
 
 async function withTransaction<T>(operation: (client: import("pg").PoolClient) => Promise<T>) {
@@ -651,13 +670,13 @@ apiRouter.get("/admin/orders", async (_request, response) => {
      WHERE o.deleted_at IS NULL
      GROUP BY o.id ORDER BY o.created_at DESC`,
   )
-  response.json(result.rows.map(mapOrder))
+  response.json(result.rows.map(mapAdminOrder))
 })
 
 apiRouter.get("/admin/orders/:id", async (request, response) => {
   const id = parsed(idSchema, request.params.id, response)
   if (!id) return
-  const order = await fetchOrder(pool, id)
+  const order = await fetchOrder(pool, id, true)
   if (!order) {
     response.status(404).json({ error: { code: "ORDER_NOT_FOUND", message: "سفارش پیدا نشد." } })
     return
@@ -702,7 +721,7 @@ apiRouter.patch("/admin/orders/:id", async (request, response) => {
         }
       }
       await client.query("UPDATE orders SET status=$1 WHERE id=$2", [input.status, id])
-      return await fetchOrder(client as unknown as typeof pool, id)
+      return await fetchOrder(client as unknown as typeof pool, id, true)
     })
     if (!updated) {
       response.status(404).json({ error: { code: "ORDER_NOT_FOUND", message: "سفارش پیدا نشد." } })

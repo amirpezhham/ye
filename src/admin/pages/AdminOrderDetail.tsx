@@ -82,6 +82,34 @@ export function AdminOrderDetail() {
                 timeStyle: "short",
               }).format(new Date(order.createdAt))}
             </p>
+
+            {order.telegramConfirmedAt ? (
+              <div className="mt-4 rounded-xl border border-[#29A9EB]/30 bg-[#29A9EB]/10 px-4 py-3 text-sm">
+                <p className="font-bold text-[#29A9EB]">
+                  ✅ مشتری این سفارش را در تلگرام تأیید کرده است
+                </p>
+                <p className="mt-1 text-xs text-white/50">
+                  زمان تأیید:{" "}
+                  {new Intl.DateTimeFormat("fa-IR-u-nu-arabext", {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                  }).format(new Date(order.telegramConfirmedAt))}
+                  {order.telegramChatId ? ` • شناسهٔ تلگرام: ${order.telegramChatId}` : ""}
+                </p>
+                {order.telegramChatId && (
+                  <a
+                    href={`tg://user?id=${order.telegramChatId}`}
+                    className="mt-2 inline-block text-xs font-bold text-[#29A9EB] underline"
+                  >
+                    باز کردن پروفایل تلگرام مشتری
+                  </a>
+                )}
+              </div>
+            ) : (
+              <p className="mt-4 text-xs text-white/30">
+                این سفارش هنوز در تلگرام تأیید نشده است.
+              </p>
+            )}
           </div>
 
           <div className="flex items-center gap-2">

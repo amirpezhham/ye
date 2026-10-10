@@ -30,6 +30,9 @@ export interface Order {
   totalPrice: number
   status: OrderStatus
   createdAt: number
+  /** فقط در پاسخ‌های پنل ادمین پر می‌شود، نه در پاسخ عمومی ثبت سفارش. */
+  telegramChatId?: string
+  telegramConfirmedAt?: number
 }
 
 const STORAGE_KEY = "ye-dood-orders"

@@ -249,7 +249,7 @@ async function handleCallback(query: TelegramCallbackQuery) {
     `UPDATE orders
      SET telegram_confirmed_at = COALESCE(telegram_confirmed_at, NOW()), telegram_chat_id = $2
      WHERE id = $1 AND deleted_at IS NULL
-     RETURNING id, full_name, total_price, total_items`,
+     RETURNING id, full_name, phone, total_price, total_items`,
     [orderId, chatId],
   )
   const order = result.rows[0]
@@ -278,16 +278,30 @@ async function handleCallback(query: TelegramCallbackQuery) {
     }
   }
 
+  // هویت تأییدکننده در تلگرام؛ فقط برای ادمین‌های ثبت‌شده فرستاده می‌شود
+  // و هیچ‌گاه در APIهای عمومی یا فروشگاه نمایش داده نمی‌شود.
+  const chatInfo = await pool.query(
+    "SELECT username, first_name FROM telegram_chats WHERE chat_id = $1",
+    [chatId],
+  )
+  const chat = chatInfo.rows[0]
+
+  const lines = [
+    "✅ مشتری سفارش را در تلگرام تأیید کرد",
+    "",
+    `شماره سفارش: ${order.id}`,
+    `نام مشتری: ${order.full_name}`,
+    `تلفن: ${order.phone}`,
+    `مبلغ کل: ${formatNumber(Number(order.total_price))} تومان`,
+    "",
+    "👤 تأییدکننده در تلگرام:",
+  ]
+  if (chat?.username) lines.push(`@${chat.username}`)
+  if (chat?.first_name) lines.push(`نام پروفایل: ${chat.first_name}`)
+  lines.push(`شناسهٔ تلگرام: ${chatId}`)
+
   try {
-    await notifyAdmins(
-      [
-        "✅ مشتری سفارش را در تلگرام تأیید کرد",
-        "",
-        `شماره سفارش: ${order.id}`,
-        `نام مشتری: ${order.full_name}`,
-        `مبلغ کل: ${formatNumber(Number(order.total_price))} تومان`,
-      ].join("\n"),
-    )
+    await notifyAdmins(lines.join("\n"))
   } catch (error) {
     console.error("اعلان تأیید سفارش به ادمین‌ها ناموفق بود:", error)
   }
