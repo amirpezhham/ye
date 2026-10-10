@@ -7,6 +7,7 @@ import {
   getUpdates,
   resolveBotUsername,
   sendMessage,
+  setMyCommands,
   setWebhook,
   type TelegramCallbackQuery,
   type TelegramMessage,
@@ -111,27 +112,71 @@ async function rememberChat(message: TelegramMessage) {
   )
 }
 
+export const HELP_TEXT = [
+  "📋 امکانات ربات یه دود ۲ دود",
+  "",
+  "🔹 /start — شروع کار با ربات",
+  "🔹 /help — نمایش همین راهنما",
+  "🔹 /order — مشاهده و تأیید یک سفارش",
+  "🔹 /id — نمایش شناسهٔ چت شما",
+  "",
+  "🛒 برای مشتریان:",
+  "بعد از ثبت سفارش در سایت، شمارهٔ سفارش (چیزی مثل ORD-...) را همین‌جا بفرستید",
+  "یا از دستور /order استفاده کنید تا دکمهٔ «✅ تأیید سفارش» برایتان بیاید.",
+  "",
+  "🔔 برای ادمین‌ها:",
+  "برای دریافت اعلان سفارش‌ها، کد اتصال را از پنل ادمین → تنظیمات بردارید و بفرستید:",
+  "/start admin_<کد اتصال>",
+].join("\n")
+
+/** شناسهٔ سفارش را از متن کاربر بیرون می‌کشد (هم ORD-xxx و هم uuid تنها). */
+function extractOrderId(text: string): string | null {
+  const trimmed = text.trim().replace(/^order_/i, "")
+
+  const withPrefix = /^(ORD-[0-9a-fA-F-]{8,})$/i.exec(trimmed)
+  if (withPrefix) return withPrefix[1]
+
+  const bareUuid = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.exec(trimmed)
+  if (bareUuid) return `ORD-${trimmed}`
+
+  return null
+}
+
 function welcomeText(chatId: number) {
   return [
     "سلام! 👋 به ربات یه دود ۲ دود خوش آمدید.",
     "",
     "این ربات برای پیگیری و تأیید سفارش‌هاست.",
-    "اگر سفارش تازه‌ای ثبت کرده‌اید، از دکمهٔ «تکمیل سفارش در تلگرام» در صفحهٔ سفارش استفاده کنید.",
+    "برای دیدن لیست امکانات، دستور /help را بفرستید.",
+    "",
+    "اگر سفارش تازه‌ای ثبت کرده‌اید، شمارهٔ سفارش را همین‌جا بفرستید",
+    "تا دکمهٔ «✅ تأیید سفارش» برایتان بیاید.",
     "",
     `شناسهٔ چت شما: ${chatId}`,
   ].join("\n")
 }
 
 async function showOrderConfirmation(chatId: number, orderId: string) {
-  const result = await pool.query(
-    `SELECT id, full_name, phone, total_items, total_price, status, telegram_confirmed_at
-     FROM orders WHERE id = $1 AND deleted_at IS NULL`,
+  const columns = "id, full_name, phone, total_items, total_price, status, telegram_confirmed_at"
+
+  // ابتدا تطبیق دقیق (استفاده از ایندکس کلید اصلی)، سپس تطبیق بدون حساسیت به حروف.
+  let result = await pool.query(
+    `SELECT ${columns} FROM orders WHERE id = $1 AND deleted_at IS NULL`,
     [orderId],
   )
+  if (!result.rows[0]) {
+    result = await pool.query(
+      `SELECT ${columns} FROM orders WHERE LOWER(id) = LOWER($1) AND deleted_at IS NULL`,
+      [orderId],
+    )
+  }
   const order = result.rows[0]
 
   if (!order) {
-    await sendMessage(chatId, "سفارشی با این شماره پیدا نشد. لطفاً شمارهٔ سفارش را بررسی کنید.")
+    await sendMessage(
+      chatId,
+      "سفارشی با این شماره پیدا نشد.\nشمارهٔ سفارش با ORD- شروع می‌شود؛ آن را از صفحهٔ «سفارش ثبت شد» در سایت بردارید.",
+    )
     return
   }
 
@@ -267,8 +312,32 @@ export async function handleTelegramUpdate(update: TelegramUpdate): Promise<void
     return
   }
 
+  if (command === "/help" || command.startsWith("/help@")) {
+    await sendMessage(message.chat.id, HELP_TEXT)
+    return
+  }
+
+  if (command === "/order" || command.startsWith("/order@")) {
+    if (payload) {
+      await showOrderConfirmation(message.chat.id, payload)
+    } else {
+      await sendMessage(
+        message.chat.id,
+        "شمارهٔ سفارش را کنار دستور بنویسید:\n\n/order ORD-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+      )
+    }
+    return
+  }
+
   if (command === "/id" || command.startsWith("/id@")) {
     await sendMessage(message.chat.id, `شناسهٔ چت شما: ${message.chat.id}`)
+    return
+  }
+
+  // اگر کاربر فقط شمارهٔ سفارش را فرستاده باشد، همان را نشان بده.
+  const typedOrderId = extractOrderId(message.text)
+  if (typedOrderId) {
+    await showOrderConfirmation(message.chat.id, typedOrderId)
   }
 }
 
@@ -303,6 +372,18 @@ export async function startTelegramBot(): Promise<void> {
   } catch (error) {
     console.error("ارتباط با Bot API برقرار نشد:", error)
     return
+  }
+
+  // منوی دستورات؛ تلگرام آن را به‌صورت دکمهٔ «☰» کنار فیلد پیام نشان می‌دهد.
+  try {
+    await setMyCommands([
+      { command: "start", description: "شروع کار با ربات" },
+      { command: "help", description: "لیست امکانات ربات" },
+      { command: "order", description: "مشاهده و تأیید سفارش" },
+      { command: "id", description: "نمایش شناسهٔ چت" },
+    ])
+  } catch (error) {
+    console.error("ثبت منوی دستورات ربات ناموفق بود:", error)
   }
 
   if (useTelegramWebhook) {

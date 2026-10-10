@@ -122,6 +122,16 @@ export function deleteWebhook() {
   return callTelegram("deleteWebhook", { drop_pending_updates: false })
 }
 
+export interface BotCommand {
+  command: string
+  description: string
+}
+
+/** ثبت منوی دستورات؛ تلگرام آن را به‌صورت دکمهٔ «☰» کنار فیلد پیام نشان می‌دهد. */
+export function setMyCommands(commands: BotCommand[]) {
+  return callTelegram("setMyCommands", { commands })
+}
+
 export function getUpdates(offset: number) {
   return callTelegram<TelegramUpdate[]>("getUpdates", {
     offset,
