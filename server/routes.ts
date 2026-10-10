@@ -1,10 +1,12 @@
-import { randomUUID } from "node:crypto"
+import { randomUUID, timingSafeEqual } from "node:crypto"
 import bcrypt from "bcryptjs"
 import { Router, type Response } from "express"
 import type { Pool, PoolClient } from "pg"
 import rateLimit from "express-rate-limit"
 import { z } from "zod"
 
+import { handleTelegramUpdate, publicBotUsername } from "./bot.js"
+import { config, telegramAdminCode, useTelegramWebhook } from "./config.js"
 import { pool } from "./db.js"
 import {
   type AuthenticatedRequest,
@@ -299,6 +301,38 @@ apiRouter.get("/posts/:slug", async (request, response) => {
     return
   }
   response.json(result.rows[0].data)
+})
+
+/**
+ * وبهوک تلگرام. اگر TELEGRAM_WEBHOOK_URL تنظیم شده باشد، تلگرام آپدیت‌ها را
+ * به این مسیر می‌فرستد (به‌جای long-polling).
+ */
+apiRouter.post("/telegram/webhook", async (request, response) => {
+  if (!useTelegramWebhook || !config.TELEGRAM_WEBHOOK_SECRET) {
+    response.status(404).json({ error: { code: "NOT_FOUND", message: "وبهوک فعال نیست." } })
+    return
+  }
+
+  const provided = Buffer.from(request.get("x-telegram-bot-api-secret-token") ?? "")
+  const expected = Buffer.from(config.TELEGRAM_WEBHOOK_SECRET)
+  if (provided.length !== expected.length || !timingSafeEqual(provided, expected)) {
+    response.status(401).json({ error: { code: "UNAUTHORIZED", message: "درخواست نامعتبر است." } })
+    return
+  }
+
+  // تلگرام منتظر پاسخ سریع است؛ پردازش خطا نباید باعث تکرار بی‌پایان شود.
+  try {
+    await handleTelegramUpdate(request.body)
+  } catch (error) {
+    console.error("پردازش آپدیت وبهوک تلگرام ناموفق بود:", error)
+  }
+  response.status(200).json({ ok: true })
+})
+
+/** اطلاعات عمومی ربات برای ساخت دکمهٔ «تکمیل سفارش در تلگرام» در فروشگاه. */
+apiRouter.get("/settings/telegram", async (_request, response) => {
+  const botUsername = await publicBotUsername()
+  response.json({ enabled: Boolean(botUsername), botUsername })
 })
 
 apiRouter.get("/settings/:key", async (request, response) => {
@@ -739,4 +773,38 @@ apiRouter.get("/admin/customers", async (_request, response) => {
     totalSpent: Number(row.total_spent),
     lastOrderAt: new Date(String(row.last_order_at)).getTime(),
   })))
+})
+
+apiRouter.get("/admin/telegram", async (_request, response) => {
+  const botUsername = await publicBotUsername()
+  const result = await pool.query(
+    `SELECT chat_id, username, first_name, is_admin, started_at, last_seen_at
+     FROM telegram_chats ORDER BY is_admin DESC, last_seen_at DESC LIMIT 100`,
+  )
+
+  response.json({
+    enabled: Boolean(botUsername),
+    botUsername,
+    // کد اتصال ادمین؛ از SESSION_SECRET مشتق می‌شود و فقط در پنل نمایش داده می‌شود.
+    adminCode: telegramAdminCode(),
+    webhookMode: useTelegramWebhook,
+    chats: result.rows.map((row) => ({
+      chatId: String(row.chat_id),
+      username: row.username,
+      firstName: row.first_name,
+      isAdmin: row.is_admin,
+      startedAt: new Date(String(row.started_at)).getTime(),
+      lastSeenAt: new Date(String(row.last_seen_at)).getTime(),
+    })),
+  })
+})
+
+apiRouter.delete("/admin/telegram/chats/:chatId", async (request, response) => {
+  const chatId = Number(request.params.chatId)
+  if (!Number.isSafeInteger(chatId)) {
+    response.status(400).json({ error: { code: "INVALID_CHAT_ID", message: "شناسهٔ چت معتبر نیست." } })
+    return
+  }
+  await pool.query("DELETE FROM telegram_chats WHERE chat_id = $1", [chatId])
+  response.status(204).end()
 })

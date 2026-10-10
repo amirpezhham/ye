@@ -9,6 +9,7 @@ import express, { type ErrorRequestHandler } from "express"
 import rateLimit from "express-rate-limit"
 import helmet from "helmet"
 
+import { startTelegramBot, stopTelegramBot } from "./bot.js"
 import { config, httpsEnabled, shouldServeStatic, trustProxy } from "./config.js"
 import { pool } from "./db.js"
 import { startOutboxWorker, stopOutboxWorker } from "./outbox.js"
@@ -196,6 +197,9 @@ const onListening = () => {
     console.info("FORCE_HTTPS فعال است؛ درخواست‌های HTTP به HTTPS هدایت می‌شوند.")
   }
   startOutboxWorker()
+  void startTelegramBot().catch((error: unknown) => {
+    console.error("راه‌اندازی ربات تلگرام ناموفق بود:", error)
+  })
 }
 
 // اگر فایل گواهی و کلید تنظیم شده باشد، خود Express روی HTTPS بالا می‌آید
@@ -215,6 +219,7 @@ const server = httpsEnabled
 async function shutdown(signal: string) {
   console.info(`${signal} received; shutting down API.`)
   stopOutboxWorker()
+  stopTelegramBot()
   server.close(async (error) => {
     if (error) {
       console.error("Failed to close API server:", error)

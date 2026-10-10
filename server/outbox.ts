@@ -1,17 +1,17 @@
 import { pool } from "./db.js"
 import { config } from "./config.js"
-import { sendOrderNotification } from "./telegram.js"
+import { notifyAdminsNewOrder } from "./bot.js"
 
 let timer: NodeJS.Timeout | undefined
 let running = false
 
 async function deliverPendingNotification() {
-  if (running || !config.TELEGRAM_BOT_TOKEN || !config.TELEGRAM_CHAT_ID) return
+  if (running || !config.TELEGRAM_BOT_TOKEN) return
   running = true
 
   try {
     const client = await pool.connect()
-    let message: { id: number; order_id: string; attempts: number; payload: Parameters<typeof sendOrderNotification>[0] } | undefined
+    let message: { id: number; order_id: string; attempts: number; payload: Parameters<typeof notifyAdminsNewOrder>[0] } | undefined
     try {
       await client.query("BEGIN")
       const result = await client.query(
@@ -39,7 +39,7 @@ async function deliverPendingNotification() {
 
     if (!message) return
     try {
-      await sendOrderNotification(message.payload)
+      await notifyAdminsNewOrder(message.payload)
       await pool.query(
         "UPDATE notification_outbox SET sent_at=NOW(), last_error=NULL WHERE id=$1",
         [message.id],
@@ -64,8 +64,8 @@ async function deliverPendingNotification() {
 }
 
 export function startOutboxWorker() {
-  if (!config.TELEGRAM_BOT_TOKEN || !config.TELEGRAM_CHAT_ID) {
-    console.info("Telegram notifications are disabled; configure both Telegram environment variables to enable them.")
+  if (!config.TELEGRAM_BOT_TOKEN) {
+    console.info("اعلان تلگرام غیرفعال است؛ TELEGRAM_BOT_TOKEN تنظیم نشده است.")
     return
   }
   timer = setInterval(() => {

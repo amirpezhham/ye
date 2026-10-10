@@ -1,4 +1,6 @@
 import "dotenv/config"
+import { createHmac } from "node:crypto"
+
 import { z } from "zod"
 
 const environmentSchema = z.object({
@@ -15,7 +17,16 @@ const environmentSchema = z.object({
   SESSION_SECRET: z.string().min(32),
   ADMIN_SESSION_HOURS: z.coerce.number().int().min(1).max(168).default(12),
   TELEGRAM_BOT_TOKEN: z.string().optional(),
+  // چت پیش‌فرض برای اعلان سفارش (عددی مثل -1001234567890 یا @channelusername).
+  // ادمین‌های ثبت‌شده از طریق ربات هم به‌صورت خودکار به این فهرست اضافه می‌شوند.
   TELEGRAM_CHAT_ID: z.string().optional(),
+  // یوزرنیم ربات بدون @؛ اگر خالی باشد از getMe خوانده می‌شود.
+  TELEGRAM_BOT_USERNAME: z.string().optional(),
+  // کد اتصال ادمین. اگر تنظیم نشود از SESSION_SECRET مشتق می‌شود تا پایدار و محرمانه بماند.
+  TELEGRAM_ADMIN_CODE: z.string().min(6).optional(),
+  // حالت وبهوک (اختیاری). در نبودش ربات با long-polling کار می‌کند.
+  TELEGRAM_WEBHOOK_URL: z.string().url().optional(),
+  TELEGRAM_WEBHOOK_SECRET: z.string().min(8).optional(),
   // سرو کردن خروجی بیلد فرانت‌اند از خود Express (تک‌سرویسی روی هاست).
   SERVE_STATIC: z
     .enum(["true", "false"])
@@ -65,3 +76,17 @@ export const isProduction = parsed.NODE_ENV === "production"
 export const shouldServeStatic = parsed.SERVE_STATIC
 export const trustProxy = resolveTrustProxy(parsed.TRUST_PROXY)
 export const httpsEnabled = Boolean(parsed.TLS_CERT_FILE && parsed.TLS_KEY_FILE)
+export const telegramEnabled = Boolean(parsed.TELEGRAM_BOT_TOKEN)
+export const useTelegramWebhook = Boolean(parsed.TELEGRAM_WEBHOOK_URL && parsed.TELEGRAM_WEBHOOK_SECRET)
+
+/**
+ * کد اتصال ادمین به ربات.
+ * اگر TELEGRAM_ADMIN_CODE تنظیم نشده باشد، از SESSION_SECRET مشتق می‌شود؛
+ * بنابراین بدون دسترسی به محیط سرور قابل حدس‌زدن نیست و با تغییر
+ * SESSION_SECRET خودبه‌خود عوض می‌شود.
+ */
+export function telegramAdminCode(): string {
+  if (parsed.TELEGRAM_ADMIN_CODE) return parsed.TELEGRAM_ADMIN_CODE
+  const digest = createHmac("sha256", parsed.SESSION_SECRET).update("telegram-admin-code").digest("hex")
+  return digest.slice(0, 12).toUpperCase()
+}

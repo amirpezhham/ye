@@ -1,13 +1,28 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { ArrowRight, Database, Save } from "lucide-react"
-import { apiPatch, apiPost } from "@/lib/api"
+import { ArrowRight, Database, Save, Send } from "lucide-react"
+import { apiDelete, apiGet, apiPatch, apiPost } from "@/lib/api"
 import { getProducts } from "@/admin/components/product-storage"
 import { getCategories } from "@/admin/components/category-storage"
 import { getPosts } from "@/admin/components/post-storage"
 import { getOrders } from "@/admin/components/order-storage"
 import { getSeoSettings } from "@/admin/components/seo-storage"
 import { getAboutContent } from "@/admin/components/content-storage"
+
+interface TelegramChatInfo {
+  chatId: string
+  username: string | null
+  firstName: string | null
+  isAdmin: boolean
+}
+
+interface TelegramAdminInfo {
+  enabled: boolean
+  botUsername: string | null
+  adminCode: string
+  webhookMode: boolean
+  chats: TelegramChatInfo[]
+}
 
 export function AdminSettings() {
   const navigate = useNavigate()
@@ -20,6 +35,37 @@ export function AdminSettings() {
   } | null>(null)
   const [migrationResult, setMigrationResult] = useState("")
   const [isMigrating, setIsMigrating] = useState(false)
+  const [telegram, setTelegram] = useState<TelegramAdminInfo | null>(null)
+  const [telegramError, setTelegramError] = useState("")
+
+  useEffect(() => {
+    let active = true
+    void apiGet<TelegramAdminInfo>("/admin/telegram")
+      .then((info) => {
+        if (active) setTelegram(info)
+      })
+      .catch((error: unknown) => {
+        console.error("دریافت وضعیت ربات تلگرام ناموفق بود.", error)
+        if (active) {
+          setTelegramError(error instanceof Error ? error.message : "دریافت وضعیت ربات ناموفق بود.")
+        }
+      })
+    return () => {
+      active = false
+    }
+  }, [])
+
+  async function removeTelegramChat(chatId: string) {
+    try {
+      await apiDelete(`/admin/telegram/chats/${encodeURIComponent(chatId)}`)
+      setTelegram((current) =>
+        current ? { ...current, chats: current.chats.filter((chat) => chat.chatId !== chatId) } : current,
+      )
+    } catch (error) {
+      console.error("حذف چت تلگرام ناموفق بود.", error)
+      setTelegramError(error instanceof Error ? error.message : "حذف چت ناموفق بود.")
+    }
+  }
 
   async function handleLocalDataMigration() {
     setMigrationResult("")
@@ -141,6 +187,96 @@ export function AdminSettings() {
               <p role="status" className="mt-4 rounded-xl border border-white/10 bg-[#0D0F0D] px-4 py-3 text-sm leading-6 text-white/70">
                 {migrationResult}
               </p>
+            )}
+          </section>
+
+          <section className="rounded-2xl border border-white/10 bg-[#151814] p-6">
+            <h2 className="flex items-center gap-2 text-lg font-black">
+              <Send className="size-5 text-[#29A9EB]" />
+              ربات تلگرام
+            </h2>
+
+            {telegramError && (
+              <p className="mt-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+                {telegramError}
+              </p>
+            )}
+
+            {!telegram ? (
+              <p className="mt-3 text-sm text-white/40">در حال بارگذاری...</p>
+            ) : !telegram.enabled ? (
+              <p className="mt-3 text-sm leading-7 text-white/50">
+                ربات غیرفعال است. برای فعال‌سازی، مقدار <code>TELEGRAM_BOT_TOKEN</code> را در فایل
+                {" "}
+                <code>.env</code> سرور تنظیم و سرویس را دوباره اجرا کنید.
+              </p>
+            ) : (
+              <>
+                <p className="mt-3 text-sm leading-7 text-white/50">
+                  ربات: <span className="font-bold text-white">@{telegram.botUsername}</span>
+                  {"  |  "}
+                  حالت اتصال: {telegram.webhookMode ? "وبهوک" : "polling"}
+                </p>
+
+                <div className="mt-4 rounded-xl border border-white/10 bg-[#0D0F0D] p-4">
+                  <p className="text-sm font-bold text-white/70">
+                    دریافت اعلان سفارش‌ها در تلگرام
+                  </p>
+
+                  <p className="mt-2 text-sm leading-7 text-white/50">
+                    ربات را در تلگرام باز کنید و این پیام را بفرستید:
+                  </p>
+
+                  <code
+                    dir="ltr"
+                    className="mt-2 block rounded-lg bg-black/40 px-3 py-2 text-left text-sm text-[#D9E600]"
+                  >
+                    /start admin_{telegram.adminCode}
+                  </code>
+
+                  <p className="mt-2 text-xs leading-6 text-white/40">
+                    پس از ثبت، هر سفارش جدید به همان چت اعلام می‌شود. این کد از
+                    {" "}
+                    <code>SESSION_SECRET</code>
+                    {" "}
+                    مشتق می‌شود، بنابراین با تغییر آن کد هم عوض می‌گردد.
+                  </p>
+                </div>
+
+                <div className="mt-4">
+                  <p className="text-sm font-bold text-white/70">
+                    چت‌های ادمین ({telegram.chats.filter((chat) => chat.isAdmin).length})
+                  </p>
+
+                  {telegram.chats.filter((chat) => chat.isAdmin).length === 0 ? (
+                    <p className="mt-2 text-sm text-white/40">
+                      هنوز چتی به عنوان ادمین ثبت نشده است.
+                    </p>
+                  ) : (
+                    <ul className="mt-2 space-y-2">
+                      {telegram.chats
+                        .filter((chat) => chat.isAdmin)
+                        .map((chat) => (
+                          <li
+                            key={chat.chatId}
+                            className="flex items-center justify-between gap-3 rounded-xl border border-white/10 px-4 py-2 text-sm"
+                          >
+                            <span className="truncate">
+                              {chat.firstName ?? chat.username ?? chat.chatId}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => void removeTelegramChat(chat.chatId)}
+                              className="shrink-0 text-xs text-red-300 transition hover:text-red-200"
+                            >
+                              حذف
+                            </button>
+                          </li>
+                        ))}
+                    </ul>
+                  )}
+                </div>
+              </>
             )}
           </section>
 

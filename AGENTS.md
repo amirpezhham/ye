@@ -65,5 +65,11 @@
 - **اسکریپت‌های جدید:** `dev:all`، `build:all`، `start`.
 - **مستندات:** `docs/deployment.md` (استقرار روی هاست) و `docs/local-dev-runbook.md` (عیب‌یابی ۵۰۲ + اجرای محلی + راه‌اندازی پستگرس بدون root).
 - **پورت:** اگر هاست متغیر `PORT` تزریق کند، همان استفاده می‌شود؛ در غیر این صورت `API_PORT` (پیش‌فرض ۴۰۰۰).
+- **ربات تلگرام (پیاده‌شده):** `server/telegram.ts` (کلاینت Bot API) + `server/bot.ts` (منطق ربات). دو قابلیت: (۱) اعلان سفارش جدید به چت ادمین‌های ثبت‌شده، (۲) «تکمیل سفارش در تلگرام» با deep-link `t.me/<bot>?start=order_<id>` و دکمهٔ inline «✅ تأیید سفارش» که `orders.telegram_confirmed_at` را پر می‌کند و ادمین را باخبر می‌کند.
+- **ثبت ادمین بدون دست‌کاری `.env`:** جدول `telegram_chats` + کد اتصال مشتق‌شده از `SESSION_SECRET` (نمایش در پنل ادمین → تنظیمات). ادمین پیام `/start admin_<CODE>` را به ربات می‌فرستد.
+- **نکتهٔ مهم:** یوزرنیم خودِ ربات (`@yedood2doodbot`) **chat_id نیست**؛ تلگرام خطای `Forbidden: the bot can't send messages to the bot` می‌دهد. `TELEGRAM_CHAT_ID` فقط شناسهٔ عددی می‌پذیرد و در حالت عادی لازم نیست.
+- **حالت اتصال:** پیش‌فرض long-polling (بدون نیاز به دامنه)؛ با تنظیم `TELEGRAM_WEBHOOK_URL` + `TELEGRAM_WEBHOOK_SECRET` به وبهوک روی `/api/telegram/webhook` سوییچ می‌کند.
+- **تست منطق ربات بدون چت واقعی:** با tsx و `handleTelegramUpdate` می‌توان آپدیت ساختگی تزریق کرد و اثرهای دیتابیسی (ثبت چت ادمین، پر شدن `telegram_confirmed_at`) را بررسی کرد؛ فقط ارسال پیام به چت ساختگی با `chat not found` شکست می‌خورد.
+- **نکتهٔ امنیتی باز:** توکن ربات در چت افشا شده بود؛ باید از BotFather با `/revoke` توکن جدید گرفته و در `.env` جایگزین شود.
 - **HTTPS و ورود ادمین:** کوکی نشست در production پرچم `Secure` دارد، پس **HTTPS اجباری** است (روی HTTP ساده، ورود ۲۰۰ می‌گیرد ولی کوکی ذخیره نمی‌شود و درخواست بعدی ۴۰۱ می‌شود). گزینه‌ها: `FORCE_HTTPS=true` برای هدایت HTTP→HTTPS (استثنای `GET /api/health`)، `TRUST_PROXY` (پیش‌فرض در production = ۱ هاپ) و اجرای مستقیم TLS با `TLS_CERT_FILE`/`TLS_KEY_FILE`. هدر HSTS فقط روی اتصال امن فرستاده می‌شود. تست محلی: `npm run tls:self-signed` (گواهی در `.certs/` که gitignore است).
 - **کد مردهٔ حذف‌شده:** `src/admin/components/auth-storage.ts` (احراز هویت قدیمی مبتنی بر `localStorage` با رمز پیش‌فرض `admin123`) حذف شد — هیچ ماژولی آن را import نمی‌کرد و منبع سردرگمی امنیتی بود.

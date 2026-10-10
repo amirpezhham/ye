@@ -91,3 +91,19 @@ CREATE TABLE IF NOT EXISTS data_migrations (
   completed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   summary JSONB NOT NULL
 );
+
+-- ---------- ربات تلگرام ----------
+
+-- چت‌هایی که با ربات تعامل داشته‌اند. is_admin با کد اتصال پنل فعال می‌شود.
+CREATE TABLE IF NOT EXISTS telegram_chats (
+  chat_id BIGINT PRIMARY KEY,
+  username TEXT,
+  first_name TEXT,
+  is_admin BOOLEAN NOT NULL DEFAULT FALSE,
+  started_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  last_seen_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- اتصال سفارش به چت مشتری در تلگرام و زمان تأیید نهایی.
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS telegram_chat_id BIGINT;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS telegram_confirmed_at TIMESTAMPTZ;
