@@ -24,13 +24,44 @@ const environmentSchema = z.object({
   STATIC_DIR: z.string().optional(),
   // در صورت فعال بودن پروکسی معکوس، آدرس عمومی سایت برای robots/sitemap.
   PUBLIC_SITE_URL: z.string().url().optional(),
+  // تعداد هاپ‌های پروکسی معکوس برای تشخیص IP و پروتکل اصلی درخواست.
+  //   "false" → بدون پروکسی | عدد → تعداد هاپ‌ها | سایر مقادیر Express مثل "loopback"
+  TRUST_PROXY: z.string().optional(),
+  // اگر true باشد، درخواست‌های HTTP به HTTPS هدایت می‌شوند (لازم برای کوکی Secure).
+  FORCE_HTTPS: z
+    .enum(["true", "false"])
+    .optional()
+    .transform((value) => value === "true"),
+  // اجرای مستقیم HTTPS بدون پروکسی معکوس (مسیر فایل‌های گواهی و کلید).
+  TLS_CERT_FILE: z.string().optional(),
+  TLS_KEY_FILE: z.string().optional(),
 })
 
-export const config = environmentSchema.parse({
+const rawNodeEnv = process.env.NODE_ENV ?? "development"
+const rawIsProduction = rawNodeEnv === "production"
+
+const parsed = environmentSchema.parse({
   ...process.env,
   API_PORT: process.env.API_PORT ?? process.env.PORT ?? 4000,
-  SERVE_STATIC: process.env.SERVE_STATIC ?? (process.env.NODE_ENV === "production" ? "true" : "false"),
+  SERVE_STATIC: process.env.SERVE_STATIC ?? (rawIsProduction ? "true" : "false"),
+  FORCE_HTTPS: process.env.FORCE_HTTPS ?? "false",
 })
 
-export const isProduction = config.NODE_ENV === "production"
-export const shouldServeStatic = config.SERVE_STATIC
+/**
+ * مقدار «trust proxy» را از متغیر محیطی می‌سازد.
+ * پیش‌فرض: در production یک هاپ (معمولاً nginx/Caddy) و در توسعه غیرفعال.
+ */
+function resolveTrustProxy(value: string | undefined): boolean | number | string {
+  if (value === undefined || value.trim() === "") return rawIsProduction ? 1 : false
+  if (value === "true") return true
+  if (value === "false") return false
+  const hops = Number(value)
+  if (Number.isInteger(hops) && hops >= 0) return hops
+  return value
+}
+
+export const config = parsed
+export const isProduction = parsed.NODE_ENV === "production"
+export const shouldServeStatic = parsed.SERVE_STATIC
+export const trustProxy = resolveTrustProxy(parsed.TRUST_PROXY)
+export const httpsEnabled = Boolean(parsed.TLS_CERT_FILE && parsed.TLS_KEY_FILE)

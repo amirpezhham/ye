@@ -16,6 +16,9 @@ dist-ssr
 !.env.example
 dist-server
 
+# گواهی‌های محلی TLS
+.certs
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

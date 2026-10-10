@@ -1,4 +1,5 @@
-import { existsSync } from "node:fs"
+import { existsSync, readFileSync } from "node:fs"
+import https from "node:https"
 import path from "node:path"
 
 import compression from "compression"
@@ -8,18 +9,20 @@ import express, { type ErrorRequestHandler } from "express"
 import rateLimit from "express-rate-limit"
 import helmet from "helmet"
 
-import { config, isProduction, shouldServeStatic } from "./config.js"
+import { config, httpsEnabled, shouldServeStatic, trustProxy } from "./config.js"
 import { pool } from "./db.js"
 import { startOutboxWorker, stopOutboxWorker } from "./outbox.js"
 import { apiRouter } from "./routes.js"
 
 const app = express()
 app.disable("x-powered-by")
-app.set("trust proxy", isProduction ? 1 : false)
+app.set("trust proxy", trustProxy)
 
 app.use(compression())
 app.use(
   helmet({
+    // HSTS فقط روی پاسخ‌های واقعاً امن فرستاده می‌شود (پایین‌تر)، نه روی HTTP.
+    hsts: false,
     contentSecurityPolicy: {
       directives: {
         ...helmet.contentSecurityPolicy.getDefaultDirectives(),
@@ -30,6 +33,28 @@ app.use(
     },
   }),
 )
+// اگر HTTPS اجباری باشد، هر درخواست HTTP پیش از هر چیز به HTTPS هدایت می‌شود.
+// کوکی نشست در production پرچم Secure دارد و روی HTTP ساده توسط مرورگر ذخیره
+// نمی‌شود؛ این هدایت جلوی «ورود بی‌صدا شکست خورد» را می‌گیرد.
+if (config.FORCE_HTTPS) {
+  app.use((request, response, next) => {
+    // بررسی سلامت برخی هاست‌ها روی HTTP انجام می‌شود و نباید هدایت شود.
+    if (request.secure || request.path === "/api/health") {
+      next()
+      return
+    }
+    response.redirect(301, `https://${request.get("host") ?? ""}${request.originalUrl}`)
+  })
+}
+
+// HSTS فقط روی اتصال واقعاً امن (شامل X-Forwarded-Proto وقتی trust proxy فعال است).
+app.use((request, response, next) => {
+  if (request.secure) {
+    response.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+  }
+  next()
+})
+
 app.use(cors({
   origin: config.ADMIN_ORIGIN,
   credentials: true,
@@ -162,13 +187,30 @@ const errorHandler: ErrorRequestHandler = (error: unknown, _request, response, _
 }
 app.use(errorHandler)
 
-const server = app.listen(config.API_PORT, "0.0.0.0", () => {
-  console.info(`API listening on port ${config.API_PORT}`)
+const onListening = () => {
+  console.info(`${httpsEnabled ? "HTTPS" : "HTTP"} API listening on port ${config.API_PORT}`)
   if (serveStatic) {
     console.info(`Serving frontend build from ${staticDir}`)
   }
+  if (config.FORCE_HTTPS) {
+    console.info("FORCE_HTTPS فعال است؛ درخواست‌های HTTP به HTTPS هدایت می‌شوند.")
+  }
   startOutboxWorker()
-})
+}
+
+// اگر فایل گواهی و کلید تنظیم شده باشد، خود Express روی HTTPS بالا می‌آید
+// (برای هاست‌هایی که پروکسی معکوس ندارند). در غیر این صورت HTTP معمول.
+const server = httpsEnabled
+  ? https
+      .createServer(
+        {
+          cert: readFileSync(config.TLS_CERT_FILE as string),
+          key: readFileSync(config.TLS_KEY_FILE as string),
+        },
+        app,
+      )
+      .listen(config.API_PORT, "0.0.0.0", onListening)
+  : app.listen(config.API_PORT, "0.0.0.0", onListening)
 
 async function shutdown(signal: string) {
   console.info(`${signal} received; shutting down API.`)

@@ -65,3 +65,5 @@
 - **اسکریپت‌های جدید:** `dev:all`، `build:all`، `start`.
 - **مستندات:** `docs/deployment.md` (استقرار روی هاست) و `docs/local-dev-runbook.md` (عیب‌یابی ۵۰۲ + اجرای محلی + راه‌اندازی پستگرس بدون root).
 - **پورت:** اگر هاست متغیر `PORT` تزریق کند، همان استفاده می‌شود؛ در غیر این صورت `API_PORT` (پیش‌فرض ۴۰۰۰).
+- **HTTPS و ورود ادمین:** کوکی نشست در production پرچم `Secure` دارد، پس **HTTPS اجباری** است (روی HTTP ساده، ورود ۲۰۰ می‌گیرد ولی کوکی ذخیره نمی‌شود و درخواست بعدی ۴۰۱ می‌شود). گزینه‌ها: `FORCE_HTTPS=true` برای هدایت HTTP→HTTPS (استثنای `GET /api/health`)، `TRUST_PROXY` (پیش‌فرض در production = ۱ هاپ) و اجرای مستقیم TLS با `TLS_CERT_FILE`/`TLS_KEY_FILE`. هدر HSTS فقط روی اتصال امن فرستاده می‌شود. تست محلی: `npm run tls:self-signed` (گواهی در `.certs/` که gitignore است).
+- **کد مردهٔ حذف‌شده:** `src/admin/components/auth-storage.ts` (احراز هویت قدیمی مبتنی بر `localStorage` با رمز پیش‌فرض `admin123`) حذف شد — هیچ ماژولی آن را import نمی‌کرد و منبع سردرگمی امنیتی بود.

@@ -38,6 +38,9 @@
 | `SERVE_STATIC` | ➖ | پیش‌فرض در production برابر `true` |
 | `STATIC_DIR` | ➖ | پیش‌فرض `./dist` |
 | `DATABASE_SSL` | ➖ | `true` (پیش‌فرض production) \| `no-verify` \| `false` |
+| `FORCE_HTTPS` | ➖ | `true` → هدایت خودکار HTTP به HTTPS (پیش‌فرض `false`) |
+| `TRUST_PROXY` | ➖ | تعداد هاپ‌های پروکسی معکوس؛ پیش‌فرض در production برابر `1` |
+| `TLS_CERT_FILE` / `TLS_KEY_FILE` | ➖ | اجرای مستقیم HTTPS بدون پروکسی معکوس (مسیر مطلق فایل‌ها) |
 | `ADMIN_SESSION_HOURS` | ➖ | پیش‌فرض ۱۲ |
 | `PUBLIC_SITE_URL` | ➖ | برای `robots.txt` و `sitemap.xml`؛ در نبودش از هدر Host استفاده می‌شود |
 | `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` | ➖ | برای اعلان سفارش |
@@ -164,12 +167,64 @@ sudo systemctl restart yedood
 
 ---
 
-## ۶. نکات امنیتی مهم
+## ۶. HTTPS و ورود امن پنل ادمین
 
-- **HTTPS الزامی است.** در `NODE_ENV=production` کوکی نشست با پرچم `Secure` صادر می‌شود؛ روی HTTP ساده مرورگر آن را ذخیره نمی‌کند و ورود پنل ادمین کار نمی‌کند.
+در `NODE_ENV=production` کوکی نشست با پرچم `Secure` صادر می‌شود. یعنی مرورگر آن را **فقط روی HTTPS** ذخیره و ارسال می‌کند. اگر سایت روی HTTP ساده سرو شود، ورود ادمین **بی‌صدا شکست می‌خورد** (پاسخ ورود ۲۰۰ است، اما کوکی ذخیره نمی‌شود و درخواست بعدی ۴۰۱ می‌گیرد). پس HTTPS اختیاری نیست.
+
+### گزینهٔ الف — پشت پروکسی معکوس (توصیه‌شده)
+
+پروکسی (nginx/Caddy) TLS را تمام می‌کند و ترافیک را روی HTTP به Node می‌فرستد:
+
+```nginx
+proxy_set_header X-Forwarded-Proto $scheme;
+proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+proxy_set_header Host              $host;
+```
+
+سرور با `TRUST_PROXY` (پیش‌فرض در production: یک هاپ) این هدرها را باور می‌کند، بنابراین `request.secure` درست تشخیص داده می‌شود و:
+
+- درخواست‌های HTTPS هدایت نمی‌شوند
+- هدر `Strict-Transport-Security` فقط روی اتصال امن فرستاده می‌شود
+
+اگر پروکسی شما چند لایه دارد، تعداد هاپ‌ها را صریح بدهید: `TRUST_PROXY=2`.
+
+### گزینهٔ ب — HTTPS مستقیم بدون پروکسی
+
+اگر هاست پروکسی معکوس ندارد، خود Express می‌تواند TLS را تمام کند:
+
+```bash
+TLS_CERT_FILE=/etc/letsencrypt/live/yedood.ir/fullchain.pem \
+TLS_KEY_FILE=/etc/letsencrypt/live/yedood.ir/privkey.pem \
+npm start
+```
+
+در لاگ می‌بینید: `HTTPS API listening on port ...`
+
+### هدایت HTTP → HTTPS
+
+با `FORCE_HTTPS=true` هر درخواست HTTP با `301` به HTTPS هدایت می‌شود. تنها استثنا `GET /api/health` است تا بررسی سلامت هاست‌ها نشکند.
+
+### تست HTTPS روی سیستم خودی
+
+برای اینکه مسیر واقعی production را قبل از هاست ببینید:
+
+```bash
+npm run tls:self-signed     # ساخت .certs/cert.pem و .certs/key.pem
+
+NODE_ENV=production FORCE_HTTPS=true SERVE_STATIC=true \
+TLS_CERT_FILE=.certs/cert.pem TLS_KEY_FILE=.certs/key.pem \
+API_PORT=4443 ADMIN_ORIGIN=https://localhost:4443 npm start
+```
+
+سپس `https://localhost:4443/admin/login` را باز کنید و یک‌بار هشدار گواهی self-signed را رد کنید (Advanced → Proceed).
+
+> فایل `.certs/` در `.gitignore` است و هرگز نباید کامیت شود.
+
+### سایر نکات امنیتی
+
 - `ADMIN_ORIGIN` باید دقیقاً (با `https` و بدون اسلش انتهایی) با دامنه یکی باشد، وگرنه CORS کوکی را رد می‌کند.
 - `SESSION_SECRET` را عوض کنید؛ با تغییر آن همهٔ نشست‌های فعال باطل می‌شوند.
-- اگر `NODE_ENV` روی `production` باشد و `trust proxy` فعال است، هدرهای `X-Forwarded-*` توسط پروکسی تنظیم شوند (نمونهٔ nginx بالا).
+- نشست‌ها بی‌حالت (stateless) و امضاشده‌اند؛ یعنی پس از «خروج» کوکی در مرورگر پاک می‌شود اما یک کوکی دزدیده‌شده تا انقضا معتبر می‌ماند. برای باطل‌کردن فوری همهٔ نشست‌ها، رمز مدیر را عوض کنید (ستون `session_version` افزایش می‌یابد).
 - رمز مدیر اولیه را بعد از اولین ورود از «تنظیمات» عوض کنید.
 
 ---
@@ -192,7 +247,9 @@ sudo systemctl restart yedood
 |---|---|---|
 | `EADDRINUSE` | پورت اشغال است | `API_PORT`/`PORT` را عوض کنید |
 | صفحه سفید روی مسیرهای تودرتو | `base` در `vite.config.ts` نسبی است یا بیلد قدیمی است | `base` باید `/` باشد؛ `npm run build:all` را دوباره بزنید |
-| ورود ادمین روی هاست کار نمی‌کند | نبود HTTPS یا ناهم‌خوانی `ADMIN_ORIGIN` | بخش ۶ |
+| ورود ادمین روی هاست کار نمی‌کند (۲۰۰ می‌گیرد ولی ریدایرکت به لاگین) | نبود HTTPS → کوکی `Secure` ذخیره نمی‌شود | بخش ۶ |
+| ورود ادمین کار نمی‌کند | ناهم‌خوانی `ADMIN_ORIGIN` با دامنه | `ADMIN_ORIGIN` را دقیقاً برابر آدرس عمومی بگذارید |
+| حلقهٔ بی‌پایان HTTP→HTTPS | پروکسی `X-Forwarded-Proto` را ست نمی‌کند | `TRUST_PROXY` و هدرهای پروکسی را تنظیم کنید |
 | `502` روی `/api/*` در حالت توسعه | API بالا نیست | `npm run dev:all` |
 | خطای اتصال پستگرس | SSL | `DATABASE_SSL=no-verify` یا `false` |
 | `SERVE_STATIC فعال است اما dist پیدا نشد` | بیلد انجام نشده | `npm run build` |

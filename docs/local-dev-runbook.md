@@ -123,6 +123,34 @@ curl -s -o /dev/null -w '%{http_code}\n' http://localhost:4173/api/products   # 
 
 ---
 
+## ۳.۵. تست ورود ادمین روی HTTPS
+
+در `NODE_ENV=production` کوکی نشست `Secure` است، پس روی HTTP ساده ورود ادمین کار نمی‌کند (۲۰۰ می‌گیرد ولی کوکی ذخیره نمی‌شود و درخواست بعدی ۴۰۱ می‌شود). برای تست مسیر واقعی production روی سیستم خودی:
+
+```bash
+npm run tls:self-signed     # ساخت .certs/cert.pem و .certs/key.pem
+
+NODE_ENV=production FORCE_HTTPS=true SERVE_STATIC=true \
+TLS_CERT_FILE=.certs/cert.pem TLS_KEY_FILE=.certs/key.pem \
+API_PORT=4443 ADMIN_ORIGIN=https://localhost:4443 npm start
+```
+
+سپس `https://localhost:4443/admin/login` را باز کنید (هشدار گواهی self-signed را یک‌بار رد کنید).
+
+بررسی سریع با curl:
+
+```bash
+# ورود و بررسی پرچم Secure روی کوکی
+curl -k -D - -o /dev/null -X POST https://localhost:4443/api/admin/login \
+  -H 'Content-Type: application/json' \
+  -d '{"username":"admin","password":"<رمز>"}' | grep -i set-cookie
+
+# هدایت HTTP به HTTPS (در حالت HTTP ساده با FORCE_HTTPS=true)
+curl -s -o /dev/null -D - http://localhost:4444/shop | grep -i location
+```
+
+---
+
 ## ۴. انتقال داده‌ها به دیتابیس
 
 فرانت‌اند دیگر داده‌ها را از `localStorage` نمی‌خواند و همه چیز از API می‌آید. بنابراین یک دیتابیس خالی یعنی فروشگاه بدون محصول.
