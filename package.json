@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:bootstrap": "node scripts/local-bootstrap.mjs",
     "dev:all": "node scripts/dev-all.mjs",
     "tls:self-signed": "node scripts/self-signed-cert.mjs",
     "build": "tsc -b && vite build",
@@ -18,6 +19,7 @@
     "api:build": "tsc -p tsconfig.server.json",
     "api:start": "node dist-server/server/index.js",
     "db:migrate": "tsx server/migrate.ts",
+    "db:seed": "tsx --tsconfig tsconfig.app.json scripts/seed-sample-data.mts",
     "db:create-admin": "tsx server/create-admin.ts"
   },
   "dependencies": {

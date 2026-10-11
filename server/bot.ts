@@ -374,6 +374,12 @@ export async function handleTelegramUpdate(update: TelegramUpdate): Promise<void
   )
 }
 
+/** خطاهای احراز هویت تلگرام (توکن باطل/revoke شده) قابل تلاش دوباره نیستند. */
+function isAuthError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error)
+  return /Unauthorized|SESSION_REVOKED|Not Found/i.test(message)
+}
+
 async function pollOnce() {
   if (polling) return
   polling = true
@@ -416,6 +422,13 @@ export async function startTelegramBot(): Promise<void> {
       { command: "id", description: "نمایش شناسهٔ چت" },
     ])
   } catch (error) {
+    if (isAuthError(error)) {
+      console.error(
+        "ربات تلگرام غیرفعال ماند: توکن ربات نامعتبر یا revoke شده است. " +
+        "توکن جدید را از BotFather بگیرید و TELEGRAM_BOT_TOKEN را در .env جایگزین کنید.",
+      )
+      return
+    }
     console.error("ثبت منوی دستورات ربات ناموفق بود:", error)
   }
 
@@ -436,16 +449,25 @@ export async function startTelegramBot(): Promise<void> {
     // اگر وبهوکی وجود نداشت، این خطا مهم نیست.
   }
 
+  const onPollError = (error: unknown) => {
+    // اگر توکن باطل شده باشد، تکرار خطا هر ۳ ثانیه بی‌فایده است.
+    if (isAuthError(error)) {
+      stopTelegramBot()
+      console.error(
+        "ربات تلگرام متوقف شد: توکن ربات نامعتبر یا revoke شده است. " +
+        "توکن جدید را از BotFather بگیرید و TELEGRAM_BOT_TOKEN را در .env جایگزین کنید.",
+      )
+      return
+    }
+    console.error("دریافت آپدیت‌های تلگرام ناموفق بود:", error)
+  }
+
   timer = setInterval(() => {
-    void pollOnce().catch((error: unknown) => {
-      console.error("دریافت آپدیت‌های تلگرام ناموفق بود:", error)
-    })
+    void pollOnce().catch(onPollError)
   }, POLL_INTERVAL_MS)
   timer.unref()
 
-  void pollOnce().catch((error: unknown) => {
-    console.error("دریافت آپدیت‌های تلگرام ناموفق بود:", error)
-  })
+  void pollOnce().catch(onPollError)
 }
 
 export function stopTelegramBot(): void {
