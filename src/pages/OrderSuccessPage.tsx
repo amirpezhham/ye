@@ -10,6 +10,7 @@ import {
 import { motion } from "motion/react"
 
 import { useOrder } from "@/context/OrderContext"
+import { getOrder, type PublicOrder } from "@/lib/orders"
 import { buildOrderTelegramLink, getTelegramSettings } from "@/lib/telegram"
 
 function formatPrice(price: number) {
@@ -19,8 +20,42 @@ function formatPrice(price: number) {
 export function OrderSuccessPage() {
   const { orderId } = useParams()
   const { lastOrder } = useOrder()
-  const order = orderId && lastOrder?.id === orderId ? lastOrder : null
+  const [order, setOrder] = useState<PublicOrder | null>(null)
+  const [loading, setLoading] = useState(Boolean(orderId))
   const [telegramLink, setTelegramLink] = useState<string | null>(null)
+
+  // سفارش تازه در حافظهٔ همین تب است؛ اگر کاربر صفحه را رفرش کند یا بعداً
+  // برگردد، سفارش از سرور خوانده می‌شود تا اطلاعات و دکمهٔ تلگرام از دست نرود.
+  useEffect(() => {
+    if (!orderId) {
+      setLoading(false)
+      return
+    }
+
+    if (lastOrder?.id === orderId) {
+      setOrder(lastOrder)
+      setLoading(false)
+      return
+    }
+
+    let active = true
+    setLoading(true)
+
+    void getOrder(orderId)
+      .then((fetched) => {
+        if (active) setOrder(fetched)
+      })
+      .catch((error: unknown) => {
+        console.error("دریافت سفارش ناموفق بود.", error)
+      })
+      .finally(() => {
+        if (active) setLoading(false)
+      })
+
+    return () => {
+      active = false
+    }
+  }, [orderId, lastOrder])
 
   useEffect(() => {
     if (!order) return
@@ -78,6 +113,17 @@ export function OrderSuccessPage() {
           سفارشتان با موفقیت دریافت شد. به زودی همکاران ما برای هماهنگی
           ارسال با شما تماس می‌گیرند.
         </p>
+
+        {loading && (
+          <p className="mt-8 text-sm text-white/40">در حال دریافت اطلاعات سفارش...</p>
+        )}
+
+        {!loading && orderId && !order && (
+          <p className="mt-8 rounded-2xl border border-white/10 bg-[#151814] px-6 py-4 text-sm leading-7 text-white/50">
+            اطلاعات این سفارش در دسترس نیست. شمارهٔ سفارش را بررسی کنید یا با پشتیبانی
+            تماس بگیرید.
+          </p>
+        )}
 
         {order && (
           <div className="mt-8 rounded-2xl border border-white/10 bg-[#151814] p-6 text-right">

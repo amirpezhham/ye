@@ -61,6 +61,27 @@ function parsed<T>(schema: z.ZodType<T>, input: unknown, response: Response): T 
   return result.data
 }
 
+/**
+ * نمای عمومی یک سفارش برای صفحهٔ «سفارش ثبت شد».
+ *
+ * چرا بدون احراز هویت؟ شناسهٔ سفارش یک UUID نسخهٔ ۴ است (۱۲۲ بیت تصادفی) و
+ * حدس‌زدنی نیست، پس خودِ لینک نقش «توکن دسترسی» را دارد. برای همین فقط
+ * فیلدهای غیرحساس برگردانده می‌شوند و نشانی و تلفن مشتری هرگز در این پاسخ نیست.
+ */
+function mapPublicOrder(row: Record<string, unknown>) {
+  return {
+    id: row.id,
+    fullName: row.full_name,
+    totalItems: row.total_items,
+    totalPrice: Number(row.total_price),
+    status: row.status,
+    createdAt: new Date(String(row.created_at)).getTime(),
+    telegramConfirmedAt: row.telegram_confirmed_at
+      ? new Date(String(row.telegram_confirmed_at)).getTime()
+      : undefined,
+  }
+}
+
 function mapOrder(row: Record<string, unknown>) {
   return {
     id: row.id,
@@ -401,6 +422,24 @@ apiRouter.get("/settings/:key", async (request, response) => {
     return
   }
   response.json(result.rows[0].value)
+})
+
+apiRouter.get("/orders/:id", async (request, response) => {
+  const id = parsed(idSchema, request.params.id, response)
+  if (!id) return
+
+  const result = await pool.query(
+    `SELECT id, full_name, total_items, total_price, status, created_at, telegram_confirmed_at
+     FROM orders WHERE id = $1 AND deleted_at IS NULL`,
+    [id],
+  )
+
+  if (!result.rows[0]) {
+    response.status(404).json({ error: { code: "ORDER_NOT_FOUND", message: "سفارش پیدا نشد." } })
+    return
+  }
+
+  response.json(mapPublicOrder(result.rows[0]))
 })
 
 apiRouter.post("/orders", async (request, response) => {
