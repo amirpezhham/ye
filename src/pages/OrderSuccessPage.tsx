@@ -20,36 +20,33 @@ function formatPrice(price: number) {
 export function OrderSuccessPage() {
   const { orderId } = useParams()
   const { lastOrder } = useOrder()
-  const [order, setOrder] = useState<PublicOrder | null>(null)
-  const [loading, setLoading] = useState(Boolean(orderId))
+  // سفارش خوانده‌شده از سرور، کلید‌خورده با شناسهٔ سفارش تا نیازی به بازنشانی نباشد.
+  const [remote, setRemote] = useState<{ id: string; order: PublicOrder | null } | null>(null)
   const [telegramLink, setTelegramLink] = useState<string | null>(null)
+
+  const remoteMatches = Boolean(remote && remote.id === orderId)
+  const order = orderId && lastOrder?.id === orderId
+    ? lastOrder
+    : remoteMatches
+      ? remote?.order ?? null
+      : null
+  const isResolving = Boolean(orderId) && !order && !remoteMatches
+  const isMissing = Boolean(orderId) && !order && remoteMatches
 
   // سفارش تازه در حافظهٔ همین تب است؛ اگر کاربر صفحه را رفرش کند یا بعداً
   // برگردد، سفارش از سرور خوانده می‌شود تا اطلاعات و دکمهٔ تلگرام از دست نرود.
   useEffect(() => {
-    if (!orderId) {
-      setLoading(false)
-      return
-    }
-
-    if (lastOrder?.id === orderId) {
-      setOrder(lastOrder)
-      setLoading(false)
-      return
-    }
+    if (!orderId || lastOrder?.id === orderId) return
 
     let active = true
-    setLoading(true)
 
     void getOrder(orderId)
       .then((fetched) => {
-        if (active) setOrder(fetched)
+        if (active) setRemote({ id: orderId, order: fetched })
       })
       .catch((error: unknown) => {
         console.error("دریافت سفارش ناموفق بود.", error)
-      })
-      .finally(() => {
-        if (active) setLoading(false)
+        if (active) setRemote({ id: orderId, order: null })
       })
 
     return () => {
@@ -114,11 +111,11 @@ export function OrderSuccessPage() {
           ارسال با شما تماس می‌گیرند.
         </p>
 
-        {loading && (
+        {isResolving && (
           <p className="mt-8 text-sm text-white/40">در حال دریافت اطلاعات سفارش...</p>
         )}
 
-        {!loading && orderId && !order && (
+        {isMissing && (
           <p className="mt-8 rounded-2xl border border-white/10 bg-[#151814] px-6 py-4 text-sm leading-7 text-white/50">
             اطلاعات این سفارش در دسترس نیست. شمارهٔ سفارش را بررسی کنید یا با پشتیبانی
             تماس بگیرید.
