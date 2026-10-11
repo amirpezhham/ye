@@ -13,6 +13,7 @@ import { startTelegramBot, stopTelegramBot } from "./bot.js"
 import { config, httpsEnabled, shouldServeStatic, trustProxy } from "./config.js"
 import { pool } from "./db.js"
 import { startOutboxWorker, stopOutboxWorker } from "./outbox.js"
+import { buildPageMeta, injectMeta } from "./meta.js"
 import { apiRouter } from "./routes.js"
 import { uploadDir } from "./uploads.js"
 
@@ -97,6 +98,9 @@ if (shouldServeStatic && !serveStatic) {
 }
 
 if (serveStatic) {
+  // قالب HTML یک‌بار خوانده می‌شود و در هر درخواست فقط متایش جایگزین می‌گردد.
+  const indexTemplate = readFileSync(indexFile, "utf8")
+
   const siteOrigin = (request: express.Request) =>
     (config.PUBLIC_SITE_URL ?? `${request.protocol}://${request.get("host") ?? "localhost"}`).replace(/\/+$/, "")
 
@@ -120,9 +124,27 @@ if (serveStatic) {
       )
   })
 
-  app.get("/sitemap.xml", (request, response) => {
+  app.get("/sitemap.xml", async (request, response) => {
     const origin = siteOrigin(request)
-    const urls = publicRoutes
+    const routes = [...publicRoutes]
+
+    // مسیرهای واقعی فروشگاه هم به نقشه اضافه می‌شوند.
+    try {
+      const [products, categories, posts] = await Promise.all([
+        pool.query(
+          "SELECT slug FROM products WHERE status <> 'out-of-stock' ORDER BY updated_at DESC LIMIT 5000",
+        ),
+        pool.query("SELECT slug FROM categories ORDER BY slug"),
+        pool.query("SELECT slug FROM posts ORDER BY created_at DESC LIMIT 1000"),
+      ])
+      for (const row of products.rows) routes.push(`/product/${row.slug}`)
+      for (const row of categories.rows) routes.push(`/products/${row.slug}`)
+      for (const row of posts.rows) routes.push(`/blog/${row.slug}`)
+    } catch (error) {
+      console.error("افزودن مسیرهای دیتابیس به نقشهٔ سایت ناموفق بود:", error)
+    }
+
+    const urls = routes
       .map((route) => `  <url><loc>${origin}${route}</loc></url>`)
       .join("\n")
     response
@@ -158,9 +180,19 @@ if (serveStatic) {
       return
     }
     response.setHeader("Cache-Control", "no-cache")
-    response.sendFile(indexFile, (error) => {
-      if (error) next(error)
-    })
+
+    // متاها پیش از ارسال HTML تزریق می‌شوند تا خزنده‌ها و پیش‌نمایش لینک
+    // (تلگرام/واتساپ که جاوااسکریپت اجرا نمی‌کنند) مقدار درست را ببینند.
+    void buildPageMeta(request.path, siteOrigin(request))
+      .then((meta) => {
+        response.type("html").send(injectMeta(indexTemplate, meta))
+      })
+      .catch((error: unknown) => {
+        console.error("تزریق متا ناموفق بود؛ نسخهٔ خام ارسال می‌شود:", error)
+        response.sendFile(indexFile, (sendError) => {
+          if (sendError) next(sendError)
+        })
+      })
   })
 }
 
