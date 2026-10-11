@@ -15,6 +15,7 @@ import { useCategories } from "@/context/CategoriesContext"
 import { useProducts } from "@/context/ProductsContext"
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog"
 import { validateImageFile } from "@/lib/storage"
+import { uploadImage } from "@/lib/upload"
 
 export function AdminCategories() {
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -67,7 +68,9 @@ export function AdminCategories() {
     setFormOpen(true)
   }
 
-  function handleImageChange(
+  const [isUploadingImage, setIsUploadingImage] = useState(false)
+
+  async function handleImageChange(
     event: React.ChangeEvent<HTMLInputElement>,
   ) {
     const file = event.target.files?.[0]
@@ -83,11 +86,18 @@ export function AdminCategories() {
       return
     }
 
-    const reader = new FileReader()
-
-    reader.onload = () => setImage(String(reader.result))
-
-    reader.readAsDataURL(file)
+    setError("")
+    setIsUploadingImage(true)
+    try {
+      const uploaded = await uploadImage(file)
+      setImage(uploaded.url)
+    } catch (uploadError) {
+      console.error("آپلود تصویر ناموفق بود.", uploadError)
+      setError(uploadError instanceof Error ? uploadError.message : "آپلود تصویر ناموفق بود.")
+    } finally {
+      setIsUploadingImage(false)
+      event.target.value = ""
+    }
   }
 
   async function handleSubmit(
@@ -231,10 +241,11 @@ export function AdminCategories() {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="flex h-12 items-center justify-center gap-2 rounded-xl border border-white/10 bg-[#0D0F0D] px-5 text-sm font-bold text-white/70 transition hover:border-[#D9E600]/30 hover:text-[#D9E600]"
+                  disabled={isUploadingImage}
+                  className="flex h-12 items-center justify-center gap-2 rounded-xl border border-white/10 bg-[#0D0F0D] px-5 text-sm font-bold text-white/70 transition hover:border-[#D9E600]/30 hover:text-[#D9E600] disabled:opacity-50"
                 >
                   <ImagePlus className="size-4" />
-                  انتخاب تصویر
+                  {isUploadingImage ? "در حال آپلود..." : "انتخاب تصویر"}
                 </button>
               </div>
 

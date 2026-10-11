@@ -8,6 +8,7 @@ import {
   type SeoSettings,
 } from "@/admin/components/seo-storage"
 import { validateImageFile } from "@/lib/storage"
+import { uploadImage } from "@/lib/upload"
 
 export function AdminSeo() {
   const navigate = useNavigate()
@@ -25,7 +26,9 @@ export function AdminSeo() {
     }))
   }
 
-  function handleImageChange(
+  const [isUploadingImage, setIsUploadingImage] = useState(false)
+
+  async function handleImageChange(
     event: React.ChangeEvent<HTMLInputElement>,
   ) {
     const file = event.target.files?.[0]
@@ -41,11 +44,18 @@ export function AdminSeo() {
       return
     }
 
-    const reader = new FileReader()
-
-    reader.onload = () => update("ogImage", String(reader.result))
-
-    reader.readAsDataURL(file)
+    setError("")
+    setIsUploadingImage(true)
+    try {
+      const uploaded = await uploadImage(file)
+      update("ogImage", uploaded.url)
+    } catch (uploadError) {
+      console.error("آپلود تصویر ناموفق بود.", uploadError)
+      setError(uploadError instanceof Error ? uploadError.message : "آپلود تصویر ناموفق بود.")
+    } finally {
+      setIsUploadingImage(false)
+      event.target.value = ""
+    }
   }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -159,10 +169,11 @@ export function AdminSeo() {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="flex h-12 items-center justify-center gap-2 rounded-xl border border-white/10 bg-[#0D0F0D] px-5 text-sm font-bold text-white/70 transition hover:border-[#D9E600]/30 hover:text-[#D9E600]"
+                  disabled={isUploadingImage}
+                  className="flex h-12 items-center justify-center gap-2 rounded-xl border border-white/10 bg-[#0D0F0D] px-5 text-sm font-bold text-white/70 transition hover:border-[#D9E600]/30 hover:text-[#D9E600] disabled:opacity-50"
                 >
                   <ImagePlus className="size-4" />
-                  انتخاب تصویر از دستگاه
+                  {isUploadingImage ? "در حال آپلود..." : "انتخاب تصویر از دستگاه"}
                 </button>
 
                 <p className="mt-2 text-xs text-white/30">

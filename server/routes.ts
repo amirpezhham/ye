@@ -8,6 +8,7 @@ import { z } from "zod"
 import { handleTelegramUpdate, publicBotUsername } from "./bot.js"
 import { config, telegramAdminCode, useTelegramWebhook } from "./config.js"
 import { pool } from "./db.js"
+import { UploadError, saveDataUrlImage } from "./uploads.js"
 import {
   type AuthenticatedRequest,
   clearSessionCookie,
@@ -18,6 +19,7 @@ import {
 import {
   categorySchema,
   jsonObjectSchema,
+  imageUploadSchema,
   loginSchema,
   localDataMigrationSchema,
   orderRequestSchema,
@@ -106,6 +108,36 @@ async function fetchOrder(client: Pool | PoolClient, orderId: string, forAdmin =
   return forAdmin ? mapAdminOrder(result.rows[0]) : mapOrder(result.rows[0])
 }
 
+/**
+ * تصاویر dataURL را هنگام انتقال داده به فایل روی دیسک تبدیل می‌کند.
+ * بدون این کار، داده‌های قدیمی مرورگر (که تصویر را base64 نگه می‌داشتند)
+ * دوباره داخل دیتابیس ذخیره می‌شدند و فهرست محصولات را سنگین می‌کردند.
+ */
+async function externalizeImageValue(value: unknown): Promise<unknown> {
+  if (typeof value !== "string" || !value.startsWith("data:image/")) return value
+
+  try {
+    const saved = await saveDataUrlImage(value)
+    return saved.url
+  } catch (error) {
+    console.error("تبدیل تصویر dataURL به فایل ناموفق بود؛ مقدار اصلی حفظ شد:", error)
+    return value
+  }
+}
+
+async function externalizeRecordImages<T extends Record<string, unknown>>(record: T): Promise<T> {
+  const next: Record<string, unknown> = { ...record }
+
+  if ("image" in next) {
+    next.image = await externalizeImageValue(next.image)
+  }
+  if (Array.isArray(next.images)) {
+    next.images = await Promise.all(next.images.map((item) => externalizeImageValue(item)))
+  }
+
+  return next as T
+}
+
 async function withTransaction<T>(operation: (client: import("pg").PoolClient) => Promise<T>) {
   const client = await pool.connect()
   try {
@@ -174,26 +206,29 @@ apiRouter.post("/admin/migrate-local-data", requireAdmin, async (request, respon
     let posts = 0
     let orders = 0
     for (const category of input.categories) {
+      const migrated = await externalizeRecordImages(category)
       const result = await client.query(
         `INSERT INTO categories (id,slug,data) VALUES ($1,$2,$3::jsonb)
          ON CONFLICT (id) DO NOTHING`,
-        [category.id, category.slug, JSON.stringify(category)],
+        [migrated.id, migrated.slug, JSON.stringify(migrated)],
       )
       categories += result.rowCount ?? 0
     }
     for (const product of input.products) {
+      const migrated = await externalizeRecordImages(product)
       const result = await client.query(
         `INSERT INTO products (id,slug,category_slug,price,stock,status,data)
          VALUES ($1,$2,$3,$4,$5,$6,$7::jsonb) ON CONFLICT (id) DO NOTHING`,
-        [product.id, product.slug, product.categorySlug, product.price, product.stock ?? null, product.status, JSON.stringify(product)],
+        [migrated.id, migrated.slug, migrated.categorySlug, migrated.price, migrated.stock ?? null, migrated.status, JSON.stringify(migrated)],
       )
       products += result.rowCount ?? 0
     }
     for (const post of input.posts) {
+      const migrated = await externalizeRecordImages(post)
       const result = await client.query(
         `INSERT INTO posts (id,slug,data,created_at) VALUES ($1,$2,$3::jsonb,$4)
          ON CONFLICT (id) DO NOTHING`,
-        [post.id, post.slug, JSON.stringify(post), new Date(post.createdAt)],
+        [migrated.id, migrated.slug, JSON.stringify(migrated), new Date(migrated.createdAt as number)],
       )
       posts += result.rowCount ?? 0
     }
@@ -217,10 +252,11 @@ apiRouter.post("/admin/migrate-local-data", requireAdmin, async (request, respon
       }
     }
     for (const [key, value] of [["seo", input.seo], ["about", input.about]] as const) {
+      const migrated = await externalizeRecordImages(value as Record<string, unknown>)
       await client.query(
         `INSERT INTO site_settings (setting_key,value) VALUES ($1,$2::jsonb)
          ON CONFLICT (setting_key) DO NOTHING`,
-        [key, JSON.stringify(value)],
+        [key, JSON.stringify(migrated)],
       )
     }
     const result = { products, categories, posts, orders }
@@ -826,4 +862,20 @@ apiRouter.delete("/admin/telegram/chats/:chatId", async (request, response) => {
   }
   await pool.query("DELETE FROM telegram_chats WHERE chat_id = $1", [chatId])
   response.status(204).end()
+})
+
+apiRouter.post("/admin/uploads", async (request, response) => {
+  const input = parsed(imageUploadSchema, request.body, response)
+  if (!input) return
+
+  try {
+    const saved = await saveDataUrlImage(input.dataUrl)
+    response.status(201).json(saved)
+  } catch (error) {
+    if (error instanceof UploadError) {
+      response.status(error.status).json({ error: { code: error.code, message: error.message } })
+      return
+    }
+    throw error
+  }
 })

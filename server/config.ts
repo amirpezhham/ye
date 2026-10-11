@@ -43,6 +43,10 @@ const environmentSchema = z.object({
     .enum(["true", "false"])
     .optional()
     .transform((value) => value === "true"),
+  // پوشهٔ ذخیرهٔ تصاویر آپلودشده (نسبت به ریشهٔ پروژه).
+  UPLOAD_DIR: z.string().optional(),
+  // سقف حجم هر تصویر پس از فشرده‌سازی سمت مرورگر.
+  UPLOAD_MAX_BYTES: z.coerce.number().int().min(1024).max(20 * 1024 * 1024).default(3 * 1024 * 1024),
   // اجرای مستقیم HTTPS بدون پروکسی معکوس (مسیر فایل‌های گواهی و کلید).
   TLS_CERT_FILE: z.string().optional(),
   TLS_KEY_FILE: z.string().optional(),

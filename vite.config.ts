@@ -21,6 +21,11 @@ export default defineConfig({
         target: `http://localhost:${process.env.API_PORT ?? 4000}`,
         changeOrigin: true,
       },
+      // تصاویر آپلودشده روی دیسک سرور هستند و باید در توسعه هم پروکسی شوند.
+      '/uploads': {
+        target: `http://localhost:${process.env.API_PORT ?? 4000}`,
+        changeOrigin: true,
+      },
     },
   },
   preview: {

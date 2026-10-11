@@ -52,6 +52,10 @@ export const orderRequestSchema = z.object({
   }).strict()).min(1).max(100),
 }).strict()
 
+export const imageUploadSchema = z.object({
+  dataUrl: z.string().min(32).max(8_000_000),
+}).strict()
+
 export const loginSchema = z.object({
   username: z.string().trim().min(1).max(100),
   password: z.string().min(1).max(200),

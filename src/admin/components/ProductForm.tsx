@@ -3,6 +3,7 @@ import { ImagePlus, Save } from "lucide-react"
 
 import type { Product } from "@/components/products/product-data"
 import { validateImageFile } from "@/lib/storage"
+import { uploadImage } from "@/lib/upload"
 import { useCategories } from "@/context/CategoriesContext"
 
 interface ProductFormProps {
@@ -54,7 +55,9 @@ export function ProductForm({
   const [error, setError] = useState("")
   const [isSaving, setIsSaving] = useState(false)
 
-  function handleImageChange(
+  const [isUploadingImage, setIsUploadingImage] = useState(false)
+
+  async function handleImageChange(
     event: React.ChangeEvent<HTMLInputElement>,
   ) {
     const file = event.target.files?.[0]
@@ -70,13 +73,18 @@ export function ProductForm({
       return
     }
 
-    const reader = new FileReader()
-
-    reader.onload = () => {
-      setImage(String(reader.result))
+    setError("")
+    setIsUploadingImage(true)
+    try {
+      const uploaded = await uploadImage(file)
+      setImage(uploaded.url)
+    } catch (uploadError) {
+      console.error("آپلود تصویر ناموفق بود.", uploadError)
+      setError(uploadError instanceof Error ? uploadError.message : "آپلود تصویر ناموفق بود.")
+    } finally {
+      setIsUploadingImage(false)
+      event.target.value = ""
     }
-
-    reader.readAsDataURL(file)
   }
 
   function handleSubmit(
@@ -333,14 +341,15 @@ export function ProductForm({
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="flex h-12 items-center justify-center gap-2 rounded-xl border border-white/10 bg-[#0D0F0D] px-5 text-sm font-bold text-white/70 transition hover:border-[#D9E600]/30 hover:text-[#D9E600]"
+              disabled={isUploadingImage}
+              className="flex h-12 items-center justify-center gap-2 rounded-xl border border-white/10 bg-[#0D0F0D] px-5 text-sm font-bold text-white/70 transition hover:border-[#D9E600]/30 hover:text-[#D9E600] disabled:opacity-50"
             >
               <ImagePlus className="size-4" />
-              انتخاب تصویر از دستگاه
+              {isUploadingImage ? "در حال آپلود..." : "انتخاب تصویر از دستگاه"}
             </button>
 
             <p className="mt-2 text-xs text-white/30">
-              فرمت‌های JPG/PNG. در نسخه فعلی تصویر به‌صورت داده در پایگاه‌داده ذخیره می‌شود.
+              فرمت‌های JPG/PNG/WebP تا ۲ مگابایت. تصویر پیش از آپلود فشرده و روی سرور ذخیره می‌شود.
             </p>
           </div>
         </div>

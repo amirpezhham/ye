@@ -14,6 +14,7 @@ import { config, httpsEnabled, shouldServeStatic, trustProxy } from "./config.js
 import { pool } from "./db.js"
 import { startOutboxWorker, stopOutboxWorker } from "./outbox.js"
 import { apiRouter } from "./routes.js"
+import { uploadDir } from "./uploads.js"
 
 const app = express()
 app.disable("x-powered-by")
@@ -76,6 +77,16 @@ app.use("/api", apiRouter)
 app.use("/api", (_request, response) => {
   response.status(404).json({ error: { code: "NOT_FOUND", message: "مسیر API پیدا نشد." } })
 })
+
+// تصاویر آپلودشده همیشه از خود Express سرو می‌شوند (در توسعه Vite آن را پروکسی می‌کند).
+app.use(
+  "/uploads",
+  express.static(uploadDir, {
+    index: false,
+    maxAge: "30d",
+    setHeaders: (response) => response.setHeader("Cache-Control", "public, max-age=2592000, immutable"),
+  }),
+)
 
 const staticDir = config.STATIC_DIR ?? path.resolve(process.cwd(), "dist")
 const indexFile = path.join(staticDir, "index.html")

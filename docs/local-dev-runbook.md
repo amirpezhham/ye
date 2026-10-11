@@ -120,6 +120,8 @@ curl -s -o /dev/null -w '%{http_code}\n' http://localhost:4173/api/products   # 
 | `ECONNREFUSED 5432` | PostgreSQL بالا نیست | سرویس پستگرس را استارت بزنید |
 | `/api/products` جواب `200` می‌دهد ولی `items: []` | دیتابیس خالی است | داده را منتقل/درج کنید (بخش ۴) |
 | ورود ادمین `401` می‌دهد | حساب ادمین ساخته نشده | `npm run db:create-admin` |
+| تصویر آپلودی نمایش داده نمی‌شود | پروکسی `/uploads` در Vite نیست | `vite.config.ts` باید `/uploads` را هم پروکسی کند |
+| محیط از صفر (پستگرس پاک شده) | ذخیره‌سازی `/tmp` موقتی است | `npm run dev:bootstrap` |
 
 ---
 

@@ -29,3 +29,6 @@ dist-server
 *.njsproj
 *.sln
 *.sw?
+
+# تصاویر آپلودشدهٔ ادمین
+uploads
