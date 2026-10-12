@@ -365,4 +365,5 @@ FROM notification_outbox ORDER BY id DESC LIMIT 20;
 | حلقهٔ بی‌پایان HTTP→HTTPS | پروکسی `X-Forwarded-Proto` را ست نمی‌کند | `TRUST_PROXY` و هدرهای پروکسی را تنظیم کنید |
 | `502` روی `/api/*` در حالت توسعه | API بالا نیست | `npm run dev:all` |
 | خطای اتصال پستگرس | SSL | `DATABASE_SSL=no-verify` یا `false` |
+| پستگرس ابری در حالت توسعه وصل نمی‌شود | `sslmode` در رشتهٔ اتصال | از نسخهٔ فعلی خودکار تشخیص داده می‌شود؛ در صورت نیاز `DATABASE_SSL=true` |
 | `SERVE_STATIC فعال است اما dist پیدا نشد` | بیلد انجام نشده | `npm run build` |
