@@ -117,6 +117,7 @@ curl -s -o /dev/null -w '%{http_code}\n' http://localhost:4173/api/products   # 
 |---|---|---|
 | `502 Bad Gateway` روی `/api/...` | API روی ۴۰۰۰ بالا نیست | `npm run api:dev` را اجرا کنید |
 | `ZodError: DATABASE_URL ... undefined` | `.env` وجود ندارد | از `.env.example` کپی بسازید |
+| پیام «سرویس API بالا نیست» در صفحهٔ فروشگاه | API اجرا نشده | `npm run api:dev` یا `npm run dev:all` |
 | `ECONNREFUSED 5432` | PostgreSQL بالا نیست | سرویس پستگرس را استارت بزنید |
 | `/api/products` جواب `200` می‌دهد ولی `items: []` | دیتابیس خالی است | داده را منتقل/درج کنید (بخش ۴) |
 | ورود ادمین `401` می‌دهد | حساب ادمین ساخته نشده | `npm run db:create-admin` |
