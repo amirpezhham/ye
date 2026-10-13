@@ -20,6 +20,7 @@
     "api:start": "node dist-server/server/index.js",
     "db:migrate": "tsx server/migrate.ts",
     "db:seed": "tsx --tsconfig tsconfig.app.json scripts/seed-sample-data.mts",
+    "export:content": "tsx --tsconfig tsconfig.app.json scripts/export-content.mts",
     "db:create-admin": "tsx server/create-admin.ts"
   },
   "dependencies": {
