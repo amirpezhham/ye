@@ -1,0 +1,289 @@
+{
+  "format": "yedood-landing-page",
+  "formatVersion": 1,
+  "generatedAt": "2026-10-14T00:00:00.000Z",
+  "baseUrl": "https://yedood2dood.ir",
+  "site": {
+    "title": "یه دود ۲ دود",
+    "description": "فروشگاه آنلاین تخصصی سیگار، تنباکو، قلیان، ویپ، ذغال، فندک، اکسسوری و قهوه با ارسال سریع.",
+    "locale": "fa-IR",
+    "direction": "rtl",
+    "logo": "https://yedood2dood.ir/images/logo.jpg"
+  },
+  "landing": {
+    "header": {
+      "logo": "https://yedood2dood.ir/images/logo.jpg",
+      "navigation": [
+        { "label": "خانه", "href": "/" },
+        { "label": "فروشگاه", "href": "/shop" },
+        { "label": "دسته‌بندی‌ها", "href": "/products" },
+        { "label": "وبلاگ", "href": "/blog" },
+        { "label": "فضای ما", "href": "/lounge" },
+        { "label": "درباره ما", "href": "/about" }
+      ]
+    },
+    "hero": {
+      "eyebrow": "SMOKE SHOP • COFFEE • LOUNGE",
+      "autoplayDelayMs": 4800,
+      "slides": [
+        {
+          "id": "۰۱",
+          "title": "یه دود ۲ دود",
+          "description": "تجربه‌ای متفاوت از خرید محصولات اسموک‌شاپ، قهوه و فضای آرام یه دود ۲ دود.",
+          "image": "https://yedood2dood.ir/images/hero/hero-01.jpg"
+        },
+        {
+          "id": "۰۳",
+          "title": "دنیای محصولات اسموک شاپ",
+          "description": "انواع تنباکو، ویپ، قلیان، ذغال و اکسسوری‌های حرفه‌ای با انتخابی متفاوت.",
+          "image": "https://yedood2dood.ir/images/hero/hero-03.jpg"
+        },
+        {
+          "id": "۰۲",
+          "title": "قهوه‌ای برای یک مکث متفاوت",
+          "description": "قهوه‌های منتخب برای یک توقف کوتاه و تجربه‌ای متفاوت در فضای یه دود ۲ دود.",
+          "image": "https://yedood2dood.ir/images/hero/hero-02.jpg"
+        },
+        {
+          "id": "۰۴",
+          "title": "اکسسوری‌های خاص",
+          "description": "جزئیات حرفه‌ای برای کسانی که به انتخاب و کیفیت اهمیت می‌دهند.",
+          "image": "https://yedood2dood.ir/images/hero/hero-04.jpg"
+        }
+      ],
+      "actions": [
+        { "label": "مشاهده محصولات", "href": "/shop", "variant": "primary" },
+        { "label": "دسته‌بندی‌ها", "href": "/products", "variant": "outline" }
+      ]
+    },
+    "services": [
+      { "title": "انتخاب متفاوت", "description": "محصولات منتخب اسموک‌شاپ" },
+      { "title": "خرید مطمئن", "description": "تجربه خرید امن و ساده" },
+      { "title": "پشتیبانی", "description": "همراه شما در انتخاب" },
+      { "title": "قهوه تازه", "description": "سرو قهوه داخل فروشگاه" }
+    ],
+    "categoriesSection": {
+      "eyebrow": "EXPLORE OUR WORLD",
+      "title": "دنیای یه دود ۲ دود",
+      "description": "از محصولات اسموک‌شاپ تا اکسسوری‌های خاص؛ انتخابت را پیدا کن.",
+      "cta": { "label": "مشاهده همه دسته‌بندی‌ها", "href": "/products" }
+    },
+    "productsSection": {
+      "eyebrow": "OUR SELECTION",
+      "title": "محصولات منتخب",
+      "description": "انتخابی از محصولات محبوب و خاص یه دود ۲ دود؛ برای کسانی که به کیفیت و جزئیات اهمیت می‌دهند.",
+      "cta": { "label": "مشاهده همه محصولات", "href": "/shop" }
+    },
+    "footer": {
+      "logo": "https://yedood2dood.ir/images/logo.jpg",
+      "intro": "تجربه‌ای متفاوت از خرید محصولات اسموک‌شاپ، قهوه و فضای آرام یه دود ۲ دود.",
+      "linksTitle": "لینک‌های سایت",
+      "links": [
+        { "label": "خانه", "href": "/" },
+        { "label": "فروشگاه", "href": "/shop" },
+        { "label": "دسته‌بندی‌ها", "href": "/products" },
+        { "label": "درباره ما", "href": "/about" },
+        { "label": "فضای ما", "href": "/lounge" },
+        { "label": "وبلاگ", "href": "/blog" }
+      ],
+      "contactTitle": "اطلاعات تماس",
+      "contact": {
+        "address": "تبریز — آدرس مجموعه یه دود ۲ دود",
+        "phone": "۰۴۱-۱۲۳۴۵۶۷۸",
+        "email": "info@yedood.com"
+      },
+      "socialTitle": "شبکه‌های اجتماعی",
+      "socials": [
+        { "label": "اینستاگرام", "href": "#" },
+        { "label": "تلگرام", "href": "#" },
+        { "label": "سروش", "href": "#" }
+      ],
+      "socialNote": "ما را در شبکه‌های اجتماعی دنبال کنید.",
+      "copyright": "© یه دود ۲ دود — تمامی حقوق محفوظ است.",
+      "credit": "سازنده وب سایت Amir.P 1112"
+    }
+  },
+  "settings": {
+    "seo": {
+      "siteTitle": "یه دود ۲ دود",
+      "siteDescription": "فروشگاه آنلاین تخصصی سیگار، تنباکو، قلیان، ویپ، ذغال، فندک، اکسسوری و قهوه با ارسال سریع.",
+      "ogImage": "https://yedood2dood.ir/images/logo.jpg",
+      "homeTitle": "یه دود ۲ دود | فروشگاه تخصصی قلیان، ویپ و لوازم دود",
+      "homeDescription": "یه دود ۲ دود؛ تخصصی‌ترین فروشگاه آنلاین قلیان، ویپ، تنباکو و لوازم جانبی با ارسال سریع و کیفیت تضمین‌شده."
+    },
+    "about": {
+      "heroTitle": "یه دود ۲ دود چیست؟",
+      "heroDescription": "یه دود ۲ دود ترکیبی از یک اسموک‌شاپ حرفه‌ای، کافه‌ای دلنشین و فضای Lounge است؛ جایی که کیفیت، جزئیات و تجربه در کنار هم معنا می‌گیرند.",
+      "storyTitle": "داستان برند",
+      "storyText": "ما باور داریم خرید فقط انتخاب کالا نیست؛ تجربه‌ای از لحظه‌هاست. از محصولات اسموک‌شاپ گرفته تا یک فنجان قهوه در فضای آرام Lounge، همه چیز برای این است که لحظه‌هایتان متفاوت باشد.",
+      "pillars": [
+        { "id": "pillar-1", "title": "اسموک‌شاپ", "description": "انتخابی متفاوت از سیگار، تنباکو، قلیان، ویپ و اکسسوری‌های حرفه‌ای." },
+        { "id": "pillar-2", "title": "قهوه", "description": "قهوه‌های منتخب و دم‌نوش‌های گرم برای یک مکث متفاوت." },
+        { "id": "pillar-3", "title": "فضای Lounge", "description": "محیطی آرام با بالکن و گوشه‌های نشستن برای تجربه‌ای که فقط مال خودتان است." }
+      ]
+    }
+  },
+  "categories": [
+    { "id": "cat-cig", "name": "سیگار", "slug": "cigarettes", "description": "انتخابی متفاوت برای هر سلیقه", "image": "https://yedood2dood.ir/images/categories/cigarettes.jpg" },
+    { "id": "cat-tob", "name": "تنباکو", "slug": "tobacco", "description": "تنباکوهای منتخب و خاص", "image": "https://yedood2dood.ir/images/categories/tobacco.jpg" },
+    { "id": "cat-hok", "name": "قلیان", "slug": "hookah", "description": "قلیان و متعلقات آن", "image": "https://yedood2dood.ir/images/categories/hookah.jpg" },
+    { "id": "cat-vap", "name": "ویپ", "slug": "vape", "description": "دنیای ویپ و محصولات مرتبط", "image": "https://yedood2dood.ir/images/categories/vape.jpg" },
+    { "id": "cat-cha", "name": "ذغال", "slug": "charcoal", "description": "ذغال و محصولات مرتبط", "image": "https://yedood2dood.ir/images/categories/Charcoal.jpg" },
+    { "id": "cat-lig", "name": "فندک", "slug": "lighters", "description": "فندک‌های خاص و کاربردی", "image": "https://yedood2dood.ir/images/categories/Lighters.jpg" },
+    { "id": "cat-acc", "name": "اکسسوری", "slug": "accessories", "description": "لوازم جانبی و ابزارهای خاص", "image": "https://yedood2dood.ir/images/categories/Accessories.jpg" },
+    { "id": "cat-cof", "name": "قهوه", "slug": "coffee", "description": "قهوه و تجربه‌ای متفاوت در یه دود ۲ دود", "image": "https://yedood2dood.ir/images/categories/Coffee.jpg" }
+  ],
+  "products": [
+    {
+      "id": "cigarette-001",
+      "name": "سیگار منتخب",
+      "slug": "selected-cigarette",
+      "category": "سیگار",
+      "categorySlug": "cigarettes",
+      "description": "انتخابی متفاوت برای سلیقه‌های خاص",
+      "price": 185000,
+      "image": "https://yedood2dood.ir/images/products/cigarette-01.jpg",
+      "status": "in-stock",
+      "badge": "popular",
+      "brand": "Premium",
+      "sku": "CIG-001",
+      "stock": 24,
+      "rating": 4.8,
+      "reviewCount": 18,
+      "featured": true
+    },
+    {
+      "id": "tobacco-001",
+      "name": "تنباکوی دست‌چین",
+      "slug": "selected-tobacco",
+      "category": "تنباکو",
+      "categorySlug": "tobacco",
+      "description": "تنباکوی خوش‌عطر با ترکیبی خاص",
+      "price": 245000,
+      "oldPrice": 275000,
+      "image": "https://yedood2dood.ir/images/products/tobacco-01.jpg",
+      "status": "in-stock",
+      "badge": "sale",
+      "brand": "Ye Dood",
+      "sku": "TOB-001",
+      "stock": 12,
+      "rating": 4.9,
+      "reviewCount": 27,
+      "featured": true
+    },
+    {
+      "id": "hookah-001",
+      "name": "قلیان مدل کلاسیک",
+      "slug": "classic-hookah",
+      "category": "قلیان",
+      "categorySlug": "hookah",
+      "description": "طراحی کلاسیک با ساختاری چشم‌نواز",
+      "price": 1850000,
+      "image": "https://yedood2dood.ir/images/products/hookah-01.jpg",
+      "status": "low-stock",
+      "badge": "featured",
+      "brand": "Ye Dood",
+      "sku": "HOK-001",
+      "stock": 4,
+      "rating": 4.7,
+      "reviewCount": 11,
+      "featured": true
+    },
+    {
+      "id": "vape-001",
+      "name": "ویپ حرفه‌ای",
+      "slug": "professional-vape",
+      "category": "ویپ",
+      "categorySlug": "vape",
+      "description": "طراحی مدرن برای تجربه‌ای متفاوت",
+      "price": 3200000,
+      "image": "https://yedood2dood.ir/images/products/vape-01.jpg",
+      "status": "in-stock",
+      "badge": "new",
+      "brand": "Premium",
+      "sku": "VAP-001",
+      "stock": 8,
+      "rating": 4.6,
+      "reviewCount": 9,
+      "featured": true
+    },
+    {
+      "id": "charcoal-001",
+      "name": "ذغال طبیعی",
+      "slug": "natural-charcoal",
+      "category": "ذغال",
+      "categorySlug": "charcoal",
+      "description": "ذغال باکیفیت مناسب استفاده طولانی",
+      "price": 165000,
+      "image": "https://yedood2dood.ir/images/products/charcoal-01.jpg",
+      "status": "in-stock",
+      "brand": "Ye Dood",
+      "sku": "CHA-001",
+      "stock": 36,
+      "rating": 4.5,
+      "reviewCount": 14
+    },
+    {
+      "id": "lighter-001",
+      "name": "فندک خاص",
+      "slug": "premium-lighter",
+      "category": "فندک",
+      "categorySlug": "lighters",
+      "description": "فندکی با طراحی خاص و بدنه مقاوم",
+      "price": 780000,
+      "image": "https://yedood2dood.ir/images/products/lighter-01.jpg",
+      "status": "in-stock",
+      "badge": "new",
+      "brand": "Premium",
+      "sku": "LIG-001",
+      "stock": 15,
+      "rating": 4.8,
+      "reviewCount": 7
+    },
+    {
+      "id": "accessory-001",
+      "name": "ست اکسسوری",
+      "slug": "smoke-accessory-set",
+      "category": "اکسسوری",
+      "categorySlug": "accessories",
+      "description": "مجموعه‌ای از ابزارهای کاربردی اسموک‌شاپ",
+      "price": 590000,
+      "image": "https://yedood2dood.ir/images/products/accessory-01.jpg",
+      "status": "in-stock",
+      "brand": "Ye Dood",
+      "sku": "ACC-001",
+      "stock": 10,
+      "rating": 4.7,
+      "reviewCount": 13
+    },
+    {
+      "id": "coffee-001",
+      "name": "قهوه ویژه یه دود",
+      "slug": "ye-dood-special-coffee",
+      "category": "قهوه",
+      "categorySlug": "coffee",
+      "description": "قهوه‌ای خاص برای تجربه‌ای متفاوت",
+      "price": 320000,
+      "image": "https://yedood2dood.ir/images/products/coffee-01.jpg",
+      "status": "in-stock",
+      "badge": "featured",
+      "brand": "Ye Dood",
+      "sku": "COF-001",
+      "stock": 20,
+      "rating": 4.9,
+      "reviewCount": 31,
+      "featured": true
+    }
+  ],
+  "posts": [
+    {
+      "id": "post-1",
+      "title": "تجربه قهوه در یه دود ۲ دود",
+      "slug": "coffee-experience",
+      "excerpt": "یک فنجان قهوه در فضای آرام Lounge چه حسی دارد؟ از انتخاب دانه تا لحظه نوشیدن.",
+      "body": "ما در یه دود ۲ دود باور داریم که یک مکث کوتاه می‌تواند روزتان را عوض کند. قهوه‌های منتخب ما با دقت انتخاب شده‌اند تا تجربه‌ای متفاوت از طعم و آرامش را برایتان رقم بزنند. فضای Lounge ما با بالکن و گوشه‌های نشستن، جایی است برای تنفس و لذت بردن از لحظه.",
+      "image": "https://yedood2dood.ir/images/products/coffee-01.jpg",
+      "createdAt": 1786793400000
+    }
+  ]
+}
