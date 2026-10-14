@@ -16,6 +16,9 @@ dist-ssr
 !.env.example
 dist-server
 
+# خروجی‌های انتقال داده به وردپرس
+exports
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
