@@ -3,7 +3,7 @@
 اسکریپت `npm run export:content` محتوای دیتابیس را به سه فایل تبدیل می‌کند:
 
 ```bash
-npm run export:content -- --base-url=https://yedood.ir
+npm run export:content -- --base-url=https://yedood2dood.ir
 ```
 
 خروجی در پوشهٔ `exports/` (در `.gitignore` است) ساخته می‌شود:

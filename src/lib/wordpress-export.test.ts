@@ -37,29 +37,29 @@ describe("wordpress export helpers", () => {
   })
 
   it("turns relative image paths into absolute URLs", () => {
-    expect(absoluteImageUrl("/images/a.jpg", "https://yedood.ir/")).toBe(
-      "https://yedood.ir/images/a.jpg",
+    expect(absoluteImageUrl("/images/a.jpg", "https://yedood2dood.ir/")).toBe(
+      "https://yedood2dood.ir/images/a.jpg",
     )
-    expect(absoluteImageUrl("images/a.jpg", "https://yedood.ir")).toBe(
-      "https://yedood.ir/images/a.jpg",
+    expect(absoluteImageUrl("images/a.jpg", "https://yedood2dood.ir")).toBe(
+      "https://yedood2dood.ir/images/a.jpg",
     )
-    expect(absoluteImageUrl("https://cdn.test/a.jpg", "https://yedood.ir")).toBe(
+    expect(absoluteImageUrl("https://cdn.test/a.jpg", "https://yedood2dood.ir")).toBe(
       "https://cdn.test/a.jpg",
     )
     // بدون baseUrl مسیر نسبی دست‌نخورده می‌ماند
     expect(absoluteImageUrl("/images/a.jpg", "")).toBe("/images/a.jpg")
-    expect(absoluteImageUrl(undefined, "https://yedood.ir")).toBe("")
+    expect(absoluteImageUrl(undefined, "https://yedood2dood.ir")).toBe("")
   })
 
   it("builds a WooCommerce CSV with BOM and the expected columns", () => {
-    const csv = buildWooCommerceCsv([product], "https://yedood.ir")
+    const csv = buildWooCommerceCsv([product], "https://yedood2dood.ir")
     expect(csv.startsWith("\uFEFF")).toBe(true)
     const [header, row] = csv.replace("\uFEFF", "").trim().split("\r\n")
     expect(header).toContain("Regular price")
     expect(header).toContain("Images")
     // تعداد ستون‌های هدر و ردیف باید برابر باشد تا نگاشت ووکامرس خطا ندهد
     expect(row.split(",").length).toBe(header.split(",").length)
-    expect(row).toContain("https://yedood.ir/images/products/cigarette-01.jpg")
+    expect(row).toContain("https://yedood2dood.ir/images/products/cigarette-01.jpg")
   })
 
   it("marks out-of-stock products in the CSV", () => {
@@ -84,27 +84,27 @@ describe("wordpress export helpers", () => {
         },
       ],
       { seo: { siteTitle: "یه دود ۲ دود", siteDescription: "توضیح" } },
-      "https://yedood.ir",
+      "https://yedood2dood.ir",
       new Date("2026-08-15T00:00:00Z"),
     )
     expect(wxr).toContain("<wp:wxr_version>1.2</wp:wxr_version>")
     expect(wxr).toContain("<language>fa-IR</language>")
     expect(wxr).toContain("<title>عنوان &amp; تست</title>")
     expect(wxr).toContain("<wp:post_name><![CDATA[sample]]></wp:post_name>")
-    expect(wxr).toContain("<link>https://yedood.ir/blog/sample</link>")
+    expect(wxr).toContain("<link>https://yedood2dood.ir/blog/sample</link>")
   })
 
   it("serialises the full site content as parseable JSON", () => {
     const raw = buildSiteContent({
       generatedAt: "2026-10-14T00:00:00.000Z",
-      baseUrl: "https://yedood.ir",
+      baseUrl: "https://yedood2dood.ir",
       categories: [{ id: "c1", slug: "coffee" }],
       products: [product],
       posts: [],
       settings: { seo: { siteTitle: "یه دود ۲ دود" } },
     })
     const parsed = JSON.parse(raw) as Record<string, unknown>
-    expect(parsed.baseUrl).toBe("https://yedood.ir")
+    expect(parsed.baseUrl).toBe("https://yedood2dood.ir")
     expect(parsed.products).toEqual([product])
     expect(parsed.generatedAt).toBe("2026-10-14T00:00:00.000Z")
   })

@@ -8,7 +8,7 @@
  *
  * استفاده:
  *   npm run export:content
- *   npm run export:content -- --base-url=https://yedood.ir
+ *   npm run export:content -- --base-url=https://yedood2dood.ir
  *
  * نکته: وردپرس فایل JSON را به‌عنوان ورودی نمی‌شناسد؛ به همین دلیل کنار JSON
  * دو فرمت بومی وردپرس (CSV برای ووکامرس و WXR برای مطالب) هم تولید می‌شود.
