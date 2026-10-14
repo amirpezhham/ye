@@ -1,4 +1,4 @@
-# سند طراحی — قرارداد API و مدل دیتابیس (ye Dood 2 dood)
+# سند طراحی — قرارداد API و مدل دیتابیس (yedood2dood)
 
 > وضعیت: **طراحی / پیش‌نویس**. هنوز پیاده‌سازی نشده.
 > هدف: وقتی هاست و دامین گرفته شد، این سند نقشه‌راه جایگزینی لایه `localStorage` با Backend/Database باشد.
@@ -142,7 +142,7 @@ Admin  ──انتخاب عکس──▶  POST /api/upload  ──▶  Storage 
 
 ## ۴. قرارداد API (API Contract)
 
-**Base URL:** `https://api.yedood.com/api` (در حالت تست محلی: `http://localhost:PORT/api`)
+**Base URL:** `https://api.yedood2dood.ir/api` (در حالت تست محلی: `http://localhost:PORT/api`)
 **فرمت:** JSON. **احراز هویت ادمین:** Bearer Token (JWT) در هدر `Authorization`.
 
 ### ۴.۱ پاسخ خطا (یکسان)

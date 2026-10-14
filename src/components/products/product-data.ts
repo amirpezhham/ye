@@ -92,7 +92,7 @@ export const products: Product[] = [
     status: "in-stock",
     badge: "sale",
 
-    brand: "Ye Dood",
+    brand: "yedood2dood",
     sku: "TOB-001",
 
     stock: 12,
@@ -119,7 +119,7 @@ export const products: Product[] = [
     status: "low-stock",
     badge: "featured",
 
-    brand: "Ye Dood",
+    brand: "yedood2dood",
     sku: "HOK-001",
 
     stock: 4,
@@ -172,7 +172,7 @@ export const products: Product[] = [
 
     status: "in-stock",
 
-    brand: "Ye Dood",
+    brand: "yedood2dood",
     sku: "CHA-001",
 
     stock: 36,
@@ -221,7 +221,7 @@ export const products: Product[] = [
 
     status: "in-stock",
 
-    brand: "Ye Dood",
+    brand: "yedood2dood",
     sku: "ACC-001",
 
     stock: 10,
@@ -246,7 +246,7 @@ export const products: Product[] = [
     status: "in-stock",
     badge: "featured",
 
-    brand: "Ye Dood",
+    brand: "yedood2dood",
     sku: "COF-001",
 
     stock: 20,

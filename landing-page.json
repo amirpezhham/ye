@@ -90,7 +90,7 @@
       "contact": {
         "address": "تبریز — آدرس مجموعه یه دود ۲ دود",
         "phone": "۰۴۱-۱۲۳۴۵۶۷۸",
-        "email": "info@yedood.com"
+        "email": "info@yedood2dood.ir"
       },
       "socialTitle": "شبکه‌های اجتماعی",
       "socials": [
@@ -164,7 +164,7 @@
       "image": "https://yedood2dood.ir/images/products/tobacco-01.jpg",
       "status": "in-stock",
       "badge": "sale",
-      "brand": "Ye Dood",
+      "brand": "yedood2dood",
       "sku": "TOB-001",
       "stock": 12,
       "rating": 4.9,
@@ -182,7 +182,7 @@
       "image": "https://yedood2dood.ir/images/products/hookah-01.jpg",
       "status": "low-stock",
       "badge": "featured",
-      "brand": "Ye Dood",
+      "brand": "yedood2dood",
       "sku": "HOK-001",
       "stock": 4,
       "rating": 4.7,
@@ -217,7 +217,7 @@
       "price": 165000,
       "image": "https://yedood2dood.ir/images/products/charcoal-01.jpg",
       "status": "in-stock",
-      "brand": "Ye Dood",
+      "brand": "yedood2dood",
       "sku": "CHA-001",
       "stock": 36,
       "rating": 4.5,
@@ -250,7 +250,7 @@
       "price": 590000,
       "image": "https://yedood2dood.ir/images/products/accessory-01.jpg",
       "status": "in-stock",
-      "brand": "Ye Dood",
+      "brand": "yedood2dood",
       "sku": "ACC-001",
       "stock": 10,
       "rating": 4.7,
@@ -267,7 +267,7 @@
       "image": "https://yedood2dood.ir/images/products/coffee-01.jpg",
       "status": "in-stock",
       "badge": "featured",
-      "brand": "Ye Dood",
+      "brand": "yedood2dood",
       "sku": "COF-001",
       "stock": 20,
       "rating": 4.9,
