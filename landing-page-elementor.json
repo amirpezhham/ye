@@ -1,0 +1,190 @@
+{
+  "version": "0.4",
+  "title": "یه دود ۲ دود — صفحهٔ لندینگ",
+  "type": "page",
+  "page_settings": {
+    "template": "default"
+  },
+  "content": [
+    {
+      "id": "aa00001",
+      "elType": "section",
+      "settings": {
+        "layout": "boxed",
+        "background_background": "classic",
+        "background_image": { "url": "https://yedood2dood.ir/images/hero/hero-01.jpg", "id": "" },
+        "background_position": "center center",
+        "background_repeat": "no-repeat",
+        "background_size": "cover",
+        "background_overlay_background": "classic",
+        "background_overlay_color": "rgba(13,15,13,0.55)",
+        "padding": { "unit": "px", "top": "110", "right": "20", "bottom": "110", "left": "20", "isLinked": false }
+      },
+      "elements": [
+        {
+          "id": "ab00001",
+          "elType": "column",
+          "settings": { "_column_size": 100, "_inline_size": null },
+          "elements": [
+            { "id": "ac00001", "elType": "widget", "widgetType": "heading", "settings": { "title": "SMOKE SHOP • COFFEE • LOUNGE", "header_size": "h6", "align": "right", "title_color": "#A8B86B" }, "elements": [] },
+            { "id": "ac00002", "elType": "widget", "widgetType": "heading", "settings": { "title": "یه دود ۲ دود", "header_size": "h1", "align": "right", "title_color": "#FFFFFF" }, "elements": [] },
+            { "id": "ac00003", "elType": "widget", "widgetType": "text-editor", "settings": { "editor": "<p>تجربه‌ای متفاوت از خرید محصولات اسموک‌شاپ، قهوه و فضای آرام یه دود ۲ دود.</p>", "align": "right", "text_color": "rgba(255,255,255,0.8)" }, "elements": [] },
+            { "id": "ac00004", "elType": "widget", "widgetType": "button", "settings": { "text": "مشاهده محصولات", "align": "right", "button_background_color": "#D9E600", "button_text_color": "#0D0F0D", "link": { "url": "https://yedood2dood.ir/shop", "is_external": "", "nofollow": "" } }, "elements": [] },
+            { "id": "ac00005", "elType": "widget", "widgetType": "button", "settings": { "text": "دسته‌بندی‌ها", "align": "right", "link": { "url": "https://yedood2dood.ir/products", "is_external": "", "nofollow": "" } }, "elements": [] }
+          ],
+          "isInner": false
+        }
+      ],
+      "isInner": false
+    },
+    {
+      "id": "ba00001",
+      "elType": "section",
+      "settings": { "layout": "boxed", "background_background": "classic", "background_color": "#171A16", "padding": { "unit": "px", "top": "40", "right": "20", "bottom": "40", "left": "20", "isLinked": false } },
+      "elements": [
+        { "id": "bb00001", "elType": "column", "settings": { "_column_size": 25, "_inline_size": null }, "elements": [
+          { "id": "bc00001", "elType": "widget", "widgetType": "heading", "settings": { "title": "انتخاب متفاوت", "header_size": "h4", "align": "right", "title_color": "#FFFFFF" }, "elements": [] },
+          { "id": "bc00002", "elType": "widget", "widgetType": "text-editor", "settings": { "editor": "<p>محصولات منتخب اسموک‌شاپ</p>", "align": "right", "text_color": "rgba(255,255,255,0.6)" }, "elements": [] }
+        ], "isInner": false },
+        { "id": "bb00002", "elType": "column", "settings": { "_column_size": 25, "_inline_size": null }, "elements": [
+          { "id": "bc00003", "elType": "widget", "widgetType": "heading", "settings": { "title": "خرید مطمئن", "header_size": "h4", "align": "right", "title_color": "#FFFFFF" }, "elements": [] },
+          { "id": "bc00004", "elType": "widget", "widgetType": "text-editor", "settings": { "editor": "<p>تجربه خرید امن و ساده</p>", "align": "right", "text_color": "rgba(255,255,255,0.6)" }, "elements": [] }
+        ], "isInner": false },
+        { "id": "bb00003", "elType": "column", "settings": { "_column_size": 25, "_inline_size": null }, "elements": [
+          { "id": "bc00005", "elType": "widget", "widgetType": "heading", "settings": { "title": "پشتیبانی", "header_size": "h4", "align": "right", "title_color": "#FFFFFF" }, "elements": [] },
+          { "id": "bc00006", "elType": "widget", "widgetType": "text-editor", "settings": { "editor": "<p>همراه شما در انتخاب</p>", "align": "right", "text_color": "rgba(255,255,255,0.6)" }, "elements": [] }
+        ], "isInner": false },
+        { "id": "bb00004", "elType": "column", "settings": { "_column_size": 25, "_inline_size": null }, "elements": [
+          { "id": "bc00007", "elType": "widget", "widgetType": "heading", "settings": { "title": "قهوه تازه", "header_size": "h4", "align": "right", "title_color": "#FFFFFF" }, "elements": [] },
+          { "id": "bc00008", "elType": "widget", "widgetType": "text-editor", "settings": { "editor": "<p>سرو قهوه داخل فروشگاه</p>", "align": "right", "text_color": "rgba(255,255,255,0.6)" }, "elements": [] }
+        ], "isInner": false }
+      ],
+      "isInner": false
+    },
+    {
+      "id": "ca00001",
+      "elType": "section",
+      "settings": { "layout": "boxed", "padding": { "unit": "px", "top": "70", "right": "20", "bottom": "20", "left": "20", "isLinked": false } },
+      "elements": [
+        { "id": "cb00001", "elType": "column", "settings": { "_column_size": 100, "_inline_size": null }, "elements": [
+          { "id": "cc00001", "elType": "widget", "widgetType": "heading", "settings": { "title": "EXPLORE OUR WORLD", "header_size": "h6", "align": "right", "title_color": "#A8B86B" }, "elements": [] },
+          { "id": "cc00002", "elType": "widget", "widgetType": "heading", "settings": { "title": "دنیای یه دود ۲ دود", "header_size": "h2", "align": "right", "title_color": "#FFFFFF" }, "elements": [] },
+          { "id": "cc00003", "elType": "widget", "widgetType": "text-editor", "settings": { "editor": "<p>از محصولات اسموک‌شاپ تا اکسسوری‌های خاص؛ انتخابت را پیدا کن.</p>", "align": "right", "text_color": "rgba(255,255,255,0.6)" }, "elements": [] },
+          { "id": "cc00004", "elType": "widget", "widgetType": "button", "settings": { "text": "مشاهده همه دسته‌بندی‌ها", "align": "right", "link": { "url": "https://yedood2dood.ir/products", "is_external": "", "nofollow": "" } }, "elements": [] }
+        ], "isInner": false }
+      ],
+      "isInner": false
+    },
+    {
+      "id": "da00001",
+      "elType": "section",
+      "settings": { "layout": "boxed", "padding": { "unit": "px", "top": "20", "right": "20", "bottom": "70", "left": "20", "isLinked": false } },
+      "elements": [
+        { "id": "db00001", "elType": "column", "settings": { "_column_size": 25, "_inline_size": null }, "elements": [
+          { "id": "dc00001", "elType": "widget", "widgetType": "image", "settings": { "image": { "url": "https://yedood2dood.ir/images/categories/cigarettes.jpg", "id": "" }, "align": "center", "image_size": "full" }, "elements": [] },
+          { "id": "dc00002", "elType": "widget", "widgetType": "heading", "settings": { "title": "سیگار", "header_size": "h4", "align": "center", "title_color": "#FFFFFF" }, "elements": [] },
+          { "id": "dc00003", "elType": "widget", "widgetType": "image", "settings": { "image": { "url": "https://yedood2dood.ir/images/categories/tobacco.jpg", "id": "" }, "align": "center", "image_size": "full" }, "elements": [] },
+          { "id": "dc00004", "elType": "widget", "widgetType": "heading", "settings": { "title": "تنباکو", "header_size": "h4", "align": "center", "title_color": "#FFFFFF" }, "elements": [] }
+        ], "isInner": false },
+        { "id": "db00002", "elType": "column", "settings": { "_column_size": 25, "_inline_size": null }, "elements": [
+          { "id": "dc00005", "elType": "widget", "widgetType": "image", "settings": { "image": { "url": "https://yedood2dood.ir/images/categories/hookah.jpg", "id": "" }, "align": "center", "image_size": "full" }, "elements": [] },
+          { "id": "dc00006", "elType": "widget", "widgetType": "heading", "settings": { "title": "قلیان", "header_size": "h4", "align": "center", "title_color": "#FFFFFF" }, "elements": [] },
+          { "id": "dc00007", "elType": "widget", "widgetType": "image", "settings": { "image": { "url": "https://yedood2dood.ir/images/categories/vape.jpg", "id": "" }, "align": "center", "image_size": "full" }, "elements": [] },
+          { "id": "dc00008", "elType": "widget", "widgetType": "heading", "settings": { "title": "ویپ", "header_size": "h4", "align": "center", "title_color": "#FFFFFF" }, "elements": [] }
+        ], "isInner": false },
+        { "id": "db00003", "elType": "column", "settings": { "_column_size": 25, "_inline_size": null }, "elements": [
+          { "id": "dc00009", "elType": "widget", "widgetType": "image", "settings": { "image": { "url": "https://yedood2dood.ir/images/categories/Charcoal.jpg", "id": "" }, "align": "center", "image_size": "full" }, "elements": [] },
+          { "id": "dc00010", "elType": "widget", "widgetType": "heading", "settings": { "title": "ذغال", "header_size": "h4", "align": "center", "title_color": "#FFFFFF" }, "elements": [] },
+          { "id": "dc00011", "elType": "widget", "widgetType": "image", "settings": { "image": { "url": "https://yedood2dood.ir/images/categories/Lighters.jpg", "id": "" }, "align": "center", "image_size": "full" }, "elements": [] },
+          { "id": "dc00012", "elType": "widget", "widgetType": "heading", "settings": { "title": "فندک", "header_size": "h4", "align": "center", "title_color": "#FFFFFF" }, "elements": [] }
+        ], "isInner": false },
+        { "id": "db00004", "elType": "column", "settings": { "_column_size": 25, "_inline_size": null }, "elements": [
+          { "id": "dc00013", "elType": "widget", "widgetType": "image", "settings": { "image": { "url": "https://yedood2dood.ir/images/categories/Accessories.jpg", "id": "" }, "align": "center", "image_size": "full" }, "elements": [] },
+          { "id": "dc00014", "elType": "widget", "widgetType": "heading", "settings": { "title": "اکسسوری", "header_size": "h4", "align": "center", "title_color": "#FFFFFF" }, "elements": [] },
+          { "id": "dc00015", "elType": "widget", "widgetType": "image", "settings": { "image": { "url": "https://yedood2dood.ir/images/categories/Coffee.jpg", "id": "" }, "align": "center", "image_size": "full" }, "elements": [] },
+          { "id": "dc00016", "elType": "widget", "widgetType": "heading", "settings": { "title": "قهوه", "header_size": "h4", "align": "center", "title_color": "#FFFFFF" }, "elements": [] }
+        ], "isInner": false }
+      ],
+      "isInner": false
+    },
+    {
+      "id": "ea00001",
+      "elType": "section",
+      "settings": { "layout": "boxed", "background_background": "classic", "background_color": "#0D0F0D", "padding": { "unit": "px", "top": "70", "right": "20", "bottom": "20", "left": "20", "isLinked": false } },
+      "elements": [
+        { "id": "eb00001", "elType": "column", "settings": { "_column_size": 100, "_inline_size": null }, "elements": [
+          { "id": "ec00001", "elType": "widget", "widgetType": "heading", "settings": { "title": "OUR SELECTION", "header_size": "h6", "align": "right", "title_color": "#A8B86B" }, "elements": [] },
+          { "id": "ec00002", "elType": "widget", "widgetType": "heading", "settings": { "title": "محصولات منتخب", "header_size": "h2", "align": "right", "title_color": "#FFFFFF" }, "elements": [] },
+          { "id": "ec00003", "elType": "widget", "widgetType": "text-editor", "settings": { "editor": "<p>انتخابی از محصولات محبوب و خاص یه دود ۲ دود؛ برای کسانی که به کیفیت و جزئیات اهمیت می‌دهند.</p>", "align": "right", "text_color": "rgba(255,255,255,0.6)" }, "elements": [] },
+          { "id": "ec00004", "elType": "widget", "widgetType": "button", "settings": { "text": "مشاهده همه محصولات", "align": "right", "link": { "url": "https://yedood2dood.ir/shop", "is_external": "", "nofollow": "" } }, "elements": [] }
+        ], "isInner": false }
+      ],
+      "isInner": false
+    },
+    {
+      "id": "fa00001",
+      "elType": "section",
+      "settings": { "layout": "boxed", "background_background": "classic", "background_color": "#0D0F0D", "padding": { "unit": "px", "top": "20", "right": "20", "bottom": "70", "left": "20", "isLinked": false } },
+      "elements": [
+        { "id": "fb00001", "elType": "column", "settings": { "_column_size": 25, "_inline_size": null }, "elements": [
+          { "id": "fc00001", "elType": "widget", "widgetType": "image", "settings": { "image": { "url": "https://yedood2dood.ir/images/products/cigarette-01.jpg", "id": "" }, "align": "center", "image_size": "full" }, "elements": [] },
+          { "id": "fc00002", "elType": "widget", "widgetType": "heading", "settings": { "title": "سیگار منتخب", "header_size": "h4", "align": "center", "title_color": "#FFFFFF" }, "elements": [] },
+          { "id": "fc00003", "elType": "widget", "widgetType": "image", "settings": { "image": { "url": "https://yedood2dood.ir/images/products/tobacco-01.jpg", "id": "" }, "align": "center", "image_size": "full" }, "elements": [] },
+          { "id": "fc00004", "elType": "widget", "widgetType": "heading", "settings": { "title": "تنباکوی دست‌چین", "header_size": "h4", "align": "center", "title_color": "#FFFFFF" }, "elements": [] }
+        ], "isInner": false },
+        { "id": "fb00002", "elType": "column", "settings": { "_column_size": 25, "_inline_size": null }, "elements": [
+          { "id": "fc00005", "elType": "widget", "widgetType": "image", "settings": { "image": { "url": "https://yedood2dood.ir/images/products/hookah-01.jpg", "id": "" }, "align": "center", "image_size": "full" }, "elements": [] },
+          { "id": "fc00006", "elType": "widget", "widgetType": "heading", "settings": { "title": "قلیان مدل کلاسیک", "header_size": "h4", "align": "center", "title_color": "#FFFFFF" }, "elements": [] },
+          { "id": "fc00007", "elType": "widget", "widgetType": "image", "settings": { "image": { "url": "https://yedood2dood.ir/images/products/vape-01.jpg", "id": "" }, "align": "center", "image_size": "full" }, "elements": [] },
+          { "id": "fc00008", "elType": "widget", "widgetType": "heading", "settings": { "title": "ویپ حرفه‌ای", "header_size": "h4", "align": "center", "title_color": "#FFFFFF" }, "elements": [] }
+        ], "isInner": false },
+        { "id": "fb00003", "elType": "column", "settings": { "_column_size": 25, "_inline_size": null }, "elements": [
+          { "id": "fc00009", "elType": "widget", "widgetType": "image", "settings": { "image": { "url": "https://yedood2dood.ir/images/products/charcoal-01.jpg", "id": "" }, "align": "center", "image_size": "full" }, "elements": [] },
+          { "id": "fc00010", "elType": "widget", "widgetType": "heading", "settings": { "title": "ذغال طبیعی", "header_size": "h4", "align": "center", "title_color": "#FFFFFF" }, "elements": [] },
+          { "id": "fc00011", "elType": "widget", "widgetType": "image", "settings": { "image": { "url": "https://yedood2dood.ir/images/products/lighter-01.jpg", "id": "" }, "align": "center", "image_size": "full" }, "elements": [] },
+          { "id": "fc00012", "elType": "widget", "widgetType": "heading", "settings": { "title": "فندک خاص", "header_size": "h4", "align": "center", "title_color": "#FFFFFF" }, "elements": [] }
+        ], "isInner": false },
+        { "id": "fb00004", "elType": "column", "settings": { "_column_size": 25, "_inline_size": null }, "elements": [
+          { "id": "fc00013", "elType": "widget", "widgetType": "image", "settings": { "image": { "url": "https://yedood2dood.ir/images/products/accessory-01.jpg", "id": "" }, "align": "center", "image_size": "full" }, "elements": [] },
+          { "id": "fc00014", "elType": "widget", "widgetType": "heading", "settings": { "title": "ست اکسسوری", "header_size": "h4", "align": "center", "title_color": "#FFFFFF" }, "elements": [] },
+          { "id": "fc00015", "elType": "widget", "widgetType": "image", "settings": { "image": { "url": "https://yedood2dood.ir/images/products/coffee-01.jpg", "id": "" }, "align": "center", "image_size": "full" }, "elements": [] },
+          { "id": "fc00016", "elType": "widget", "widgetType": "heading", "settings": { "title": "قهوه ویژه یه دود", "header_size": "h4", "align": "center", "title_color": "#FFFFFF" }, "elements": [] }
+        ], "isInner": false }
+      ],
+      "isInner": false
+    },
+    {
+      "id": "ga00001",
+      "elType": "section",
+      "settings": { "layout": "boxed", "background_background": "classic", "background_color": "#0F110F", "padding": { "unit": "px", "top": "60", "right": "20", "bottom": "30", "left": "20", "isLinked": false } },
+      "elements": [
+        { "id": "gb00001", "elType": "column", "settings": { "_column_size": 33, "_inline_size": null }, "elements": [
+          { "id": "gc00001", "elType": "widget", "widgetType": "heading", "settings": { "title": "یه دود ۲ دود", "header_size": "h3", "align": "right", "title_color": "#FFFFFF" }, "elements": [] },
+          { "id": "gc00002", "elType": "widget", "widgetType": "text-editor", "settings": { "editor": "<p>تجربه‌ای متفاوت از خرید محصولات اسموک‌شاپ، قهوه و فضای آرام یه دود ۲ دود.</p>", "align": "right", "text_color": "rgba(255,255,255,0.5)" }, "elements": [] }
+        ], "isInner": false },
+        { "id": "gb00002", "elType": "column", "settings": { "_column_size": 33, "_inline_size": null }, "elements": [
+          { "id": "gc00003", "elType": "widget", "widgetType": "heading", "settings": { "title": "لینک‌های سایت", "header_size": "h5", "align": "right", "title_color": "#FFFFFF" }, "elements": [] },
+          { "id": "gc00004", "elType": "widget", "widgetType": "text-editor", "settings": { "editor": "<ul><li><a href=\"https://yedood2dood.ir/\">خانه</a></li><li><a href=\"https://yedood2dood.ir/shop\">فروشگاه</a></li><li><a href=\"https://yedood2dood.ir/products\">دسته‌بندی‌ها</a></li><li><a href=\"https://yedood2dood.ir/about\">درباره ما</a></li><li><a href=\"https://yedood2dood.ir/lounge\">فضای ما</a></li><li><a href=\"https://yedood2dood.ir/blog\">وبلاگ</a></li></ul>", "align": "right", "text_color": "rgba(255,255,255,0.5)" }, "elements": [] }
+        ], "isInner": false },
+        { "id": "gb00003", "elType": "column", "settings": { "_column_size": 33, "_inline_size": null }, "elements": [
+          { "id": "gc00005", "elType": "widget", "widgetType": "heading", "settings": { "title": "اطلاعات تماس", "header_size": "h5", "align": "right", "title_color": "#FFFFFF" }, "elements": [] },
+          { "id": "gc00006", "elType": "widget", "widgetType": "text-editor", "settings": { "editor": "<ul><li>تبریز — آدرس مجموعه یه دود ۲ دود</li><li dir=\"ltr\">۰۴۱-۱۲۳۴۵۶۷۸</li><li dir=\"ltr\">info@yedood2dood.ir</li></ul>", "align": "right", "text_color": "rgba(255,255,255,0.5)" }, "elements": [] },
+          { "id": "gc00007", "elType": "widget", "widgetType": "heading", "settings": { "title": "شبکه‌های اجتماعی", "header_size": "h5", "align": "right", "title_color": "#FFFFFF" }, "elements": [] },
+          { "id": "gc00008", "elType": "widget", "widgetType": "text-editor", "settings": { "editor": "<p>اینستاگرام • تلگرام • سروش</p>", "align": "right", "text_color": "rgba(255,255,255,0.5)" }, "elements": [] }
+        ], "isInner": false }
+      ],
+      "isInner": false
+    },
+    {
+      "id": "ha00001",
+      "elType": "section",
+      "settings": { "layout": "boxed", "background_background": "classic", "background_color": "#0F110F", "padding": { "unit": "px", "top": "10", "right": "20", "bottom": "30", "left": "20", "isLinked": false } },
+      "elements": [
+        { "id": "hb00001", "elType": "column", "settings": { "_column_size": 100, "_inline_size": null }, "elements": [
+          { "id": "hc00001", "elType": "widget", "widgetType": "text-editor", "settings": { "editor": "<p>© یه دود ۲ دود — تمامی حقوق محفوظ است. | سازنده وب سایت Amir.P 1112</p>", "align": "center", "text_color": "rgba(255,255,255,0.4)" }, "elements": [] }
+        ], "isInner": false }
+      ],
+      "isInner": false
+    }
+  ]
+}
